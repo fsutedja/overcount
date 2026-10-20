@@ -6,16 +6,25 @@
 > differ.
 
 ## Context
-A LeetCode-style practice site for combinatorics and probability. Each problem is split into
-fill-in-the-blank steps, so learners find exactly where they overcount or undercount.
+A LeetCode-style practice site for combinatorics and probability. Learners answer first and get
+help only when they need it, so they find exactly where they overcount or undercount.
 **The skill trained is choosing the right formula and what to plug in, not arithmetic.**
 
 - **Input:** answers are math expressions typed in a Desmos-like MathLive field and graded by
   value, so any equivalent form counts.
-- **Two modes, switchable per problem:**
-  - *Guided:* a skeleton such as $\binom{\square}{\square}\times\binom{\square}{\square}$ with
-    labeled slots.
-  - *Free:* the user types the full expression.
+- **Answer-first flow** (decided 2026-10-20, replacing the step player and the Guided/Free
+  toggle):
+  1. **Answer:** only the final answer box is shown (free mode).
+  2. **Wrong answer:** targeted feedback for recognised mistakes ("That counts ordered picks…"),
+     then the learner retries. A **Help** button is always visible.
+  3. **Help:** the full skeleton on one line, e.g.
+     $\binom{\square}{\square}\times\binom{\square}{\square}$. A group label sits under each
+     part (juniors, seniors), and each slot shows a small hint (total, pick). The learner only
+     fills in numbers.
+  4. **Show solution:** offered after one wrong skeleton attempt. It shows the step-by-step
+     explanation as read-only text, using the math-symbol step icons.
+  - A problem counts as **solved** whenever the final answer is correct, with or without help.
+    The help level is recorded on each attempt.
 - **A visual** shows items being picked.
 - **Practice again:** "New numbers" and "Try a variation".
 - **Progress:** an attempt log, an activity heatmap and a daily attempts-vs-correct chart, all
@@ -23,7 +32,7 @@ fill-in-the-blank steps, so learners find exactly where they overcount or underc
 
 **$0 hybrid content pipeline:** **generate → verify → publish**.
 - **Generate:** the Gemini API free tier (Google AI Studio key in a gitignored `.env`) generates
-  problem *templates* (variables + ranges + step scaffold + Python checker). It runs behind a
+  problem *templates* (variables + ranges + answer, skeleton and solution + Python checker). It runs behind a
   pluggable `Generator` interface.
 - **Verify:** every template is verified by its brute-force checker (and simulation, where
   relevant) across several random variable settings. Passing families go to `content/`. Failing
@@ -63,8 +72,8 @@ into the schema now. This is a resume project, so clean code and the README matt
   - Grading: user LaTeX → Compute Engine (with a custom `P`) → value → compared with the stored
     instance value. Exact comparison for rationals, relative tolerance `1e-9` for reals. Guards
     on huge `!`/`C`/`P`/`^`.
-  - Guided mode: the skeleton LaTeX has `\placeholder[slot]{}` prompts. Grading substitutes the
-    prompt values into the skeleton and evaluates the result. Mismatched slots (versus the
+  - Help skeleton: the skeleton LaTeX has `\placeholder[slot]{}` prompts. Grading substitutes
+    the prompt values into the skeleton and evaluates the result. Mismatched slots (versus the
     stored slot values) are flagged as a hint, but the verdict is decided by value, so `C(8,5)`
     is accepted.
   - **Spike result (milestone 1):** the Compute Engine evaluates binomials, factorials, a custom
@@ -103,34 +112,33 @@ exported to `spec/*.schema.json`, and TS types are generated from those files.
       "constraints": ["j < J", "s < S"],     // sympy relationals
       "difficulty": "easy",
       "tags": { "topics": ["counting/combinations"], "contexts": ["committees-seating"] },
-      "steps": [
-        {
-          "id": "s1", "label": "Pick juniors", "template": "Ways to pick juniors: {w}",
-          "blanks": {
-            "w": {
-              "kind": "expr",
-              "answer": "C(J,j)",
-              "guided": { "skeleton": "C({n},{k})",
-                          "slots": { "n": { "label": "juniors available", "answer": "J" },
-                                     "k": { "label": "juniors picked",    "answer": "j" } } },
-              "hints": ["Does the order you pick them in matter?"],
-              "common_wrong": [ { "expr": "P(J,j)", "mistake_tag": "order-confusion",
-                                  "feedback": "That counts ordered picks. A team has no order." } ]
-            }
-          },
-          "explanation": "Unordered selection of {{j}} from {{J}} → C({{J}},{{j}}).",
-          "visual": { "kind": "pick", "pool": { "label": "juniors", "icon": "person" }, "total": "J", "select": "j" }
-        },
-        { "id": "s2", "...": "seniors, same shape" },
-        {
-          "id": "s3", "label": "Combine", "template": "Both choices happen together, so {op}",
-          "blanks": { "op": { "kind": "choice", "options": ["×", "+"], "answer": "×",
-                      "feedback": { "+": { "text": "Add only for either/or cases.", "mistake_tag": "add-vs-multiply" } } } }
+      "answer": {
+        "prompt": "Total number of teams",
+        "expr": "C(J,j)*C(S,s)",
+        "common_wrong": [                   // checked against free answers; each names a mistake
+          { "expr": "P(J,j)*P(S,s)",  "mistake_tag": "order-confusion", "feedback": "That counts ordered picks. A team has no order." },
+          { "expr": "C(J,j)+C(S,s)",  "mistake_tag": "add-vs-multiply", "feedback": "Adding counts teams of only juniors or only seniors…" },
+          { "expr": "C(J+S,j+s)",     "mistake_tag": "overcount",       "feedback": "That counts every team of the right size, including the wrong mix…" }
+        ],
+        "skeleton": {                       // the Help view: one line, numbers only
+          "expr": "C({a},{b})*C({c},{d})",
+          "groups": [ { "label": "juniors", "slots": ["a", "b"] }, { "label": "seniors", "slots": ["c", "d"] } ],
+          "slots": { "a": { "hint": "total", "answer": "J" }, "b": { "hint": "pick", "answer": "j" },
+                     "c": { "hint": "total", "answer": "S" }, "d": { "hint": "pick", "answer": "s" } },
+          "slot_mistakes": [                // optional: a wrong slot value that names a mistake
+            { "slot": "a", "expr": "J+S", "mistake_tag": "overcount", "feedback": "That's everyone in the club. This part only picks from the juniors." }
+          ]                                 // only checked for slots whose group value is wrong (C(8,5) = C(8,3) is never flagged)
         }
+      },
+      "solution": [                         // read-only, shown by "Show solution"
+        { "kind": "choose",  "title": "Pick the juniors", "expr": "C(J,j)",
+          "explanation": "Order doesn't matter on a team, so this is C({{J}}, {{j}})." },
+        { "kind": "choose",  "title": "Pick the seniors", "expr": "C(S,s)", "explanation": "…" },
+        { "kind": "combine", "title": "Combine", "expr": "C(J,j)*C(S,s)",
+          "explanation": "Both choices happen together, so multiply (the product rule)." }
       ],
-      "final": { "prompt": "Total number of teams", "answer": "C(J,j)*C(S,s)",
-                 "guided": { "skeleton": "C({a},{b})*C({c},{d})", "slots": { "...": "..." } },
-                 "compose": "s1.w * s2.m" },
+      "visual": { "kind": "pick", "pools": [ { "label": "juniors", "total": "J", "slot": "b" },
+                                             { "label": "seniors", "total": "S", "slot": "d" } ] },
       "checker": "solve_root",               // fn in checker.py; null if the outcome space is infinite
       "simulator": null                      // e.g. "sim_root" (fn(rng, **vars) -> outcome); required for probability problems
     }
@@ -168,15 +176,18 @@ one node (validated at build).
 **Mistake tags** (enum in `taxonomy.py`): `order-confusion`, `overcount`, `undercount`,
 `add-vs-multiply`, `missed-complement`, `replacement-confusion`, `wrong-distribution`,
 `independence-assumed`, `conditional-reversed`, `off-by-one`.
-- Every `common_wrong` entry and every wrong choice option **must** have a tag (enforced by the
-  schema now).
+- Every `common_wrong` and `slot_mistakes` entry **must** have a tag (enforced by the schema now).
+
+**Step kinds** (solution steps, shown with their math-symbol icon; see DESIGN.md D2): `choose` C,
+`arrange` P, `combine` ×+, `cases` Σ, `inclusion-exclusion` ∪, `complement` 1−, `overcount` ÷,
+`condition` A|B, `distribution` ∼.
 - Tags power the post-MVP weak-spots features.
 
 ### 2b. Published bank (static, lazy-loaded)
 - `web/public/bank/index.json` holds metadata for lists and filters: id, family_id, title,
   difficulty, tags, mistake_tags, variant_of, twist and instance_count.
 - `web/public/bank/families/<slug>.json` holds the problems without checker code, plus
-  `instances: [{ key, vars, values: { "s1.w": "56", "s1.w.n": "8", ..., "final": "840" } }]`.
+  `instances: [{ key, vars, values: { "answer": "840", "slot.a": "8", "slot.b": "3", ... } }]`.
 - `data/bank/` holds the full build, with verification metadata.
 
 ### 2c. Attempt log (localStorage now, Supabase `attempts` table later; same shape)
@@ -187,16 +198,15 @@ type Attempt = {
   problem_id: string;
   family_id: string;
   instance_key: string;    // which number variant
-  mode: "guided" | "free";
+  help_level: 0 | 1 | 2;   // 0 free answer, 1 used the Help skeleton, 2 saw the solution
   attempted_at: string;    // ISO UTC
   local_date: string;      // YYYY-MM-DD in the user's timezone (heatmap/streak bucket)
-  correct: boolean;
-  revealed: boolean;       // solution viewed before this submit
-  mistake_tags: string[];  // tags hit on blanks since the previous submit (logged now, used post-MVP)
+  correct: boolean;        // counts as "solved" at any help level
+  mistake_tags: string[];  // tags recognised on this submission (logged now, used post-MVP)
   schema_version: 1;
 };
 ```
-- An *attempt* is one final-answer submission.
+- An *attempt* is one answer submission, whether a free answer or a filled skeleton.
 - The record is stored under `localStorage["overcount.attempts.v1"]` behind a `ProgressStore`
   interface (`add`, `list({from,to})`), implemented by `LocalStorageProgressStore`. A future
   `SupabaseProgressStore` will be a drop-in replacement.
@@ -251,7 +261,7 @@ type Attempt = {
   attribute access.
 - It runs in a subprocess (`python -I`) with a timeout and CPU/memory rlimits.
 
-**Later gates (post-MVP):** `compose` and skeleton consistency, `common_wrong` ≠ correct
+**Later gates (post-MVP):** skeleton-and-solution consistency with the answer, `common_wrong` ≠ correct
 value, a checker-independence lint (no `math.comb` and similar), and a CE ↔ sympy cross-check in
 CI. Until then, a vitest covers CE grading of the golden problems' canonical answers.
 
@@ -294,7 +304,7 @@ overcount/
 ├── data/  bank/  generation_log.jsonl
 └── web/
     ├── src/
-    │   ├── components/          # ProblemView, StepCard, ModeToggle, MathInput, GuidedSkeleton, ChoiceBlank,
+    │   ├── components/          # ProblemPage, AnswerBox, MathInput, HelpSkeleton, SolutionSteps, StepIcon,
     │   │                        # PracticeAgainBar, PickVisual, SlotsVisual, TagFilter, ActivityHeatmap, DailyChart
     │   ├── lib/                 # grade.ts, bank.ts (ProblemRepository), progress.ts (ProgressStore), stats.ts, daily.ts
     │   ├── pages/               # Home (roadmap + daily + mini heatmap), Topic, Practice, Problem, Progress
@@ -407,9 +417,14 @@ resume section.
    hand-computed instance values in `web/`, a `MathInput` with shortcuts, and Compute Engine
    grading of the final answer in Free mode, including the CE spike (passed; no mathjs needed).
    **Result: a real problem you can solve on screen.** ✅ Done.
-2. **Step player:** steps unlock in order, expr and choice blanks, feedback and `common_wrong`
-   hints, reveal after 2 misses, final answer + bonus number.
-3. **Guided mode:** placeholder skeletons, Guided/Free toggle (remembered), slot mismatch hints.
+2. **Answer-first player** (milestones 2 and 3 merged after the flow change):
+   - Free answer box with targeted `common_wrong` feedback and retry.
+   - Help: a one-line placeholder skeleton with group labels and slot hints, graded by value,
+     with slot-mismatch and `slot_mistakes` feedback.
+   - "Show solution" (offered after one wrong skeleton attempt): a read-only step list with
+     math-symbol icons.
+   - The two-pane layout, the final bonus number, and attempt records with `help_level` and
+     mistake tags (stored in memory for now; `ProgressStore` comes in milestone 8).
 4. **Pipeline core:** uv project, Pydantic schemas → JSON Schema → TS types, sympy expressions,
    instance sampler, `build`. Three golden families authored in Claude Code (committee, ×-vs-+
    trap, circular-seating overcount; each with 1 variant) replace the hand-written web JSON.
@@ -425,7 +440,7 @@ resume section.
    chart (attempts vs. correct).
 9. **Home roadmap + topic pages:** `roadmap.yaml` → `index.json`, the roadmap graph with
    per-node progress bars, `/topics/:nodeId`, and the daily problem card + mini heatmap on Home.
-10. **Visuals:** `pick` and `slots`, bound to instance values and guided slot entries.
+10. **Visuals:** `pick` and `slots`, bound to instance values and Help skeleton slot entries.
 11. **Content runs:** generate by `targets.yaml` coverage (counting, inclusion–exclusion/
     complement, distributions, probability). Fix `needs_review` items in Claude Code sessions.
     Target ≈ 50 roots, ≥ 3 per topic tag, all contexts and difficulties.
@@ -491,8 +506,9 @@ resume section.
 - End to end: `overcount generate --limit 3 && overcount verify staging/ && overcount build &&
   overcount stats`, then hand-check one `needs_review` report.
 - In the browser pane:
-  - Solve a golden problem in both modes, including the `choose` and `C(` shortcuts,
-    `P(8,3)/3!` vs `C(8,3)`, and a swapped guided slot.
+  - Solve a golden problem at each help level: free (the `choose` and `C(` shortcuts,
+    `P(8,3)/3!` vs `C(8,3)`, a recognised mistake), Help skeleton (correct, a swapped
+    `C(8,5)`, a wrong slot flagged), and Show solution.
   - "New numbers", and "Try a variation" after a reveal.
   - Make a few right and wrong attempts, then confirm the heatmap and line chart update and
     survive a reload.

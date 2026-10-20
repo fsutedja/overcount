@@ -1,5 +1,5 @@
 import { Header } from './components/Header'
-import { ProblemView } from './components/ProblemView'
+import { ProblemPage } from './components/ProblemPage'
 import goldenProblem from './data/golden/committee-mixed.json'
 import type { Problem } from './types/problem'
 
@@ -10,7 +10,7 @@ export default function App() {
     <>
       <Header />
       <main>
-        <ProblemView problem={problem} instance={problem.instances[0]} />
+        <ProblemPage problem={problem} instance={problem.instances[0]} />
       </main>
     </>
   )

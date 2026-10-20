@@ -33,9 +33,10 @@ interface MathInputProps {
   onChange: (latex: string) => void
   onSubmit: () => void
   invalid?: boolean
+  autoFocus?: boolean
 }
 
-export function MathInput({ label, onChange, onSubmit, invalid = false }: MathInputProps) {
+export function MathInput({ label, onChange, onSubmit, invalid = false, autoFocus = false }: MathInputProps) {
   const ref = useRef<MathfieldElement>(null)
   const callbacks = useRef({ onChange, onSubmit })
   callbacks.current = { onChange, onSubmit }
@@ -53,13 +54,20 @@ export function MathInput({ label, onChange, onSubmit, invalid = false }: MathIn
       if (event.key === 'Enter') {
         event.preventDefault()
         callbacks.current.onSubmit()
+      } else if (event.key === '*') {
+        // Show a real multiplication sign instead of an asterisk.
+        event.preventDefault()
+        event.stopPropagation()
+        field.executeCommand(['insert', '\\times'])
       }
     }
+    // Capture phase: MathLive consumes Enter inside its shadow DOM before bubbling listeners run.
     field.addEventListener('input', handleInput)
-    field.addEventListener('keydown', handleKeyDown)
+    field.addEventListener('keydown', handleKeyDown, { capture: true })
+    if (autoFocus) field.focus()
     return () => {
       field.removeEventListener('input', handleInput)
-      field.removeEventListener('keydown', handleKeyDown)
+      field.removeEventListener('keydown', handleKeyDown, { capture: true })
     }
   }, [])
 

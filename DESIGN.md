@@ -122,11 +122,16 @@ whichever page is active. Unselected links use `ink-muted`.
 ### Layout (decided 2026-10-20): B · Two panes
 
 - **Desktop:** the left pane holds the order ticket (statement) and the picking visual, and stays
-  pinned (`position: sticky`) while you scroll. The right pane holds the Guided/Free toggle and
-  the steps: completed steps collapse to a one-line summary, the active step is outlined in
-  `accent`, and later steps are locked on a `card-sunken` background.
+  pinned (`position: sticky`) while you scroll. The right pane holds the answer-first flow:
+  1. The answer box.
+  2. The **Help** skeleton (one line, group labels underneath, a slot hint inside each box).
+  3. **Show solution**, as read-only steps with math-symbol icons.
+
+  There is no Guided/Free toggle. The answer-first flow replaced it on 2026-10-20; see PLAN.md.
 - **Phones (< 768px):** the panes stack into a single column (layout A): ticket, then visual,
-  then steps.
+  then the answer and help.
+- **Column alignment:** both panes start with a matching heading ("Problem" / "Your answer"), so
+  the cards under them line up.
 - **Why:** counting problems need constant rereading of the numbers and checking the visual
   against your answer. B keeps both on screen for every step. A lets them scroll away, and C
   hides the statement behind a summary.

@@ -1,30 +1,89 @@
-// Hand-written for milestone 1. From milestone 4 these types are generated from the
-// pipeline's Pydantic schema (spec/problem.schema.json) so the web app and pipeline can't drift.
+// Hand-written for now. From milestone 4 these types are generated from the pipeline's
+// Pydantic schema (spec/problem.schema.json) so the web app and pipeline can't drift.
+// Text fields may contain {{var}} placeholders, filled from the instance.
 
 /** An exact rational ("840", "7/30") or, for answers involving e, a decimal approximation. */
 export type StoredValue = { type: 'rational'; exact: string } | { type: 'real'; approx: number }
 
 export type Difficulty = 'easy' | 'medium' | 'hard'
 
+/** Solution step kinds, each shown with its math-symbol icon (see DESIGN.md, D2). */
+export type StepKind =
+  | 'choose'
+  | 'arrange'
+  | 'combine'
+  | 'cases'
+  | 'inclusion-exclusion'
+  | 'complement'
+  | 'overcount'
+  | 'condition'
+  | 'distribution'
+
+export type MistakeTag =
+  | 'order-confusion'
+  | 'overcount'
+  | 'undercount'
+  | 'add-vs-multiply'
+  | 'missed-complement'
+  | 'replacement-confusion'
+  | 'wrong-distribution'
+  | 'independence-assumed'
+  | 'conditional-reversed'
+  | 'off-by-one'
+
+/** A predictable wrong answer, recognised by value, with feedback that names the mistake. */
+export interface CommonWrong {
+  latex: string
+  feedback: string
+  mistake_tag: MistakeTag
+}
+
+/**
+ * One labelled part of the Help skeleton, e.g. C([a], [b]) labelled "juniors".
+ * `display` is shown to the learner; `latex` is what gets graded. Both use [slot] markers.
+ */
+export interface SkeletonGroup {
+  label: string
+  display: string
+  latex: string
+}
+
+export interface Skeleton {
+  /** Groups joined by operators: group, op, group, op, group… */
+  parts: ({ group: SkeletonGroup } | { op: { display: string; latex: string } })[]
+  /** Small hint shown inside each empty slot. */
+  slots: Record<string, { hint: string }>
+  slot_mistakes: (CommonWrong & { slot: string })[]
+}
+
+export interface SolutionStep {
+  kind: StepKind
+  title: string
+  latex: string
+  explanation: string
+}
+
 /** One concrete set of numbers for a template, with every answer precomputed by the pipeline. */
 export interface Instance {
   key: string
   vars: Record<string, string>
-  values: { final: StoredValue } & Record<string, StoredValue>
+  /** "answer" plus "slot.<id>" for each skeleton slot. */
+  values: { answer: StoredValue } & Record<string, StoredValue>
 }
 
 export interface Problem {
   id: string
   family_id: string
   title: string
-  /** Markdown with {{var}} placeholders filled from the instance. */
   statement: string
   difficulty: Difficulty
   tags: { topics: string[]; contexts: string[] }
-  final: {
+  answer: {
     prompt: string
-    /** Canonical expression in the storage grammar, with {{var}} placeholders. */
-    answer: string
+    latex: string
+    common_wrong: CommonWrong[]
+    skeleton: Skeleton
   }
+  solution: SolutionStep[]
   instances: Instance[]
 }

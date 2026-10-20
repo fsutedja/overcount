@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatValue, gradeLatex } from './grade'
+import { formatValue, gradeLatex, matchesLatex } from './grade'
 import type { StoredValue } from '../types/problem'
 
 const rational = (exact: string): StoredValue => ({ type: 'rational', exact })
@@ -41,6 +41,20 @@ describe('gradeLatex', () => {
     expect(gradeLatex('\\binom{2.5}{1}', teams)).toMatchObject({ kind: 'invalid' })
     expect(gradeLatex('100000!', teams)).toMatchObject({ kind: 'invalid' })
     expect(gradeLatex('2^{5000}', teams)).toMatchObject({ kind: 'invalid' })
+  })
+})
+
+describe('matchesLatex', () => {
+  it('recognises a known mistake by value, in any equivalent form', () => {
+    const orderedPicks = '\\operatorname{P}\\left(8,3\\right)'
+    expect(matchesLatex('\\operatorname{P}(8,3)', orderedPicks)).toBe(true)
+    expect(matchesLatex('8\\cdot7\\cdot6', orderedPicks)).toBe(true)
+    expect(matchesLatex('\\binom{8}{3}', orderedPicks)).toBe(false)
+  })
+
+  it('never matches input that cannot be graded', () => {
+    expect(matchesLatex('', '0')).toBe(false)
+    expect(matchesLatex('x', '0')).toBe(false)
   })
 })
 

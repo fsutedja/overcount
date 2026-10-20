@@ -125,6 +125,17 @@ export function gradeLatex(latex: string, expected: StoredValue): GradeResult {
   return closeEnough ? { kind: 'correct' } : { kind: 'wrong' }
 }
 
+/**
+ * True when the learner's answer has the same exact value as a reference expression, such as
+ * a known common mistake. Used for feedback only, so anything unparseable simply doesn't match.
+ */
+export function matchesLatex(latex: string, referenceLatex: string): boolean {
+  const answer = ce.parse(latex)
+  if (!answer.isValid || findProblem(answer.json as MathJson)) return false
+  const reference = ce.parse(referenceLatex).evaluate()
+  return ce.box(exactDecimals(answer.json as MathJson) as never).evaluate().isEqual(reference) === true
+}
+
 /** The computed number, shown as a bonus once the problem is solved. */
 export function formatValue(value: StoredValue): string {
   if (value.type === 'real') return value.approx.toPrecision(6)
