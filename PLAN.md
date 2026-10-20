@@ -1,9 +1,43 @@
 # Overcount: Combinatorics & Probability Practice Site, Design Plan
 
-> **Status (2026-10-20):** milestones 0 and 1 are done. Design checkpoint D1 (palette, type,
-> logo) is decided, and D2 (problem page layout) is in progress. Visual decisions and their
-> rationale live in [DESIGN.md](DESIGN.md), which takes precedence over §5b below wherever they
-> differ.
+## Status (2026-10-20)
+
+**Done**
+
+| Milestone | What shipped |
+|---|---|
+| 0 · Repo setup | Private GitHub repo, gitleaks pre-commit hook, `.env.example`, README stub |
+| 1 · Playable problem | MathLive input, Compute Engine grading (exact, no mathjs needed), D1 tokens and fonts, light/dark toggle |
+| 2 · Answer-first player | Free answer with targeted feedback; Help skeleton; Show solution; attempt records with help level (milestones 2 and 3 merged) |
+| 4 · Pipeline core | Pydantic schema, `ast`-whitelisted expression grammar with sympy values and LaTeX, instance builder, `overcount build [--check]`, 3 golden families (6 problems) |
+| Design D1, D2 | Palette, type and logo; two-pane layout; math-symbol step icons. See [DESIGN.md](DESIGN.md), which takes precedence over §5b wherever they differ |
+
+**Changed from the original plan**
+- **Answer-first flow:** a free answer, then Help (a one-line skeleton), then Show solution. This
+  replaced the step-by-step player and the Guided/Free toggle, so milestones 2 and 3 became one
+  milestone.
+- **Problem format:** steps are now read-only `solution` text. Common mistakes live on the final
+  answer, and the skeleton has group labels, slot hints and `slot_mistakes` (see §2a).
+- **Step kinds:** `cases` (Σ) and `inclusion-exclusion` (∪) were added, so addition and
+  subtraction each have their own kind.
+- **Expressions:** content is parsed with Python's `ast` against a whitelist instead of sympy's
+  `parse_expr`. That keeps LLM-written content from ever being `eval`'d and gives LaTeX that
+  matches the author's structure.
+- **Web types:** TypeScript types for the bank are hand-written rather than generated from JSON
+  Schema. A vitest cross-check grades every committed answer, skeleton and solution with the
+  browser's Compute Engine instead. Generating the types is still possible later.
+- **Pushing:** pushes happen only after explicit approval, not automatically after each
+  milestone.
+- **Python:** developed on 3.14, still compatible with 3.12 and up.
+
+**Next**
+1. **Milestone 5 · Verify:** sandboxed brute-force checkers and simulation gates,
+   `staging/ → content/ | needs_review/` routing, CI (pytest, vitest, `build --check`).
+2. **Milestone 6 · Gemini generator.**
+3. **Milestones 7–9:** Practice and Daily pages; progress saved with `ProgressStore`; the Home
+   roadmap. Design checkpoint D3 comes before milestone 9.
+4. **Known follow-up:** the JS bundle is about 1.6 MB gzipped, mostly the Compute Engine. Lazy-load
+   it before the deploy in milestone 12.
 
 ## Context
 A LeetCode-style practice site for combinatorics and probability. Learners answer first and get
@@ -417,7 +451,7 @@ resume section.
    hand-computed instance values in `web/`, a `MathInput` with shortcuts, and Compute Engine
    grading of the final answer in Free mode, including the CE spike (passed; no mathjs needed).
    **Result: a real problem you can solve on screen.** ✅ Done.
-2. **Answer-first player** (milestones 2 and 3 merged after the flow change):
+2. ✅ **Answer-first player** (milestones 2 and 3 merged after the flow change):
    - Free answer box with targeted `common_wrong` feedback and retry.
    - Help: a one-line placeholder skeleton with group labels and slot hints, graded by value,
      with slot-mismatch and `slot_mistakes` feedback.
@@ -425,7 +459,7 @@ resume section.
      math-symbol icons.
    - The two-pane layout, the final bonus number, and attempt records with `help_level` and
      mistake tags (stored in memory for now; `ProgressStore` comes in milestone 8).
-4. **Pipeline core:** uv project, Pydantic schemas → JSON Schema → TS types, sympy expressions,
+4. ✅ **Pipeline core:** uv project, Pydantic schemas → JSON Schema → TS types, sympy expressions,
    instance sampler, `build`. Three golden families authored in Claude Code (committee, ×-vs-+
    trap, circular-seating overcount; each with 1 variant) replace the hand-written web JSON.
 5. **Verify:** sandbox + the 3 MVP gates, staging → content / needs_review routing with
