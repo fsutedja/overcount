@@ -133,10 +133,37 @@ whichever page is active. Unselected links use `ink-muted`.
 - **Mockup:** [design/mockups/d2-problem-layouts.html](design/mockups/d2-problem-layouts.html)
   (all three options compared).
 
-### Step icons
+### Step icons (decided 2026-10-20): C · Math symbols
 
-Pending: one icon per step kind (choose, arrange, combine, divide out overcount, complement,
-condition, distribution), always shown with a text label.
+Each step kind shows its operation as a bold symbol in an `accent-soft` tile (`accent-ink`
+text), always next to the step's text label.
+
+| Step kind | Symbol | Meaning |
+|---|---|---|
+| Choose | **C** | unordered selection, C(n, k) |
+| Arrange | **P** | ordered selection, P(n, k), n! |
+| Combine | **×+** | the "× or +?" decision step |
+| Split into cases | **Σ** | separate cases, then add |
+| Inclusion–exclusion | **∪** | add the groups, subtract the overlap |
+| Complement | **1−** | total minus what you don't want |
+| Divide out overcount | **÷** | divide by the number of orderings |
+| Condition | **A\|B** | given that B happened |
+| Distribution | **∼** | binomial, geometric, … |
+
+- **Rule:** an icon names the *kind* of step and never gives away a blank's answer. That's why
+  Combine shows both × and +.
+- **Why:** it's the most direct link to the math being learned, and symbols render crisply at
+  every size in both themes.
+- **Considered and dropped:**
+  - Pixel kitchen icons (egg carton, mixing bowl, cleaver, strainer, jars). Several were hard to
+    read at 12×12, and the complement icon in particular never landed: pie, ticket, cracked egg,
+    shells, loaf, cup, cookie tray and pancake were all tried.
+  - Generic line icons.
+- **Mockup:** [design/mockups/d2-step-icons.html](design/mockups/d2-step-icons.html)
+
+Split into cases and inclusion–exclusion were added as step kinds during this checkpoint, so
+addition and subtraction each have a home: Σ for disjoint cases, ∪ for overlaps, and 1− for
+complements.
 
 ## D3 · Home and progress
 
