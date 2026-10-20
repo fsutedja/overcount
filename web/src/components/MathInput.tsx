@@ -38,8 +38,15 @@ interface MathInputProps {
 
 export function MathInput({ label, onChange, onSubmit, invalid = false, autoFocus = false }: MathInputProps) {
   const ref = useRef<MathfieldElement>(null)
+  // Latest callbacks for the long-lived MathLive listeners, updated after each render.
   const callbacks = useRef({ onChange, onSubmit })
-  callbacks.current = { onChange, onSubmit }
+  useEffect(() => {
+    callbacks.current = { onChange, onSubmit }
+  })
+
+  useEffect(() => {
+    if (autoFocus) ref.current?.focus()
+  }, [autoFocus])
 
   useEffect(() => {
     const field = ref.current
@@ -64,7 +71,6 @@ export function MathInput({ label, onChange, onSubmit, invalid = false, autoFocu
     // Capture phase: MathLive consumes Enter inside its shadow DOM before bubbling listeners run.
     field.addEventListener('input', handleInput)
     field.addEventListener('keydown', handleKeyDown, { capture: true })
-    if (autoFocus) field.focus()
     return () => {
       field.removeEventListener('input', handleInput)
       field.removeEventListener('keydown', handleKeyDown, { capture: true })

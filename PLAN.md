@@ -10,6 +10,7 @@
 | 1 · Playable problem | MathLive input, Compute Engine grading (exact, no mathjs needed), D1 tokens and fonts, light/dark toggle |
 | 2 · Answer-first player | Free answer with targeted feedback; Help skeleton; Show solution; attempt records with help level (milestones 2 and 3 merged) |
 | 4 · Pipeline core | Pydantic schema, `ast`-whitelisted expression grammar with sympy values and LaTeX, instance builder, `overcount build [--check]`, 3 golden families (6 problems) |
+| 5 · Verify | Sandboxed checkers (import/builtin allowlist + isolated process with time and memory limits); schema, brute-force and simulation gates; `verify`, `promote` and `stats`; `needs_review/` reports; GitHub Actions CI |
 | Design D1, D2 | Palette, type and logo; two-pane layout; math-symbol step icons. See [DESIGN.md](DESIGN.md), which takes precedence over §5b wherever they differ |
 
 **Changed from the original plan**
@@ -31,13 +32,11 @@
 - **Python:** developed on 3.14, still compatible with 3.12 and up.
 
 **Next**
-1. **Milestone 5 · Verify:** sandboxed brute-force checkers and simulation gates,
-   `staging/ → content/ | needs_review/` routing, CI (pytest, vitest, `build --check`).
-2. **Milestone 6 · Gemini generator.**
-3. **Milestones 7–9:** Practice and Daily pages; progress saved with `ProgressStore`; the Home
+1. **Milestone 6 · Gemini generator.**
+2. **Milestones 7–9:** Practice and Daily pages; progress saved with `ProgressStore`; the Home
    roadmap. Design checkpoint D3 comes before milestone 9.
-4. **Known follow-up:** the JS bundle is about 1.6 MB gzipped, mostly the Compute Engine. Lazy-load
-   it before the deploy in milestone 12.
+3. **Follow-ups** are tracked in [POLISH.md](POLISH.md), for example lazy-loading the 1.6 MB
+   Compute Engine bundle before the deploy.
 
 ## Context
 A LeetCode-style practice site for combinatorics and probability. Learners answer first and get
@@ -462,7 +461,7 @@ resume section.
 4. ✅ **Pipeline core:** uv project, Pydantic schemas → JSON Schema → TS types, sympy expressions,
    instance sampler, `build`. Three golden families authored in Claude Code (committee, ×-vs-+
    trap, circular-seating overcount; each with 1 variant) replace the hand-written web JSON.
-5. **Verify:** sandbox + the 3 MVP gates, staging → content / needs_review routing with
+5. ✅ **Verify:** sandbox + the 3 MVP gates, staging → content / needs_review routing with
    `REPORT.md`, `promote`, `stats`, and CI (pytest, vitest, `build --check`).
 6. **Gemini generator:** `GeminiGenerator`, structured output, rate limiter, retries, resumable
    log, `.env`/`.env.example`, `targets.yaml`. First run of ~5 targets through

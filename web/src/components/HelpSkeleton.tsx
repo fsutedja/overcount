@@ -24,7 +24,8 @@ function tokens(display: string) {
 export function HelpSkeleton({ skeleton, values, wrongSlots, onChange, onSubmit }: HelpSkeletonProps) {
   const firstInput = useRef<HTMLInputElement>(null)
   useEffect(() => firstInput.current?.focus(), [])
-  let firstSlot = true
+  const firstSlot = skeleton.parts.flatMap((part) => ('group' in part ? tokens(part.group.display) : []))
+    .find((token) => 'slot' in token)
 
   return (
     <div className="flex flex-wrap items-start gap-x-3 gap-y-4 text-2xl">
@@ -45,12 +46,10 @@ export function HelpSkeleton({ skeleton, values, wrongSlots, onChange, onSubmit 
                 const slot = token.slot
                 const hint = skeleton.slots[slot]?.hint ?? ''
                 const wrong = wrongSlots.includes(slot)
-                const isFirst = firstSlot
-                firstSlot = false
                 return (
                   <input
                     key={i}
-                    ref={isFirst ? firstInput : undefined}
+                    ref={firstSlot && 'slot' in firstSlot && firstSlot.slot === slot ? firstInput : undefined}
                     value={values[slot] ?? ''}
                     onChange={(event) => onChange(slot, event.target.value)}
                     onKeyDown={(event) => event.key === 'Enter' && onSubmit()}
