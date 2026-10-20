@@ -1,0 +1,44 @@
+[project]
+name = "overcount"
+version = "0.1.0"
+description = "Content pipeline for Overcount: verify problem templates and publish the static problem bank"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.9",
+    "sympy>=1.13",
+    "typer>=0.12",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+overcount = "overcount.cli:app"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "types-pyyaml>=6.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.4,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+strict = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["sympy.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,116 @@
+{
+  "family_id": "round-table",
+  "problems": [
+    {
+      "id": "round-table",
+      "origin": { "kind": "authored" },
+      "title": "Round table",
+      "statement": "{{n}} friends sit around a round table. Two seatings count as the same if one is a rotation of the other, so everyone has the same left and right neighbours. How many different seatings are there?",
+      "variables": {
+        "n": { "min": 4, "max": 8, "default": 6 }
+      },
+      "difficulty": "easy",
+      "tags": { "topics": ["counting/symmetry-circular"], "contexts": ["committees-seating"] },
+      "answer": {
+        "prompt": "Number of different seatings",
+        "expr": "n!/n",
+        "common_wrong": [
+          {
+            "expr": "n!",
+            "feedback": "That counts seatings in a row. Around the table, each seating is counted {{n}} times, once for each rotation.",
+            "mistake_tag": "overcount"
+          },
+          {
+            "expr": "n!/2",
+            "feedback": "Dividing by 2 removes mirror images, but here only rotations count as the same.",
+            "mistake_tag": "overcount"
+          }
+        ],
+        "skeleton": {
+          "parts": [
+            { "group": "orders in a row", "expr": "[a]!" },
+            { "op": "/" },
+            { "group": "rotations", "expr": "[b]" }
+          ],
+          "slots": {
+            "a": { "hint": "people", "answer": "n" },
+            "b": { "hint": "rotations", "answer": "n" }
+          }
+        }
+      },
+      "solution": [
+        {
+          "kind": "arrange",
+          "title": "Seat everyone in a row",
+          "expr": "n!",
+          "explanation": "Ignoring the table's shape, {{n}} people can be ordered in {{n}}! ways."
+        },
+        {
+          "kind": "overcount",
+          "title": "Divide out the rotations",
+          "expr": "n!/n",
+          "explanation": "Rotating everyone one seat gives the same seating, and there are {{n}} rotations, so each seating was counted {{n}} times."
+        }
+      ],
+      "checker": "solve_root"
+    },
+    {
+      "id": "round-table-mirror",
+      "variant_of": "round-table",
+      "twist": "mirror images count as the same",
+      "origin": { "kind": "authored" },
+      "title": "Bracelet of beads",
+      "statement": "{{n}} different beads are threaded onto a bracelet. Two bracelets are the same if one can be rotated or flipped over to match the other. How many different bracelets are there?",
+      "variables": {
+        "n": { "min": 4, "max": 8, "default": 6 }
+      },
+      "difficulty": "medium",
+      "tags": { "topics": ["counting/symmetry-circular"], "contexts": ["balls-urns"] },
+      "answer": {
+        "prompt": "Number of different bracelets",
+        "expr": "n!/(2*n)",
+        "common_wrong": [
+          {
+            "expr": "n!/n",
+            "feedback": "That removes rotations but not flips. Turning the bracelet over gives the same bracelet, so each one is still counted twice.",
+            "mistake_tag": "overcount"
+          },
+          {
+            "expr": "n!",
+            "feedback": "That counts beads in a row. Each bracelet is counted once for every rotation and flip: {{n}} × 2 times.",
+            "mistake_tag": "overcount"
+          }
+        ],
+        "skeleton": {
+          "parts": [
+            { "group": "orders in a row", "expr": "[a]!" },
+            { "op": "/" },
+            { "group": "rotations", "expr": "[b]" },
+            { "op": "/" },
+            { "group": "flips", "expr": "[c]" }
+          ],
+          "slots": {
+            "a": { "hint": "beads", "answer": "n" },
+            "b": { "hint": "rotations", "answer": "n" },
+            "c": { "hint": "sides", "answer": "2" }
+          }
+        }
+      },
+      "solution": [
+        {
+          "kind": "arrange",
+          "title": "Order the beads in a row",
+          "expr": "n!",
+          "explanation": "{{n}} different beads in a row can be ordered in {{n}}! ways."
+        },
+        {
+          "kind": "overcount",
+          "title": "Divide out rotations and flips",
+          "expr": "n!/(2*n)",
+          "explanation": "Each bracelet appears once for each of its {{n}} rotations, on each of its 2 sides, so divide by 2 × {{n}}."
+        }
+      ],
+      "checker": "solve_mirror"
+    }
+  ]
+}

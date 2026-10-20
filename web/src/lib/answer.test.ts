@@ -1,17 +1,19 @@
 import { describe, expect, it } from 'vitest'
-import golden from '../data/golden/committee-mixed.json'
-import type { Problem } from '../types/problem'
+import { readFileSync } from 'node:fs'
+import type { Family, Problem } from '../types/problem'
 import { gradeFreeAnswer, gradeSkeleton, skeletonLatex } from './answer'
 
-const problem = golden as Problem
-const [defaultInstance, biggerInstance] = problem.instances
+const family = JSON.parse(readFileSync(new URL('../../public/bank/families/committee-mixed.json', import.meta.url), 'utf8')) as Family
+const problem = family.problems[0] as Problem
+const [defaultInstance, otherInstance] = problem.instances
 const slots = (a: string, b: string, c: string, d: string) => ({ a, b, c, d })
 
 describe('gradeFreeAnswer', () => {
   it('accepts any equivalent expression', () => {
     expect(gradeFreeAnswer('\\binom{8}{3}\\binom{6}{2}', problem, defaultInstance)).toEqual({ kind: 'correct' })
     expect(gradeFreeAnswer('56\\times15', problem, defaultInstance)).toEqual({ kind: 'correct' })
-    expect(gradeFreeAnswer('\\binom{10}{4}\\binom{7}{3}', problem, biggerInstance)).toEqual({ kind: 'correct' })
+    const { J, S, j, s } = otherInstance.vars
+    expect(gradeFreeAnswer(`\\binom{${J}}{${j}}\\binom{${S}}{${s}}`, problem, otherInstance)).toEqual({ kind: 'correct' })
   })
 
   it('names recognised mistakes', () => {
@@ -39,7 +41,7 @@ describe('gradeSkeleton', () => {
     expect(gradeSkeleton(slots('8', '3', '6', '3'), problem, defaultInstance)).toEqual({ kind: 'wrong', wrongSlots: ['d'] })
     // C(8,5) equals C(8,3), so the 5 is fine; only the seniors' group is wrong.
     expect(gradeSkeleton(slots('8', '5', '6', '1'), problem, defaultInstance)).toEqual({ kind: 'wrong', wrongSlots: ['d'] })
-    expect(gradeSkeleton(slots('8', '3', '6', '4'), problem, biggerInstance)).toMatchObject({ kind: 'wrong', wrongSlots: ['a', 'b', 'c', 'd'] })
+    expect(gradeSkeleton(slots('2', '1', '2', '1'), problem, defaultInstance)).toMatchObject({ kind: 'wrong', wrongSlots: ['a', 'b', 'c', 'd'] })
   })
 
   it('names a recognised slot mistake', () => {

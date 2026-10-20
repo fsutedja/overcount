@@ -1,5 +1,5 @@
-// Hand-written for now. From milestone 4 these types are generated from the pipeline's
-// Pydantic schema (spec/problem.schema.json) so the web app and pipeline can't drift.
+// The shape of web/public/bank/, written by the pipeline (pipeline/src/overcount/publish.py).
+// A vitest checks the committed bank against these types' required fields.
 // Text fields may contain {{var}} placeholders, filled from the instance.
 
 /** An exact rational ("840", "7/30") or, for answers involving e, a decimal approximation. */
@@ -74,6 +74,9 @@ export interface Instance {
 export interface Problem {
   id: string
   family_id: string
+  variant_of: string | null
+  /** How a variant differs, shown as a chip, e.g. "one junior is captain". */
+  twist: string | null
   title: string
   statement: string
   difficulty: Difficulty
@@ -86,4 +89,27 @@ export interface Problem {
   }
   solution: SolutionStep[]
   instances: Instance[]
+}
+
+export interface Family {
+  family_id: string
+  problems: Problem[]
+}
+
+/** One row of web/public/bank/index.json, used for lists and filters. */
+export interface ProblemSummary {
+  id: string
+  family_id: string
+  variant_of: string | null
+  twist: string | null
+  title: string
+  difficulty: Difficulty
+  tags: { topics: string[]; contexts: string[] }
+  mistake_tags: MistakeTag[]
+  instance_count: number
+}
+
+export interface BankIndex {
+  schema_version: 1
+  problems: ProblemSummary[]
 }

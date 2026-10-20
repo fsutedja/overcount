@@ -1,0 +1,132 @@
+{
+  "family_id": "club-president",
+  "problems": [
+    {
+      "id": "club-president",
+      "origin": { "kind": "authored" },
+      "title": "President and advisor",
+      "statement": "A chess club has {{J}} juniors and {{S}} seniors, and the school has {{t}} teachers. The club needs one president, who can be any junior or any senior, and one teacher as advisor. In how many ways can the president and advisor be chosen?",
+      "variables": {
+        "J": { "min": 3, "max": 12, "default": 7 },
+        "S": { "min": 3, "max": 12, "default": 5 },
+        "t": { "min": 2, "max": 6, "default": 4 }
+      },
+      "difficulty": "easy",
+      "tags": { "topics": ["counting/basics"], "contexts": ["committees-seating"] },
+      "answer": {
+        "prompt": "Ways to choose a president and an advisor",
+        "expr": "(J+S)*t",
+        "common_wrong": [
+          {
+            "expr": "J*S*t",
+            "feedback": "Multiplying J by S counts a junior and a senior together, but there's only one president. The president is a junior or a senior, so add those.",
+            "mistake_tag": "add-vs-multiply"
+          },
+          {
+            "expr": "J+S+t",
+            "feedback": "Adding everything counts a president or an advisor. You need both, so multiply the president choices by the advisor choices.",
+            "mistake_tag": "add-vs-multiply"
+          }
+        ],
+        "skeleton": {
+          "parts": [
+            { "group": "president", "expr": "([a]+[b])" },
+            { "op": "*" },
+            { "group": "advisor", "expr": "[c]" }
+          ],
+          "slots": {
+            "a": { "hint": "juniors", "answer": "J" },
+            "b": { "hint": "seniors", "answer": "S" },
+            "c": { "hint": "teachers", "answer": "t" }
+          }
+        }
+      },
+      "solution": [
+        {
+          "kind": "cases",
+          "title": "Choose the president",
+          "expr": "J+S",
+          "explanation": "The president is either a junior or a senior, never both, so add the two cases: {{J}} + {{S}}."
+        },
+        {
+          "kind": "choose",
+          "title": "Choose the advisor",
+          "expr": "t",
+          "explanation": "Any of the {{t}} teachers can be advisor."
+        },
+        {
+          "kind": "combine",
+          "title": "Combine",
+          "expr": "(J+S)*t",
+          "explanation": "You choose a president and an advisor, so multiply."
+        }
+      ],
+      "checker": "solve_root"
+    },
+    {
+      "id": "club-president-optional-advisor",
+      "variant_of": "club-president",
+      "twist": "the advisor seat may stay empty",
+      "origin": { "kind": "authored" },
+      "title": "President and an optional advisor",
+      "statement": "A chess club has {{J}} juniors and {{S}} seniors, and the school has {{t}} teachers. The club needs one president, who can be any junior or any senior. It may also pick one teacher as advisor, or leave the advisor seat empty. How many different choices are possible?",
+      "variables": {
+        "J": { "min": 3, "max": 12, "default": 7 },
+        "S": { "min": 3, "max": 12, "default": 5 },
+        "t": { "min": 2, "max": 6, "default": 4 }
+      },
+      "difficulty": "medium",
+      "tags": { "topics": ["counting/basics"], "contexts": ["committees-seating"] },
+      "answer": {
+        "prompt": "Ways to choose a president and an optional advisor",
+        "expr": "(J+S)*(t+1)",
+        "common_wrong": [
+          {
+            "expr": "(J+S)*t",
+            "feedback": "That forgets the choice of having no advisor. \"No advisor\" is one more option alongside the {{t}} teachers.",
+            "mistake_tag": "undercount"
+          },
+          {
+            "expr": "(J+S)*t+1",
+            "feedback": "Leaving the seat empty is possible with every president, not just once in total.",
+            "mistake_tag": "undercount"
+          }
+        ],
+        "skeleton": {
+          "parts": [
+            { "group": "president", "expr": "([a]+[b])" },
+            { "op": "*" },
+            { "group": "advisor", "expr": "([c]+[d])" }
+          ],
+          "slots": {
+            "a": { "hint": "juniors", "answer": "J" },
+            "b": { "hint": "seniors", "answer": "S" },
+            "c": { "hint": "teachers", "answer": "t" },
+            "d": { "hint": "no one", "answer": "1" }
+          }
+        }
+      },
+      "solution": [
+        {
+          "kind": "cases",
+          "title": "Choose the president",
+          "expr": "J+S",
+          "explanation": "A junior or a senior: {{J}} + {{S}} choices."
+        },
+        {
+          "kind": "cases",
+          "title": "Choose the advisor, or no one",
+          "expr": "t+1",
+          "explanation": "Any of the {{t}} teachers, or leave the seat empty: one extra option."
+        },
+        {
+          "kind": "combine",
+          "title": "Combine",
+          "expr": "(J+S)*(t+1)",
+          "explanation": "Both choices are made together, so multiply."
+        }
+      ],
+      "checker": "solve_optional_advisor"
+    }
+  ]
+}
