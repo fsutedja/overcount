@@ -1,0 +1,26 @@
+# Secrets — only the example file is committed
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node / web
+node_modules/
+web/dist/
+.vercel/
+
+# Pipeline scratch (fresh generator output; verified families live in content/)
+staging/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
