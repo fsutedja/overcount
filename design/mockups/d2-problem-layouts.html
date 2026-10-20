@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D2 · Problem page layouts</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+  :root { --bg:#F4EFE6; --card:#FFFBF3; --sunken:#F8F3EA; --border:#E4D9C6; --ink:#2B2823; --muted:#675F53;
+          --accent:#4F8F87; --accent-ink:#276660; --accent-soft:#E3EEEC; --deco:#C2734F;
+          --correct-bg:#E1ECD8; --correct-ink:#35652F; --wrong-bg:#F3E0E7; --wrong-ink:#8E3352; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#ECE6DA; font-family:'Atkinson Hyperlegible', system-ui, sans-serif; color:var(--ink); }
+  main { max-width:1100px; margin:0 auto; padding:24px 16px 48px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .intro { color:var(--muted); margin:0 0 24px; }
+  h2 { font-size:18px; margin:32px 0 2px; }
+  .desc { color:var(--muted); margin:0 0 10px; }
+  .frame { background:var(--bg); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+  .header { display:flex; align-items:center; gap:16px; padding:10px 16px; border-bottom:1px solid var(--border); font-size:14px; }
+  .logo { font-family:'Pixelify Sans', monospace; font-size:22px; } .logo .o { color:var(--accent-ink); } .logo .c { color:var(--deco); }
+  .nav { color:var(--muted); font-weight:700; display:flex; gap:14px; }
+  .page { padding:16px; font-size:14px; }
+  .ticket { background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .tear { height:8px; background-image:radial-gradient(circle at 6px 0, var(--bg) 4px, transparent 4.5px); background-size:12px 8px; }
+  .ticket-body { padding:4px 14px 14px; }
+  .meta { color:var(--muted); font-size:11px; letter-spacing:.05em; text-transform:uppercase; }
+  .title { font-weight:700; font-size:17px; margin:2px 0 6px; }
+  .statement { line-height:1.6; font-size:15px; }
+  .visual { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-top:10px; }
+  .visual .lbl { color:var(--muted); font-size:11px; letter-spacing:.05em; margin:0 0 5px; }
+  .visual .lbl + .dots + .lbl { margin-top:10px; }
+  .dots { display:flex; gap:6px; }
+  .dot { width:15px; height:15px; border-radius:50%; border:1.5px solid #C9BBA3; }
+  .dot.p { background:var(--accent); border-color:var(--accent-ink); }
+  .dot.w { background:var(--wrong-bg); border:1.5px dashed var(--wrong-ink); }
+  .steps-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .seg { display:inline-flex; border:1px solid var(--border); border-radius:8px; overflow:hidden; font-size:12px; }
+  .seg span { padding:3px 11px; } .seg .on { background:var(--accent-ink); color:var(--card); }
+  .step { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:9px 12px; margin-top:8px; }
+  .step.active { border:2px solid var(--accent); }
+  .step.locked { background:var(--sunken); color:var(--muted); }
+  .icon { display:inline-flex; width:22px; height:22px; border-radius:6px; background:var(--accent-soft); color:var(--accent-ink);
+          align-items:center; justify-content:center; font-size:12px; font-weight:700; margin-right:6px; vertical-align:middle; }
+  .indent { margin-left:28px; }
+  .expr { font-size:19px; margin-top:8px; }
+  .slot { display:inline-block; min-width:30px; padding:2px 7px; border:2px solid var(--accent); border-radius:6px; background:#fff; text-align:center; font-weight:700; }
+  .slot.wrong { border-color:var(--wrong-ink); background:var(--wrong-bg); color:var(--wrong-ink); }
+  .slot-wrap { display:inline-flex; flex-direction:column; align-items:center; vertical-align:bottom; }
+  .slot-wrap small { font-size:10px; color:var(--muted); } .slot-wrap small.bad { color:var(--wrong-ink); }
+  .feedback { background:var(--wrong-bg); color:var(--wrong-ink); border-radius:8px; padding:7px 10px; margin-top:8px; }
+  .ok { color:var(--correct-ink); font-size:12px; font-weight:700; float:right; }
+  .done-expr { font-family:'Times New Roman', serif; font-style:italic; margin-left:6px; }
+  .btn { display:inline-block; background:var(--accent-ink); color:var(--card); border-radius:8px; padding:6px 14px; font-weight:700; margin-top:8px; }
+  .links { color:var(--muted); margin-left:10px; font-size:13px; }
+  .pinned { color:var(--muted); font-size:12px; margin-top:8px; }
+  .two { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); gap:16px; align-items:start; }
+  .narrow { max-width:520px; margin:0 auto; }
+  .progress { display:flex; gap:5px; margin:8px 0 10px; } .progress i { flex:1; height:6px; border-radius:3px; background:var(--border); }
+  .progress i.d { background:var(--accent); } .progress i.c { background:var(--accent-ink); }
+  .summary { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:9px 12px; line-height:1.5; }
+  .summary a { color:var(--accent-ink); font-weight:700; text-decoration:none; }
+  .big-step { text-align:center; padding:16px; }
+  .big-step .expr { font-size:24px; }
+  .big-step .btn { display:block; }
+  .rec { display:inline-block; background:var(--accent-soft); color:var(--accent-ink); font-size:12px; font-weight:700; border-radius:6px; padding:2px 8px; margin-left:6px; vertical-align:middle; }
+  @media (max-width:760px) { .two { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>D2 · Problem page layouts</h1>
+  <p class="intro">All three show the same moment: step 1 correct, step 2 just answered wrong in Guided mode (3 seniors picked instead of 2).</p>
+
+  <!-- A -->
+  <h2>A · Single column</h2>
+  <p class="desc">Ticket, visual, then every step stacked in one scroll. Same layout on phone and desktop.</p>
+  <div class="frame">
+    <div class="header"><span class="logo"><span class="o">over</span><span class="c">count</span></span><span class="nav"><span>Roadmap</span><span>Practice</span><span>Progress</span></span></div>
+    <div class="page"><div class="narrow">
+      <div class="ticket"><div class="tear"></div><div class="ticket-body">
+        <div class="meta">Easy · committees</div><div class="title">Robotics club team</div>
+        <div class="statement">A club has 8 juniors and 6 seniors. In how many ways can a team of 3 juniors and 2 seniors be chosen?</div>
+      </div></div>
+      <div class="visual">
+        <p class="lbl">JUNIORS · 3 PICKED</p><div class="dots"><i class="dot p"></i><i class="dot p"></i><i class="dot p"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+        <p class="lbl">SENIORS · 3 PICKED?</p><div class="dots"><i class="dot w"></i><i class="dot w"></i><i class="dot w"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+      </div>
+      <div style="margin-top:14px">
+        <div class="steps-top"><b>Steps</b><span class="seg"><span class="on">Guided</span><span>Free</span></span></div>
+        <div class="step"><span class="icon">C</span><b>Pick juniors</b><span class="done-expr">C(8, 3)</span><span class="ok">✓ Correct</span></div>
+        <div class="step active"><span class="icon">C</span><b>Pick seniors</b>
+          <div class="indent expr">C( <span class="slot-wrap"><small>seniors available</small><span class="slot">6</span></span> , <span class="slot-wrap"><small class="bad">seniors picked</small><span class="slot wrong">3</span></span> )</div>
+          <div class="indent feedback"><b>✗ Not quite.</b> Check “seniors picked”: how many seniors does the team need?</div>
+          <div class="indent"><span class="btn">Check step</span><span class="links">Hint · Ask about this step</span></div>
+        </div>
+        <div class="step locked">🔒︎ <b>Combine</b>: both choices happen, so × or +?</div>
+        <div class="step locked">🔒︎ <b>Final answer</b>: total number of teams</div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- B -->
+  <h2>B · Two panes <span class="rec">Recommended</span></h2>
+  <p class="desc">Problem and visual stay pinned on the left while you work through the steps on the right. Collapses to A on phones.</p>
+  <div class="frame">
+    <div class="header"><span class="logo"><span class="o">over</span><span class="c">count</span></span><span class="nav"><span>Roadmap</span><span>Practice</span><span>Progress</span></span></div>
+    <div class="page"><div class="two">
+      <div>
+        <div class="ticket"><div class="tear"></div><div class="ticket-body">
+          <div class="meta">Easy · committees</div><div class="title">Robotics club team</div>
+          <div class="statement">A club has 8 juniors and 6 seniors. In how many ways can a team of 3 juniors and 2 seniors be chosen?</div>
+        </div></div>
+        <div class="visual">
+          <p class="lbl">JUNIORS · 3 PICKED</p><div class="dots"><i class="dot p"></i><i class="dot p"></i><i class="dot p"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+          <p class="lbl">SENIORS · 3 PICKED?</p><div class="dots"><i class="dot w"></i><i class="dot w"></i><i class="dot w"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+        </div>
+        <p class="pinned">📌︎ Stays in view while you scroll the steps</p>
+      </div>
+      <div>
+        <div class="steps-top"><b>Steps</b><span class="seg"><span class="on">Guided</span><span>Free</span></span></div>
+        <div class="step"><span class="icon">C</span><b>Pick juniors</b><span class="done-expr">C(8, 3)</span><span class="ok">✓ Correct</span></div>
+        <div class="step active"><span class="icon">C</span><b>Pick seniors</b>
+          <div class="indent expr">C( <span class="slot-wrap"><small>seniors available</small><span class="slot">6</span></span> , <span class="slot-wrap"><small class="bad">seniors picked</small><span class="slot wrong">3</span></span> )</div>
+          <div class="indent feedback"><b>✗ Not quite.</b> Check “seniors picked”: how many seniors does the team need?</div>
+          <div class="indent"><span class="btn">Check step</span><span class="links">Hint · Ask about this step</span></div>
+        </div>
+        <div class="step locked">🔒︎ <b>Combine</b>: both choices happen, so × or +?</div>
+        <div class="step locked">🔒︎ <b>Final answer</b>: total number of teams</div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- C -->
+  <h2>C · One step at a time</h2>
+  <p class="desc">Duolingo-style focus: progress bar, one big step card, the problem collapsed to a summary.</p>
+  <div class="frame">
+    <div class="header"><span class="logo"><span class="o">over</span><span class="c">count</span></span><span class="nav"><span>Roadmap</span><span>Practice</span><span>Progress</span></span></div>
+    <div class="page"><div class="narrow">
+      <div class="steps-top"><span style="color:var(--muted)">Robotics club team · step 2 of 4</span><span class="seg"><span class="on">Guided</span><span>Free</span></span></div>
+      <div class="progress"><i class="d"></i><i class="c"></i><i></i><i></i></div>
+      <div class="summary"><span style="color:var(--muted)">8 juniors, 6 seniors · team of 3 juniors and 2 seniors</span> <a href="#">Full problem ▾</a></div>
+      <div class="visual">
+        <p class="lbl">JUNIORS · 3 PICKED</p><div class="dots"><i class="dot p"></i><i class="dot p"></i><i class="dot p"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+        <p class="lbl">SENIORS · 3 PICKED?</p><div class="dots"><i class="dot w"></i><i class="dot w"></i><i class="dot w"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+      </div>
+      <div class="step active big-step"><div style="font-size:17px"><span class="icon">C</span><b>Pick seniors</b></div>
+        <div class="expr">C( <span class="slot-wrap"><small>seniors available</small><span class="slot">6</span></span> , <span class="slot-wrap"><small class="bad">seniors picked</small><span class="slot wrong">3</span></span> )</div>
+        <div class="feedback" style="text-align:left"><b>✗ Not quite.</b> Check “seniors picked”: how many seniors does the team need?</div>
+        <span class="btn">Check step</span>
+        <div class="links" style="margin:8px 0 0">Hint · Ask about this step</div>
+      </div>
+      <p style="color:var(--muted);font-size:13px">Done: C(8, 3) ✓</p>
+    </div></div>
+  </div>
+</main>
+</body>
+</html>
