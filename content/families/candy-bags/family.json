@@ -1,0 +1,296 @@
+{
+  "family_id": "candy-bags",
+  "problems": [
+    {
+      "id": "candy-bags",
+      "origin": {
+        "kind": "generated",
+        "generator": "gemini",
+        "model": "gemini-3.8-flash",
+        "prompt_version": "family-v1",
+        "inspired_by": null
+      },
+      "title": "Packing candy bags",
+      "statement": "You have {{n}} identical fruit candies to distribute into {{k}} distinct gift bags. Bags are allowed to remain empty. In how many different ways can the candies be distributed?",
+      "variables": {
+        "n": {
+          "min": 6,
+          "max": 12,
+          "default": 8
+        },
+        "k": {
+          "min": 3,
+          "max": 5,
+          "default": 4
+        }
+      },
+      "constraints": [
+        "k < n"
+      ],
+      "difficulty": "easy",
+      "tags": {
+        "topics": [
+          "counting/stars-bars"
+        ],
+        "contexts": [
+          "balls-urns"
+        ]
+      },
+      "answer": {
+        "prompt": "Number of ways to distribute the candies",
+        "expr": "C(n+k-1,k-1)",
+        "type": "count",
+        "common_wrong": [
+          {
+            "expr": "C(n+k,k)",
+            "feedback": "To divide items into {{k}} bags, you need only {{k}}-1 dividers, not {{k}}.",
+            "mistake_tag": "off-by-one"
+          },
+          {
+            "expr": "k^n",
+            "feedback": "That formula treats the candies as distinct. Because the candies are identical, swapping two candies between bags does not create a new arrangement.",
+            "mistake_tag": "order-confusion"
+          },
+          {
+            "expr": "P(n+k-1,k-1)",
+            "feedback": "Dividers are identical, so their order relative to each other does not matter.",
+            "mistake_tag": "order-confusion"
+          }
+        ],
+        "skeleton": {
+          "parts": [
+            {
+              "group": "stars and dividers",
+              "expr": "C([a],[b])"
+            }
+          ],
+          "slots": {
+            "a": {
+              "hint": "stars plus bars",
+              "answer": "n+k-1"
+            },
+            "b": {
+              "hint": "bars",
+              "answer": "k-1"
+            }
+          },
+          "slot_mistakes": [
+            {
+              "slot": "b",
+              "expr": "k",
+              "feedback": "Dividing candies among {{k}} bags requires {{k}}-1 dividers.",
+              "mistake_tag": "off-by-one"
+            }
+          ]
+        }
+      },
+      "solution": [
+        {
+          "kind": "arrange",
+          "title": "Count symbols in stars and bars",
+          "expr": "n+k-1",
+          "explanation": "Represent the {{n}} identical candies as stars and use {{k}}-1 dividers to partition them into {{k}} distinct bags, giving {{n}}+{{k}}-1 total symbols."
+        },
+        {
+          "kind": "choose",
+          "title": "Choose divider positions",
+          "expr": "C(n+k-1,k-1)",
+          "explanation": "From the {{n}}+{{k}}-1 symbol positions, choose {{k}}-1 positions for the dividers."
+        }
+      ],
+      "checker": "solve_root"
+    },
+    {
+      "id": "candy-bags-nonempty",
+      "variant_of": "candy-bags",
+      "twist": "every bag gets at least one candy",
+      "origin": {
+        "kind": "generated",
+        "generator": "gemini",
+        "model": "gemini-3.8-flash",
+        "prompt_version": "family-v1",
+        "inspired_by": null
+      },
+      "title": "No empty candy bags",
+      "statement": "You have {{n}} identical fruit candies to distribute into {{k}} distinct gift bags, but every bag must receive at least one candy. In how many different ways can the candies be distributed?",
+      "variables": {
+        "n": {
+          "min": 6,
+          "max": 12,
+          "default": 8
+        },
+        "k": {
+          "min": 3,
+          "max": 5,
+          "default": 4
+        }
+      },
+      "constraints": [
+        "k < n"
+      ],
+      "difficulty": "easy",
+      "tags": {
+        "topics": [
+          "counting/stars-bars"
+        ],
+        "contexts": [
+          "balls-urns"
+        ]
+      },
+      "answer": {
+        "prompt": "Number of ways to distribute the candies",
+        "expr": "C(n-1,k-1)",
+        "type": "count",
+        "common_wrong": [
+          {
+            "expr": "C(n+k-1,k-1)",
+            "feedback": "That allows bags to be empty. Here, every bag must receive at least one candy.",
+            "mistake_tag": "overcount"
+          },
+          {
+            "expr": "C(n,k)",
+            "feedback": "There are {{n}}-1 spaces between consecutive candies to place {{k}}-1 dividers.",
+            "mistake_tag": "off-by-one"
+          },
+          {
+            "expr": "P(n-1,k-1)",
+            "feedback": "All dividers are identical, so their order does not create new distributions.",
+            "mistake_tag": "order-confusion"
+          }
+        ],
+        "skeleton": {
+          "parts": [
+            {
+              "group": "spaces and dividers",
+              "expr": "C([a],[b])"
+            }
+          ],
+          "slots": {
+            "a": {
+              "hint": "spaces between candies",
+              "answer": "n-1"
+            },
+            "b": {
+              "hint": "bars",
+              "answer": "k-1"
+            }
+          }
+        }
+      },
+      "solution": [
+        {
+          "kind": "arrange",
+          "title": "Line up candies and locate gaps",
+          "expr": "n-1",
+          "explanation": "Lining up the {{n}} candies creates {{n}}-1 internal gaps between adjacent candies."
+        },
+        {
+          "kind": "choose",
+          "title": "Place dividers in distinct gaps",
+          "expr": "C(n-1,k-1)",
+          "explanation": "Placing at most one divider per gap ensures no bag is empty, so choose {{k}}-1 gaps out of {{n}}-1."
+        }
+      ],
+      "checker": "solve_nonempty"
+    },
+    {
+      "id": "candy-bags-minimum",
+      "variant_of": "candy-bags",
+      "twist": "one specific bag receives a minimum amount",
+      "origin": {
+        "kind": "generated",
+        "generator": "gemini",
+        "model": "gemini-3.8-flash",
+        "prompt_version": "family-v1",
+        "inspired_by": null
+      },
+      "title": "Special bag minimum",
+      "statement": "You have {{n}} identical fruit candies to distribute into {{k}} distinct gift bags. A designated gold bag must receive at least {{m}} candies, while the other bags may receive any number (including zero). In how many different ways can the candies be distributed?",
+      "variables": {
+        "n": {
+          "min": 7,
+          "max": 12,
+          "default": 9
+        },
+        "k": {
+          "min": 3,
+          "max": 5,
+          "default": 3
+        },
+        "m": {
+          "min": 2,
+          "max": 4,
+          "default": 2
+        }
+      },
+      "constraints": [
+        "m < n",
+        "k < n"
+      ],
+      "difficulty": "medium",
+      "tags": {
+        "topics": [
+          "counting/stars-bars"
+        ],
+        "contexts": [
+          "balls-urns"
+        ]
+      },
+      "answer": {
+        "prompt": "Number of ways to distribute the candies",
+        "expr": "C(n-m+k-1,k-1)",
+        "type": "count",
+        "common_wrong": [
+          {
+            "expr": "C(n+k-1,k-1)",
+            "feedback": "This counts all distributions without enforcing that the gold bag gets at least {{m}} candies.",
+            "mistake_tag": "overcount"
+          },
+          {
+            "expr": "C(n-m,k-1)",
+            "feedback": "The {{n}}-{{m}} remaining candies can go into any of the {{k}} bags, so the number of positions is ({{n}}-{{m}})+{{k}}-1.",
+            "mistake_tag": "wrong-distribution"
+          },
+          {
+            "expr": "P(n-m+k-1,k-1)",
+            "feedback": "Placing identical dividers into available positions is an unordered choice.",
+            "mistake_tag": "order-confusion"
+          }
+        ],
+        "skeleton": {
+          "parts": [
+            {
+              "group": "remaining candies and bars",
+              "expr": "C([a],[b])"
+            }
+          ],
+          "slots": {
+            "a": {
+              "hint": "remaining plus bars",
+              "answer": "n-m+k-1"
+            },
+            "b": {
+              "hint": "bars",
+              "answer": "k-1"
+            }
+          }
+        }
+      },
+      "solution": [
+        {
+          "kind": "choose",
+          "title": "Pre-assign candies to the gold bag",
+          "expr": "n-m",
+          "explanation": "Place {{m}} candies into the gold bag first, leaving {{n}}-{{m}} candies to distribute freely among all {{k}} bags."
+        },
+        {
+          "kind": "combine",
+          "title": "Distribute the remaining candies",
+          "expr": "C(n-m+k-1,k-1)",
+          "explanation": "Apply standard stars and bars to place {{n}}-{{m}} identical candies into {{k}} bags with {{k}}-1 dividers."
+        }
+      ],
+      "checker": "solve_minimum"
+    }
+  ]
+}

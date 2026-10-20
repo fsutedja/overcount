@@ -1,0 +1,335 @@
+{
+  "family_id": "dice-at-least-one-six",
+  "problems": [
+    {
+      "id": "dice-at-least-one-six",
+      "origin": {
+        "kind": "generated",
+        "generator": "gemini",
+        "model": "gemini-3.8-flash",
+        "prompt_version": "family-v1",
+        "inspired_by": null
+      },
+      "title": "At least one six",
+      "statement": "A standard 6-sided die is rolled {{n}} times in order. How many roll sequences contain at least one 6?",
+      "variables": {
+        "n": {
+          "min": 3,
+          "max": 7,
+          "default": 4
+        }
+      },
+      "difficulty": "easy",
+      "tags": {
+        "topics": [
+          "counting/complement"
+        ],
+        "contexts": [
+          "dice"
+        ]
+      },
+      "answer": {
+        "prompt": "Number of roll sequences with at least one 6",
+        "expr": "6^n - 5^n",
+        "type": "count",
+        "common_wrong": [
+          {
+            "expr": "n*6^(n-1)",
+            "feedback": "That overcounts sequences with multiple sixes. For example, a sequence with two sixes gets counted twice depending on which six you designate first.",
+            "mistake_tag": "overcount"
+          },
+          {
+            "expr": "n*5^(n-1)",
+            "feedback": "That counts sequences with exactly one 6. Sequences with two or more sixes also satisfy the condition.",
+            "mistake_tag": "undercount"
+          },
+          {
+            "expr": "6^n - 1",
+            "feedback": "Subtracting 1 only removes the single outcome where every roll is the same specific number. You need to subtract all sequences that avoid six completely.",
+            "mistake_tag": "missed-complement"
+          }
+        ],
+        "skeleton": {
+          "parts": [
+            {
+              "group": "total sequences",
+              "expr": "[a]^[b]"
+            },
+            {
+              "op": "-"
+            },
+            {
+              "group": "no sixes",
+              "expr": "[c]^[d]"
+            }
+          ],
+          "slots": {
+            "a": {
+              "hint": "faces",
+              "answer": "6"
+            },
+            "b": {
+              "hint": "rolls",
+              "answer": "n"
+            },
+            "c": {
+              "hint": "non-sixes",
+              "answer": "5"
+            },
+            "d": {
+              "hint": "rolls",
+              "answer": "n"
+            }
+          }
+        }
+      },
+      "solution": [
+        {
+          "kind": "arrange",
+          "title": "Total number of sequences",
+          "expr": "6^n",
+          "explanation": "Each of the {{n}} rolls has 6 possible outcomes, giving 6^{{n}} total sequences."
+        },
+        {
+          "kind": "complement",
+          "title": "Sequences with no sixes",
+          "expr": "5^n",
+          "explanation": "To get no sixes, each roll must be one of the other 5 faces (1 through 5), giving 5^{{n}} sequences."
+        },
+        {
+          "kind": "combine",
+          "title": "Subtract the complement",
+          "expr": "6^n - 5^n",
+          "explanation": "Subtract the sequences with zero sixes from the total number of sequences to find those with at least one 6."
+        }
+      ],
+      "checker": "solve_root"
+    },
+    {
+      "id": "dice-at-least-one-six-two-or-more",
+      "variant_of": "dice-at-least-one-six",
+      "twist": "at least two sixes",
+      "origin": {
+        "kind": "generated",
+        "generator": "gemini",
+        "model": "gemini-3.8-flash",
+        "prompt_version": "family-v1",
+        "inspired_by": null
+      },
+      "title": "At least two sixes",
+      "statement": "A standard 6-sided die is rolled {{n}} times in order. How many roll sequences contain at least two sixes?",
+      "variables": {
+        "n": {
+          "min": 3,
+          "max": 7,
+          "default": 5
+        }
+      },
+      "difficulty": "medium",
+      "tags": {
+        "topics": [
+          "counting/complement"
+        ],
+        "contexts": [
+          "dice"
+        ]
+      },
+      "answer": {
+        "prompt": "Number of roll sequences with at least two sixes",
+        "expr": "6^n - 5^n - n*5^(n-1)",
+        "type": "count",
+        "common_wrong": [
+          {
+            "expr": "6^n - 5^n",
+            "feedback": "That only subtracts sequences with zero sixes. Sequences with exactly one 6 must also be excluded.",
+            "mistake_tag": "overcount"
+          },
+          {
+            "expr": "C(n,2)*6^(n-2)",
+            "feedback": "Picking 2 positions for sixes and letting the rest be anything overcounts sequences with three or more sixes.",
+            "mistake_tag": "overcount"
+          }
+        ],
+        "skeleton": {
+          "parts": [
+            {
+              "group": "total sequences",
+              "expr": "[a]^[b]"
+            },
+            {
+              "op": "-"
+            },
+            {
+              "group": "no sixes",
+              "expr": "[c]^[d]"
+            },
+            {
+              "op": "-"
+            },
+            {
+              "group": "one six",
+              "expr": "[e]*[f]^[g]"
+            }
+          ],
+          "slots": {
+            "a": {
+              "hint": "faces",
+              "answer": "6"
+            },
+            "b": {
+              "hint": "rolls",
+              "answer": "n"
+            },
+            "c": {
+              "hint": "non-sixes",
+              "answer": "5"
+            },
+            "d": {
+              "hint": "rolls",
+              "answer": "n"
+            },
+            "e": {
+              "hint": "positions",
+              "answer": "n"
+            },
+            "f": {
+              "hint": "non-sixes",
+              "answer": "5"
+            },
+            "g": {
+              "hint": "remaining",
+              "answer": "n-1"
+            }
+          }
+        }
+      },
+      "solution": [
+        {
+          "kind": "arrange",
+          "title": "Total sequences",
+          "expr": "6^n",
+          "explanation": "There are 6 possible outcomes for each of the {{n}} rolls."
+        },
+        {
+          "kind": "complement",
+          "title": "Count unwanted sequences",
+          "expr": "5^n + n*5^(n-1)",
+          "explanation": "There are 5^{{n}} sequences with zero sixes, and {{n}} × 5^({{n}}-1) sequences with exactly one 6."
+        },
+        {
+          "kind": "combine",
+          "title": "Subtract from the total",
+          "expr": "6^n - 5^n - n*5^(n-1)",
+          "explanation": "Subtract both unwanted cases from the total to count sequences with at least two sixes."
+        }
+      ],
+      "checker": "solve_two_or_more"
+    },
+    {
+      "id": "dice-at-least-one-six-no-ones",
+      "variant_of": "dice-at-least-one-six",
+      "twist": "no ones and at least one six",
+      "origin": {
+        "kind": "generated",
+        "generator": "gemini",
+        "model": "gemini-3.8-flash",
+        "prompt_version": "family-v1",
+        "inspired_by": null
+      },
+      "title": "At least one six without ones",
+      "statement": "A standard 6-sided die is rolled {{n}} times in order. How many roll sequences contain no 1s, but at least one 6?",
+      "variables": {
+        "n": {
+          "min": 3,
+          "max": 7,
+          "default": 4
+        }
+      },
+      "difficulty": "medium",
+      "tags": {
+        "topics": [
+          "counting/complement"
+        ],
+        "contexts": [
+          "dice"
+        ]
+      },
+      "answer": {
+        "prompt": "Number of roll sequences with no 1s and at least one 6",
+        "expr": "5^n - 4^n",
+        "type": "count",
+        "common_wrong": [
+          {
+            "expr": "6^n - 5^n",
+            "feedback": "That counts sequences with at least one 6 from all possible rolls, without excluding sequences that contain 1s.",
+            "mistake_tag": "overcount"
+          },
+          {
+            "expr": "5^n",
+            "feedback": "That counts every sequence avoiding 1s, but it includes sequences that also have no 6s.",
+            "mistake_tag": "overcount"
+          },
+          {
+            "expr": "n*4^(n-1)",
+            "feedback": "That only counts sequences with exactly one 6 and no 1s, missing sequences with multiple sixes.",
+            "mistake_tag": "undercount"
+          }
+        ],
+        "skeleton": {
+          "parts": [
+            {
+              "group": "no ones",
+              "expr": "[a]^[b]"
+            },
+            {
+              "op": "-"
+            },
+            {
+              "group": "neither one nor six",
+              "expr": "[c]^[d]"
+            }
+          ],
+          "slots": {
+            "a": {
+              "hint": "allowed faces",
+              "answer": "5"
+            },
+            "b": {
+              "hint": "rolls",
+              "answer": "n"
+            },
+            "c": {
+              "hint": "no one or six",
+              "answer": "4"
+            },
+            "d": {
+              "hint": "rolls",
+              "answer": "n"
+            }
+          }
+        }
+      },
+      "solution": [
+        {
+          "kind": "arrange",
+          "title": "Sequences with no ones",
+          "expr": "5^n",
+          "explanation": "If no 1 is rolled, each die must show one of 5 values (2, 3, 4, 5, or 6), giving 5^{{n}} total sequences."
+        },
+        {
+          "kind": "complement",
+          "title": "Sequences with neither one nor six",
+          "expr": "4^n",
+          "explanation": "Among sequences with no 1s, those that also lack a 6 can only use 4 values (2, 3, 4, or 5), giving 4^{{n}} sequences."
+        },
+        {
+          "kind": "combine",
+          "title": "Subtract the unwanted sequences",
+          "expr": "5^n - 4^n",
+          "explanation": "Subtracting sequences with neither 1 nor 6 from all sequences without 1 leaves those that have at least one 6."
+        }
+      ],
+      "checker": "solve_no_ones"
+    }
+  ]
+}

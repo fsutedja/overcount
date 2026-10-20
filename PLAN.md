@@ -11,6 +11,7 @@
 | 2 · Answer-first player | Free answer with targeted feedback; Help skeleton; Show solution; attempt records with help level (milestones 2 and 3 merged) |
 | 4 · Pipeline core | Pydantic schema, `ast`-whitelisted expression grammar with sympy values and LaTeX, instance builder, `overcount build [--check]`, 3 golden families (6 problems) |
 | 5 · Verify | Sandboxed checkers (import/builtin allowlist + isolated process with time and memory limits); schema, brute-force and simulation gates; `verify`, `promote` and `stats`; `needs_review/` reports; GitHub Actions CI |
+| 6 · Gemini generator | `overcount generate` with `content/targets.yaml`, the versioned prompt `family-v1`, rate limits, retries with backoff, a clean stop on the daily quota or an unavailable model, and a resumable `data/generation_log.jsonl`. First run: 3 families generated; 2 passed every gate and 1 went to `needs_review/` |
 | Design D1, D2 | Palette, type and logo; two-pane layout; math-symbol step icons. See [DESIGN.md](DESIGN.md), which takes precedence over §5b wherever they differ |
 
 **Changed from the original plan**
@@ -30,12 +31,21 @@
 - **Pushing:** pushes happen only after explicit approval, not automatically after each
   milestone.
 - **Python:** developed on 3.14, still compatible with 3.12 and up.
+- **Gemini:** the default model is `gemini-3.8-flash`, because `gemini-2.5-flash` is no longer
+  offered to new API keys. Retries use a small hand-written loop rather than `tenacity`. Each
+  family takes about 2 minutes to generate.
+- **Placeholder check:** the schema now rejects malformed `{{x}}` placeholders. Review caught one
+  in a generated explanation that the gates had let through.
 
 **Next**
-1. **Milestone 6 · Gemini generator.**
-2. **Milestones 7–9:** Practice and Daily pages; progress saved with `ProgressStore`; the Home
+1. **Fix `needs_review/hearts-or-face-cards`:** its math is right, but a standard 52-card deck
+   leaves only 2–3 number sets. Decide how card problems should vary, and teach that in a
+   `family-v2` prompt.
+2. **Generate the remaining targets** in `content/targets.yaml` (the free tier allows this
+   across a few runs).
+3. **Milestones 7–9:** Practice and Daily pages; progress saved with `ProgressStore`; the Home
    roadmap. Design checkpoint D3 comes before milestone 9.
-3. **Follow-ups** are tracked in [POLISH.md](POLISH.md), for example lazy-loading the 1.6 MB
+4. **Follow-ups** are tracked in [POLISH.md](POLISH.md), for example lazy-loading the 1.6 MB
    Compute Engine bundle before the deploy.
 
 ## Context
@@ -463,7 +473,7 @@ resume section.
    trap, circular-seating overcount; each with 1 variant) replace the hand-written web JSON.
 5. ✅ **Verify:** sandbox + the 3 MVP gates, staging → content / needs_review routing with
    `REPORT.md`, `promote`, `stats`, and CI (pytest, vitest, `build --check`).
-6. **Gemini generator:** `GeminiGenerator`, structured output, rate limiter, retries, resumable
+6. ✅ **Gemini generator:** `GeminiGenerator`, structured output, rate limiter, retries, resumable
    log, `.env`/`.env.example`, `targets.yaml`. First run of ~5 targets through
    generate → verify → publish.
 7. **Practice + daily + practice again:** filters (topic, context, difficulty), date-seeded

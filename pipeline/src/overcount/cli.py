@@ -1,12 +1,19 @@
 """Command-line interface: `uv run overcount --help`."""
 
 import json
+import os
 from collections import Counter
 from pathlib import Path
 from typing import Annotated
 
 import typer
+from dotenv import load_dotenv
 
+from .generate.base import load_targets
+from .generate.gemini import GeminiGenerator
+from .generate.prompt import system_prompt, user_prompt
+from .generate.ratelimit import GenerationLog, RateLimiter
+from .generate.run import run_generation
 from .publish import build_bank, stale_files, write_bank
 from .verify.gates import FamilyReport
 from .verify.route import RouteError, family_folders, route, verify_folder, write_review_report
@@ -29,6 +36,65 @@ FAMILIES_DIR = CONTENT_DIR / "families"
 STAGING_DIR = REPO_ROOT / "staging"
 REVIEW_DIR = REPO_ROOT / "needs_review"
 BANK_DIR = REPO_ROOT / "web" / "public" / "bank"
+TARGETS_FILE = CONTENT_DIR / "targets.yaml"
+GENERATION_LOG = REPO_ROOT / "data" / "generation_log.jsonl"
+#: Used when .env doesn't set GEMINI_MODEL. Check `client.models.list()` if it stops working.
+DEFAULT_MODEL = "gemini-3.8-flash"
+
+
+@app.command()
+def generate(
+    limit: Annotated[int | None, typer.Option(help="Generate at most this many families this run")] = None,
+    only: Annotated[str | None, typer.Option(help="Generate just this target id")] = None,
+    force: Annotated[bool, typer.Option(help="Regenerate targets that are already done")] = False,
+    dry_run: Annotated[bool, typer.Option(help="Show what would be sent, without calling the API")] = False,
+) -> None:
+    """Draft new problem families with Gemini into staging/. Then run `verify staging`."""
+    targets = load_targets(TARGETS_FILE)
+    if only:
+        targets = [t for t in targets if t.id == only]
+        if not targets:
+            typer.echo(f"No target called {only!r} in content/targets.yaml.", err=True)
+            raise typer.Exit(1)
+
+    if dry_run:
+        prompt = system_prompt(FAMILIES_DIR)
+        typer.echo(f"System prompt: {len(prompt):,} characters (prompts/family-v1.md + 2 example families)\n")
+        for target in targets[: limit or len(targets)]:
+            typer.echo(user_prompt(target) + "\n")
+        return
+
+    load_dotenv(REPO_ROOT / ".env")
+    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if not api_key:
+        typer.echo("GEMINI_API_KEY is missing. Add it to the .env file in the repo root.", err=True)
+        raise typer.Exit(1)
+    model = os.environ.get("GEMINI_MODEL", DEFAULT_MODEL)
+    log = GenerationLog(GENERATION_LOG)
+    limiter = RateLimiter(
+        requests_per_minute=int(os.environ.get("GEMINI_RPM", "10")),
+        requests_per_day=int(os.environ.get("GEMINI_RPD", "250")),
+        used_today=log.requests_today(),
+    )
+    generator = GeminiGenerator.from_key(api_key, model, limiter, FAMILIES_DIR)
+    existing = {p.name for d in (FAMILIES_DIR, REVIEW_DIR, STAGING_DIR) for p in family_folders(d)}
+
+    typer.echo(f"Generating with {model} ({limiter.used_today} requests already used today)…")
+    result = run_generation(generator, limiter, targets, log, STAGING_DIR, existing, limit=limit, force=force)
+
+    for target_id in result.staged:
+        typer.echo(f"  staged   {target_id}")
+    for target_id, reason in result.failed:
+        typer.echo(f"  failed   {target_id}: {reason}")
+    if result.skipped:
+        typer.echo(f"  skipped  {len(result.skipped)} already-done target(s)")
+    if result.stopped_reason:
+        typer.echo(f"Stopped: {result.stopped_reason}")
+        typer.echo("Set GEMINI_MODEL in .env to a model your key can use.")
+    if result.stopped_for_quota:
+        typer.echo("Stopped: the daily free-tier quota is used up. Run again tomorrow to continue.")
+    if result.staged:
+        typer.echo("\nNext: `uv run overcount verify ../staging` to check the drafts.")
 
 
 def _print_report(report: FamilyReport) -> None:

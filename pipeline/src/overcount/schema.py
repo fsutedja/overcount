@@ -174,6 +174,12 @@ class Problem(Model):
         unknown = {name for text in texts for name in PLACEHOLDER.findall(text)} - set(self.variables)
         if unknown:
             raise ValueError(f"text uses unknown placeholders {sorted(unknown)}")
+        # Any braces left after removing valid placeholders would show up raw on the page.
+        malformed = [
+            text for text in texts if "{" in PLACEHOLDER.sub("", text) or "}" in PLACEHOLDER.sub("", text)
+        ]
+        if malformed:
+            raise ValueError(f"malformed placeholder (use {{{{x}}}} exactly) in: {malformed[0]!r}")
         if self.checker is None and self.simulator is None:
             raise ValueError("a problem needs a checker or a simulator so it can be verified")
         if (self.variant_of is None) != (self.twist is None):

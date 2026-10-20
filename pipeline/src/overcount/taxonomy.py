@@ -52,3 +52,4 @@ StepKind = Literal[
 TOPICS: tuple[str, ...] = get_args(Topic)
 CONTEXTS: tuple[str, ...] = get_args(Context)
 MISTAKE_TAGS: tuple[str, ...] = get_args(MistakeTag)
+STEP_KINDS: tuple[str, ...] = get_args(StepKind)

@@ -2,6 +2,71 @@
   "schema_version": 1,
   "problems": [
     {
+      "id": "candy-bags",
+      "family_id": "candy-bags",
+      "variant_of": null,
+      "twist": null,
+      "title": "Packing candy bags",
+      "difficulty": "easy",
+      "tags": {
+        "topics": [
+          "counting/stars-bars"
+        ],
+        "contexts": [
+          "balls-urns"
+        ]
+      },
+      "mistake_tags": [
+        "off-by-one",
+        "order-confusion"
+      ],
+      "instance_count": 21
+    },
+    {
+      "id": "candy-bags-nonempty",
+      "family_id": "candy-bags",
+      "variant_of": "candy-bags",
+      "twist": "every bag gets at least one candy",
+      "title": "No empty candy bags",
+      "difficulty": "easy",
+      "tags": {
+        "topics": [
+          "counting/stars-bars"
+        ],
+        "contexts": [
+          "balls-urns"
+        ]
+      },
+      "mistake_tags": [
+        "off-by-one",
+        "order-confusion",
+        "overcount"
+      ],
+      "instance_count": 21
+    },
+    {
+      "id": "candy-bags-minimum",
+      "family_id": "candy-bags",
+      "variant_of": "candy-bags",
+      "twist": "one specific bag receives a minimum amount",
+      "title": "Special bag minimum",
+      "difficulty": "medium",
+      "tags": {
+        "topics": [
+          "counting/stars-bars"
+        ],
+        "contexts": [
+          "balls-urns"
+        ]
+      },
+      "mistake_tags": [
+        "order-confusion",
+        "overcount",
+        "wrong-distribution"
+      ],
+      "instance_count": 54
+    },
+    {
       "id": "club-president",
       "family_id": "club-president",
       "variant_of": null,
@@ -83,6 +148,69 @@
         "undercount"
       ],
       "instance_count": 100
+    },
+    {
+      "id": "dice-at-least-one-six",
+      "family_id": "dice-at-least-one-six",
+      "variant_of": null,
+      "twist": null,
+      "title": "At least one six",
+      "difficulty": "easy",
+      "tags": {
+        "topics": [
+          "counting/complement"
+        ],
+        "contexts": [
+          "dice"
+        ]
+      },
+      "mistake_tags": [
+        "missed-complement",
+        "overcount",
+        "undercount"
+      ],
+      "instance_count": 5
+    },
+    {
+      "id": "dice-at-least-one-six-two-or-more",
+      "family_id": "dice-at-least-one-six",
+      "variant_of": "dice-at-least-one-six",
+      "twist": "at least two sixes",
+      "title": "At least two sixes",
+      "difficulty": "medium",
+      "tags": {
+        "topics": [
+          "counting/complement"
+        ],
+        "contexts": [
+          "dice"
+        ]
+      },
+      "mistake_tags": [
+        "overcount"
+      ],
+      "instance_count": 5
+    },
+    {
+      "id": "dice-at-least-one-six-no-ones",
+      "family_id": "dice-at-least-one-six",
+      "variant_of": "dice-at-least-one-six",
+      "twist": "no ones and at least one six",
+      "title": "At least one six without ones",
+      "difficulty": "medium",
+      "tags": {
+        "topics": [
+          "counting/complement"
+        ],
+        "contexts": [
+          "dice"
+        ]
+      },
+      "mistake_tags": [
+        "overcount",
+        "undercount"
+      ],
+      "instance_count": 5
     },
     {
       "id": "round-table",

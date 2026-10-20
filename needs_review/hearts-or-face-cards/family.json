@@ -1,0 +1,379 @@
+{
+  "family_id": "hearts-or-face-cards",
+  "problems": [
+    {
+      "id": "hearts-or-face-cards",
+      "origin": {
+        "kind": "generated",
+        "generator": "gemini",
+        "model": "gemini-3.8-flash",
+        "prompt_version": "family-v1",
+        "inspired_by": null
+      },
+      "title": "All hearts or all face cards",
+      "statement": "A player is dealt a hand of {{k}} cards from a standard 52-card deck. How many different hands consist entirely of hearts or entirely of face cards (or both)?",
+      "variables": {
+        "k": {
+          "min": 2,
+          "max": 3,
+          "default": 2
+        }
+      },
+      "constraints": [],
+      "difficulty": "medium",
+      "tags": {
+        "topics": [
+          "counting/inclusion-exclusion",
+          "counting/combinations"
+        ],
+        "contexts": [
+          "cards-poker"
+        ]
+      },
+      "answer": {
+        "prompt": "Number of hands",
+        "expr": "C(13,k)+C(12,k)-C(3,k)",
+        "type": "count",
+        "common_wrong": [
+          {
+            "expr": "C(13,k)+C(12,k)",
+            "feedback": "That counts hands of heart face cards twice: once as all hearts and once as all face cards. Subtract the overlap.",
+            "mistake_tag": "overcount"
+          },
+          {
+            "expr": "C(13,k)*C(12,k)",
+            "feedback": "Multiplying counts hands formed by choosing {{k}} hearts and {{k}} face cards together. For an 'or' condition, add the counts and subtract the overlap.",
+            "mistake_tag": "add-vs-multiply"
+          },
+          {
+            "expr": "C(22,k)",
+            "feedback": "That allows mixing hearts and face cards in the same hand. Every card in the hand must be of the same type: all hearts or all face cards.",
+            "mistake_tag": "overcount"
+          }
+        ],
+        "skeleton": {
+          "parts": [
+            {
+              "group": "all hearts",
+              "expr": "C([a],[b])"
+            },
+            {
+              "op": "+"
+            },
+            {
+              "group": "all face cards",
+              "expr": "C([c],[d])"
+            },
+            {
+              "op": "-"
+            },
+            {
+              "group": "overlap",
+              "expr": "C([e],[f])"
+            }
+          ],
+          "slots": {
+            "a": {
+              "hint": "hearts",
+              "answer": "13"
+            },
+            "b": {
+              "hint": "hand size",
+              "answer": "k"
+            },
+            "c": {
+              "hint": "face cards",
+              "answer": "12"
+            },
+            "d": {
+              "hint": "hand size",
+              "answer": "k"
+            },
+            "e": {
+              "hint": "heart face cards",
+              "answer": "3"
+            },
+            "f": {
+              "hint": "hand size",
+              "answer": "k"
+            }
+          }
+        }
+      },
+      "solution": [
+        {
+          "kind": "choose",
+          "title": "Hands of all hearts",
+          "expr": "C(13,k)",
+          "explanation": "There are 13 hearts in the deck, so choosing {{k}} of them gives C(13,{{k}}) hands."
+        },
+        {
+          "kind": "choose",
+          "title": "Hands of all face cards",
+          "expr": "C(12,k)",
+          "explanation": "There are 12 face cards (Jack, Queen, King in 4 suits), giving C(12,{{k}}) hands."
+        },
+        {
+          "kind": "choose",
+          "title": "Hands in the overlap",
+          "expr": "C(3,k)",
+          "explanation": "Cards that are both hearts and face cards are the Jack, Queen, and King of hearts (3 cards), giving C(3,{{k}}) hands."
+        },
+        {
+          "kind": "inclusion-exclusion",
+          "title": "Apply inclusion-exclusion",
+          "expr": "C(13,k)+C(12,k)-C(3,k)",
+          "explanation": "Add the two counts and subtract the overlap that was counted twice."
+        }
+      ],
+      "checker": "solve_root"
+    },
+    {
+      "id": "hearts-or-face-cards-red",
+      "variant_of": "hearts-or-face-cards",
+      "twist": "red cards instead of hearts",
+      "origin": {
+        "kind": "generated",
+        "generator": "gemini",
+        "model": "gemini-3.8-flash",
+        "prompt_version": "family-v1",
+        "inspired_by": null
+      },
+      "title": "All red cards or all face cards",
+      "statement": "A player is dealt a hand of {{k}} cards from a standard 52-card deck. How many different hands consist entirely of red cards (hearts or diamonds) or entirely of face cards?",
+      "variables": {
+        "k": {
+          "min": 2,
+          "max": 4,
+          "default": 3
+        }
+      },
+      "constraints": [],
+      "difficulty": "medium",
+      "tags": {
+        "topics": [
+          "counting/inclusion-exclusion",
+          "counting/combinations"
+        ],
+        "contexts": [
+          "cards-poker"
+        ]
+      },
+      "answer": {
+        "prompt": "Number of hands",
+        "expr": "C(26,k)+C(12,k)-C(6,k)",
+        "type": "count",
+        "common_wrong": [
+          {
+            "expr": "C(26,k)+C(12,k)",
+            "feedback": "That counts hands of red face cards twice: once as red hands and once as face card hands.",
+            "mistake_tag": "overcount"
+          },
+          {
+            "expr": "C(26,k)+C(12,k)-C(3,k)",
+            "feedback": "There are 6 red face cards across hearts and diamonds, not just 3. Subtract hands drawn from all 6 red face cards.",
+            "mistake_tag": "overcount"
+          },
+          {
+            "expr": "C(32,k)",
+            "feedback": "That allows mixing red cards and non-red face cards within the same hand. The hand must be entirely red or entirely face cards.",
+            "mistake_tag": "overcount"
+          }
+        ],
+        "skeleton": {
+          "parts": [
+            {
+              "group": "all red cards",
+              "expr": "C([a],[b])"
+            },
+            {
+              "op": "+"
+            },
+            {
+              "group": "all face cards",
+              "expr": "C([c],[d])"
+            },
+            {
+              "op": "-"
+            },
+            {
+              "group": "overlap",
+              "expr": "C([e],[f])"
+            }
+          ],
+          "slots": {
+            "a": {
+              "hint": "red cards",
+              "answer": "26"
+            },
+            "b": {
+              "hint": "hand size",
+              "answer": "k"
+            },
+            "c": {
+              "hint": "face cards",
+              "answer": "12"
+            },
+            "d": {
+              "hint": "hand size",
+              "answer": "k"
+            },
+            "e": {
+              "hint": "red face cards",
+              "answer": "6"
+            },
+            "f": {
+              "hint": "hand size",
+              "answer": "k"
+            }
+          }
+        }
+      },
+      "solution": [
+        {
+          "kind": "choose",
+          "title": "Hands of all red cards",
+          "expr": "C(26,k)",
+          "explanation": "There are 26 red cards (13 hearts and 13 diamonds), giving C(26,{{k}}) hands."
+        },
+        {
+          "kind": "choose",
+          "title": "Hands of all face cards",
+          "expr": "C(12,k)",
+          "explanation": "There are 12 face cards in the deck, giving C(12,{{k}}) hands."
+        },
+        {
+          "kind": "choose",
+          "title": "Hands in the overlap",
+          "expr": "C(6,k)",
+          "explanation": "There are 6 red face cards (J, Q, K of hearts and diamonds), giving C(6,{{k}}) hands."
+        },
+        {
+          "kind": "inclusion-exclusion",
+          "title": "Apply inclusion-exclusion",
+          "expr": "C(26,k)+C(12,k)-C(6,k)",
+          "explanation": "Add the counts for red hands and face card hands, then subtract the red face card hands."
+        }
+      ],
+      "checker": "solve_red"
+    },
+    {
+      "id": "hearts-or-face-cards-exclusive",
+      "variant_of": "hearts-or-face-cards",
+      "twist": "exclusive or (not both)",
+      "origin": {
+        "kind": "generated",
+        "generator": "gemini",
+        "model": "gemini-3.8-flash",
+        "prompt_version": "family-v1",
+        "inspired_by": null
+      },
+      "title": "All hearts or all face cards, but not both",
+      "statement": "A player is dealt a hand of {{k}} cards from a standard 52-card deck. How many different hands consist entirely of hearts or entirely of face cards, but not both?",
+      "variables": {
+        "k": {
+          "min": 2,
+          "max": 3,
+          "default": 2
+        }
+      },
+      "constraints": [],
+      "difficulty": "medium",
+      "tags": {
+        "topics": [
+          "counting/inclusion-exclusion",
+          "counting/combinations"
+        ],
+        "contexts": [
+          "cards-poker"
+        ]
+      },
+      "answer": {
+        "prompt": "Number of hands",
+        "expr": "C(13,k)+C(12,k)-2*C(3,k)",
+        "type": "count",
+        "common_wrong": [
+          {
+            "expr": "C(13,k)+C(12,k)-C(3,k)",
+            "feedback": "Subtracting the overlap once leaves those hands counted once (inclusive OR). To remove hands with both properties completely, subtract the overlap twice.",
+            "mistake_tag": "overcount"
+          },
+          {
+            "expr": "C(13,k)+C(12,k)",
+            "feedback": "That includes the hands satisfying both conditions twice instead of excluding them.",
+            "mistake_tag": "overcount"
+          }
+        ],
+        "skeleton": {
+          "parts": [
+            {
+              "group": "all hearts",
+              "expr": "C([a],[b])"
+            },
+            {
+              "op": "+"
+            },
+            {
+              "group": "all face cards",
+              "expr": "C([c],[d])"
+            },
+            {
+              "op": "-"
+            },
+            {
+              "group": "remove overlap twice",
+              "expr": "2*C([e],[f])"
+            }
+          ],
+          "slots": {
+            "a": {
+              "hint": "hearts",
+              "answer": "13"
+            },
+            "b": {
+              "hint": "hand size",
+              "answer": "k"
+            },
+            "c": {
+              "hint": "face cards",
+              "answer": "12"
+            },
+            "d": {
+              "hint": "hand size",
+              "answer": "k"
+            },
+            "e": {
+              "hint": "heart face cards",
+              "answer": "3"
+            },
+            "f": {
+              "hint": "hand size",
+              "answer": "k"
+            }
+          }
+        }
+      },
+      "solution": [
+        {
+          "kind": "choose",
+          "title": "Hands of all hearts and hands of all face cards",
+          "expr": "C(13,k)+C(12,k)",
+          "explanation": "There are C(13,{{k}}) hands of all hearts and C(12,{{k}}) hands of all face cards. Hands with both properties are counted twice."
+        },
+        {
+          "kind": "choose",
+          "title": "Hands in the overlap",
+          "expr": "C(3,k)",
+          "explanation": "There are 3 heart face cards, giving C(3,{{k}}) hands that have both properties."
+        },
+        {
+          "kind": "inclusion-exclusion",
+          "title": "Exclude the overlap completely",
+          "expr": "C(13,k)+C(12,k)-2*C(3,k)",
+          "explanation": "Subtracting C(3,{{k}}) once reduces their count from 2 to 1; subtracting it again removes them entirely."
+        }
+      ],
+      "checker": "solve_exclusive"
+    }
+  ]
+}

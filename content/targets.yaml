@@ -1,0 +1,76 @@
+# What `overcount generate` asks Gemini for, in order. Each target becomes one family
+# (a root problem plus `variants`). Finished targets are skipped, so add new ones at the end.
+# Coverage goal (PLAN.md): every roadmap stop has at least 3 root problems.
+
+targets:
+  # Stars and bars
+  - id: candy-bags
+    topic: counting/stars-bars
+    context: balls-urns
+    difficulty: easy
+    variants: 2
+    notes: Identical candies into distinct bags; one variant requires every bag to get at least one.
+
+  # Complement
+  - id: dice-at-least-one-six
+    topic: counting/complement
+    context: dice
+    difficulty: easy
+    variants: 2
+    notes: Count roll sequences with at least one six by subtracting those with none.
+
+  # Inclusion–exclusion
+  - id: hearts-or-face-cards
+    topic: counting/inclusion-exclusion
+    context: cards-poker
+    difficulty: medium
+    variants: 2
+    notes: Cards that are hearts or face cards; the overlap is counted twice if you just add.
+
+  # Combinations
+  - id: poker-two-pair
+    topic: counting/combinations
+    context: cards-poker
+    difficulty: hard
+    variants: 1
+    inspiration: Counting two-pair poker hands, a classic overcounting trap (choosing the two pair ranks in order).
+    notes: Use a reduced deck (fewer ranks, given as a variable) so brute force stays fast.
+
+  # Probability basics
+  - id: dice-sum-probability
+    topic: probability/basics
+    context: dice
+    difficulty: easy
+    variants: 2
+    notes: Probability that two dice show a given sum; answer as an exact fraction.
+
+  # Conditional probability
+  - id: urn-second-draw-red
+    topic: probability/conditional-bayes
+    context: balls-urns
+    difficulty: medium
+    variants: 2
+    notes: Two draws without replacement; probability the first was red given the second is red.
+
+  # Distributions
+  - id: dice-exactly-k-sixes
+    topic: distributions/binomial
+    context: dice
+    difficulty: medium
+    variants: 2
+    notes: Exactly k sixes in n rolls; a variant asks for at least k.
+
+  - id: cards-hypergeometric-hearts
+    topic: distributions/hypergeometric
+    context: cards-poker
+    difficulty: medium
+    variants: 1
+    notes: Exactly k hearts in a hand drawn from a small deck (sizes as variables).
+
+  # Expectation
+  - id: hat-check-matches
+    topic: probability/expectation
+    context: committees-seating
+    difficulty: hard
+    variants: 1
+    notes: Expected number of people who get their own seat back after a random reshuffle (indicators).
