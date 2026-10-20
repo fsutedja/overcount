@@ -21,7 +21,7 @@ from ..instances import Instance, InstanceError, build_instance, build_instances
 from ..schema import Family, IntRange, Problem
 from .sandbox import Call, Result, SandboxError, UnsafeCode, run_checker
 
-#: Fewer instances than this and "New numbers" has too little to offer.
+#: Fewer instances than this and "New numbers" has too little to offer (the app hides it then).
 MIN_INSTANCES = 5
 RANDOM_CHECKS = 10
 MAX_CORNERS = 16
@@ -178,7 +178,9 @@ def verify_family(folder: Path) -> FamilyReport:
             report.failures.append(Failure("schema", problem.id, str(error)))
             continue
         report.checked[problem.id] = {"instances": len(instances)}
-        if len(instances) < MIN_INSTANCES:
+        # A standard 52-card deck leaves little to vary; card problems get variety from case
+        # variants ("Try a variation") instead, so they're exempt from the minimum.
+        if problem.deck != "standard" and len(instances) < MIN_INSTANCES:
             report.failures.append(
                 Failure(
                     "schema",

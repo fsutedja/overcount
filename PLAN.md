@@ -36,16 +36,17 @@
   family takes about 2 minutes to generate.
 - **Placeholder check:** the schema now rejects malformed `{{x}}` placeholders. Review caught one
   in a generated explanation that the gates had let through.
+- **Card problems** (decided 2026-10-20, details in §2a): standard 52-card deck by default and
+  exempt from the "at least 5 number sets" rule; variety comes from case variants; custom decks
+  are only for Hard problems. The `family-v2` prompt teaches this, and `hearts-or-face-cards`
+  passed under it and is published.
 
 **Next**
-1. **Fix `needs_review/hearts-or-face-cards`:** its math is right, but a standard 52-card deck
-   leaves only 2–3 number sets. Decide how card problems should vary, and teach that in a
-   `family-v2` prompt.
-2. **Generate the remaining targets** in `content/targets.yaml` (the free tier allows this
-   across a few runs).
-3. **Milestones 7–9:** Practice and Daily pages; progress saved with `ProgressStore`; the Home
+1. **Generate the remaining targets** in `content/targets.yaml` with `family-v2` (the free tier
+   allows this across a few runs).
+2. **Milestones 7–9:** Practice and Daily pages; progress saved with `ProgressStore`; the Home
    roadmap. Design checkpoint D3 comes before milestone 9.
-4. **Follow-ups** are tracked in [POLISH.md](POLISH.md), for example lazy-loading the 1.6 MB
+3. **Follow-ups** are tracked in [POLISH.md](POLISH.md), for example lazy-loading the 1.6 MB
    Compute Engine bundle before the deploy.
 
 ## Context
@@ -201,6 +202,18 @@ which places it on the roadmap.
   `distributions/poisson`
 
 **Context tags:** `cards-poker`, `dice`, `balls-urns`, `committees-seating`.
+
+**Card problems** (context `cards-poker`, decided 2026-10-20):
+- Every card problem sets `deck`. The default is `"standard"`: the usual 52-card deck with 13
+  ranks and 4 suits.
+- Standard-deck problems are **exempt from the "at least 5 number sets" gate**. Often only the
+  hand size can vary, which leaves few sets. When a problem has fewer than 5 sets, the app
+  **hides "New numbers"**.
+- Variety comes from **case variants** instead (flush, full house, two pair, at least one ace…),
+  offered through "Try a variation".
+- `"custom"` decks (fewer ranks, extra suits) are allowed **only for Hard problems**, and the
+  statement must describe the deck fully. The schema enforces the deck and difficulty rules;
+  the prompt (`family-v2`) asks for the statement wording.
 
 **Roadmap** (`content/roadmap.yaml`, exported into `index.json`): an ordered list of nodes
 `{id, title, blurb, prereqs: [node ids], topic_tags: [...]}`. Each topic tag belongs to exactly
@@ -477,7 +490,8 @@ resume section.
    log, `.env`/`.env.example`, `targets.yaml`. First run of ~5 targets through
    generate → verify → publish.
 7. **Practice + daily + practice again:** filters (topic, context, difficulty), date-seeded
-   daily problem and instance, "New numbers", and "Try a variation" (nudged after a reveal).
+   daily problem and instance, "New numbers" (hidden when a problem has fewer than 5 number
+   sets, see card problems in §2a), and "Try a variation" (nudged after a reveal).
 8. **Progress:** attempt logging via `ProgressStore`; a Progress page with a heatmap (one square
    per day, shaded by the number of distinct problems solved correctly that day) and a daily line
    chart (attempts vs. correct).

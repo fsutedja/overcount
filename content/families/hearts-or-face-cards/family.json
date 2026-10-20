@@ -126,7 +126,8 @@
           "explanation": "Add the two counts and subtract the overlap that was counted twice."
         }
       ],
-      "checker": "solve_root"
+      "checker": "solve_root",
+      "deck": "standard"
     },
     {
       "id": "hearts-or-face-cards-red",
@@ -255,7 +256,8 @@
           "explanation": "Add the counts for red hands and face card hands, then subtract the red face card hands."
         }
       ],
-      "checker": "solve_red"
+      "checker": "solve_red",
+      "deck": "standard"
     },
     {
       "id": "hearts-or-face-cards-exclusive",
@@ -373,7 +375,8 @@
           "explanation": "Subtracting C(3,{{k}}) once reduces their count from 2 to 1; subtracting it again removes them entirely."
         }
       ],
-      "checker": "solve_exclusive"
+      "checker": "solve_exclusive",
+      "deck": "standard"
     }
   ]
 }

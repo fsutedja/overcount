@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 
 from .generate.base import load_targets
 from .generate.gemini import GeminiGenerator
-from .generate.prompt import system_prompt, user_prompt
+from .generate.prompt import PROMPT_VERSION, system_prompt, user_prompt
 from .generate.ratelimit import GenerationLog, RateLimiter
 from .generate.run import run_generation
 from .publish import build_bank, stale_files, write_bank
@@ -59,7 +59,9 @@ def generate(
 
     if dry_run:
         prompt = system_prompt(FAMILIES_DIR)
-        typer.echo(f"System prompt: {len(prompt):,} characters (prompts/family-v1.md + 2 example families)\n")
+        typer.echo(
+            f"System prompt: {len(prompt):,} characters (prompts/{PROMPT_VERSION}.md + 2 example families)\n"
+        )
         for target in targets[: limit or len(targets)]:
             typer.echo(user_prompt(target) + "\n")
         return

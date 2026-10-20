@@ -9,6 +9,7 @@ from google.genai import errors
 from overcount.cli import FAMILIES_DIR
 from overcount.generate.base import FamilyDraft, Target, write_draft
 from overcount.generate.gemini import GeminiGenerator, InvalidReply, parse_reply, stamp
+from overcount.generate.prompt import PROMPT_VERSION
 from overcount.generate.ratelimit import GenerationLog, QuotaExhausted, RateLimiter
 from overcount.generate.run import run_generation
 
@@ -89,7 +90,7 @@ def test_stamp_pins_ids_and_provenance() -> None:
         "kind": "generated",
         "generator": "gemini",
         "model": "gemini-test",
-        "prompt_version": "family-v1",
+        "prompt_version": PROMPT_VERSION,
         "inspired_by": None,
     }
 

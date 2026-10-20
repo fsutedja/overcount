@@ -5,7 +5,7 @@ from pathlib import Path
 from ..taxonomy import CONTEXTS, MISTAKE_TAGS, STEP_KINDS, TOPICS
 from .base import Target
 
-PROMPT_VERSION = "family-v1"
+PROMPT_VERSION = "family-v2"
 PROMPTS_DIR = Path(__file__).parent / "prompts"
 EXAMPLE_FAMILIES = ("committee-mixed", "round-table")
 

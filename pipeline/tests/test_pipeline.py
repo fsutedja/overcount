@@ -81,3 +81,30 @@ def test_bank_skeleton_groups_keep_brackets(tmp_path: Path) -> None:
     family = json.loads(bank.files["families/club-president.json"])
     group = family["problems"][0]["answer"]["skeleton"]["parts"][0]["group"]
     assert group == {"label": "president", "display": "([a]+[b])", "latex": r"\left([a] + [b]\right)"}
+
+
+def card_problem(**changes: Any) -> dict[str, Any]:
+    family = copy.deepcopy(golden("hearts-or-face-cards"))
+    family["problems"] = family["problems"][:1]
+    family["problems"][0].update(changes)
+    return family
+
+
+def test_card_problems_must_declare_their_deck() -> None:
+    family = card_problem()
+    family["problems"][0].pop("deck")
+    with pytest.raises(ValidationError, match="must set"):
+        Family.model_validate(family)
+
+
+def test_custom_decks_are_only_for_hard_problems() -> None:
+    with pytest.raises(ValidationError, match="only allowed for hard"):
+        Family.model_validate(card_problem(deck="custom", difficulty="medium"))
+    Family.model_validate(card_problem(deck="custom", difficulty="hard"))
+
+
+def test_deck_is_only_for_card_problems() -> None:
+    family = copy.deepcopy(golden("committee-mixed"))
+    family["problems"][0]["deck"] = "standard"
+    with pytest.raises(ValidationError, match="only for card problems"):
+        Family.model_validate(family)

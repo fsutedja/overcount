@@ -213,6 +213,70 @@
       "instance_count": 5
     },
     {
+      "id": "hearts-or-face-cards",
+      "family_id": "hearts-or-face-cards",
+      "variant_of": null,
+      "twist": null,
+      "title": "All hearts or all face cards",
+      "difficulty": "medium",
+      "tags": {
+        "topics": [
+          "counting/inclusion-exclusion",
+          "counting/combinations"
+        ],
+        "contexts": [
+          "cards-poker"
+        ]
+      },
+      "mistake_tags": [
+        "add-vs-multiply",
+        "overcount"
+      ],
+      "instance_count": 2
+    },
+    {
+      "id": "hearts-or-face-cards-red",
+      "family_id": "hearts-or-face-cards",
+      "variant_of": "hearts-or-face-cards",
+      "twist": "red cards instead of hearts",
+      "title": "All red cards or all face cards",
+      "difficulty": "medium",
+      "tags": {
+        "topics": [
+          "counting/inclusion-exclusion",
+          "counting/combinations"
+        ],
+        "contexts": [
+          "cards-poker"
+        ]
+      },
+      "mistake_tags": [
+        "overcount"
+      ],
+      "instance_count": 3
+    },
+    {
+      "id": "hearts-or-face-cards-exclusive",
+      "family_id": "hearts-or-face-cards",
+      "variant_of": "hearts-or-face-cards",
+      "twist": "exclusive or (not both)",
+      "title": "All hearts or all face cards, but not both",
+      "difficulty": "medium",
+      "tags": {
+        "topics": [
+          "counting/inclusion-exclusion",
+          "counting/combinations"
+        ],
+        "contexts": [
+          "cards-poker"
+        ]
+      },
+      "mistake_tags": [
+        "overcount"
+      ],
+      "instance_count": 2
+    },
+    {
       "id": "round-table",
       "family_id": "round-table",
       "variant_of": null,

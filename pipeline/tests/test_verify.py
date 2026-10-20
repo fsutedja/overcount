@@ -209,3 +209,10 @@ def test_route_sends_failures_to_review_with_a_report(tmp_path: Path) -> None:
     report = (target / "REPORT.md").read_text()
     assert "**checker** · `committee-mixed`" in report
     assert "overcount promote committee-mixed" in report
+
+
+def test_standard_deck_problems_are_exempt_from_the_instance_minimum(tmp_path: Path) -> None:
+    folder = copy_family(tmp_path, "hearts-or-face-cards")
+    report = verify_family(folder)
+    assert report.passed, report.failures
+    assert report.checked["hearts-or-face-cards"]["instances"] < 5

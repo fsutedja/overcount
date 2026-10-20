@@ -162,6 +162,9 @@ class Problem(Model):
     #: Function names in the family's checker.py. A problem needs at least one way to be verified.
     checker: str | None = None
     simulator: str | None = None
+    #: Card problems only. "standard" = the usual 52-card deck (13 ranks, 4 suits); "custom" = a
+    #: deck the statement describes, allowed only for hard problems (PLAN.md, card problems).
+    deck: Literal["standard", "custom"] | None = None
 
     @model_validator(mode="after")
     def names_are_consistent(self) -> "Problem":
@@ -184,6 +187,13 @@ class Problem(Model):
             raise ValueError("a problem needs a checker or a simulator so it can be verified")
         if (self.variant_of is None) != (self.twist is None):
             raise ValueError("variants need both variant_of and twist; root problems need neither")
+        is_cards = "cards-poker" in self.tags.contexts
+        if is_cards and self.deck is None:
+            raise ValueError('card problems must set "deck" to "standard" or "custom"')
+        if not is_cards and self.deck is not None:
+            raise ValueError('"deck" is only for card problems (context cards-poker)')
+        if self.deck == "custom" and self.difficulty != "hard":
+            raise ValueError("a custom deck is only allowed for hard problems; use the standard 52-card deck")
         return self
 
 
