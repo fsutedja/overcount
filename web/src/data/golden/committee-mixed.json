@@ -1,0 +1,29 @@
+{
+  "id": "committee-mixed",
+  "family_id": "committee-mixed",
+  "title": "Robotics club team",
+  "statement": "A robotics club has {{J}} juniors and {{S}} seniors. In how many ways can a team of {{j}} juniors and {{s}} seniors be chosen?",
+  "difficulty": "easy",
+  "tags": { "topics": ["counting/combinations"], "contexts": ["committees-seating"] },
+  "final": {
+    "prompt": "Total number of teams",
+    "answer": "C(J,j)*C(S,s)"
+  },
+  "instances": [
+    {
+      "key": "J=8,S=6,j=3,s=2",
+      "vars": { "J": "8", "S": "6", "j": "3", "s": "2" },
+      "values": { "final": { "type": "rational", "exact": "840" } }
+    },
+    {
+      "key": "J=10,S=7,j=4,s=3",
+      "vars": { "J": "10", "S": "7", "j": "4", "s": "3" },
+      "values": { "final": { "type": "rational", "exact": "7350" } }
+    },
+    {
+      "key": "J=6,S=5,j=2,s=2",
+      "vars": { "J": "6", "S": "5", "j": "2", "s": "2" },
+      "values": { "final": { "type": "rational", "exact": "150" } }
+    }
+  ]
+}

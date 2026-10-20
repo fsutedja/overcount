@@ -24,3 +24,6 @@ staging/
 .DS_Store
 .idea/
 .vscode/
+
+# Local Claude Code launch config
+.claude/

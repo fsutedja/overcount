@@ -2,9 +2,9 @@
 
 Overcount is a learning tool first. Every visual choice should help people understand
 combinatorics and probability: one problem in focus, a clear step flow, readable math, and an
-obvious next action. The personality is lightly inspired by Overcooked: order-ticket cards,
-ingredient-style step icons, and a gentle "served ✓" moment. It uses none of the game's assets,
-and there are no timers or urgency mechanics.
+obvious next action. The personality is lightly inspired by Overcooked: order-ticket cards and
+ingredient-style step icons. It uses none of the game's assets, and there are no timers or
+urgency mechanics.
 
 Decisions are made at checkpoints. Each checkpoint compares 2–3 rendered options and records
 the pick here with its rationale.
@@ -56,6 +56,23 @@ reads as plain text, which keeps the header calm.
 Alternatives compared: black + terracotta (the original), tonal teal, solid teal, teal + sage,
 ink + teal, teal + saffron, and deep teal + terracotta.
 
+### Logo mark
+
+The mark is a 20×20 pixel-art drawing of a black frying pan, seen from a three-quarter angle.
+A fried egg flips out of it: half inside the pan, tilted mid-toss. It sits to the left of the
+wordmark in the header.
+
+- Files: `web/src/assets/logo-mark.svg` (cropped for the header) and `web/public/favicon.svg`
+  (square).
+- Colours: pan `#2B2823` / `#3E3A33` with a `#5A544B` rim; egg white `#FFFBF3` with a
+  `#C9BBA3` outline; yolk `#E3A13B` with a `#F6CD78` highlight. The yolk yellow is **logo-only**
+  and never used for UI states.
+- Meaning: a flipped egg is cooked "over easy" (**over**count), and a flip is a coin toss, the
+  starting point of probability.
+- Concepts considered: an egg carton (choose 3 of 6), Pascal's pan, a binomial egg, several
+  side-view tosses, and higher viewing angles. The user chose the simplest version: no motion
+  lines, with the egg lowered to sit half inside the pan.
+
 ### Type
 
 | Role | Font |
@@ -89,6 +106,16 @@ Start 2P.
 The selected page is marked with a 2px teal (`accent-ink`) text underline, offset 4px. Because
 it's a text decoration, it doesn't move the link, so every nav item stays on the same line
 whichever page is active. Unselected links use `ink-muted`.
+
+### Answer feedback
+
+- **Correct:** a `correct-bg` box with `correct-ink` text reading "✓ Correct. That's 840." The
+  computed value is the bonus number. There is no "served" label or celebration graphic; the
+  feedback stays plain and calm.
+- **Wrong:** a `wrong-bg` box with `wrong-ink` text that starts "✗ Not quite." and ends with a
+  hint.
+- **Input that can't be graded** (empty, incomplete, letters, too large): a neutral
+  `ink-muted` message, not marked wrong.
 
 ## D2 · Problem page
 

@@ -1,0 +1,80 @@
+/*
+ * Design tokens: the single place colours and fonts are defined (see DESIGN.md, D1).
+ * Components never use raw hex values; they use these tokens through the Tailwind theme.
+ */
+
+/* Body font */
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-weight: 400;
+  font-display: swap;
+  src: url('../../node_modules/@fontsource/atkinson-hyperlegible/files/atkinson-hyperlegible-latin-400-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-weight: 700;
+  font-display: swap;
+  src: url('../../node_modules/@fontsource/atkinson-hyperlegible/files/atkinson-hyperlegible-latin-700-normal.woff2')
+    format('woff2');
+}
+
+/*
+ * "Overcount Pixel": Pixelify Sans for letters, Atkinson Hyperlegible Bold for digits.
+ * Pixelify's digits are easy to misread (5 vs 8, 12 vs 18), so digits come from Atkinson,
+ * scaled to 88% so they sit at the pixel font's lowercase height.
+ */
+@font-face {
+  font-family: 'Overcount Pixel';
+  font-display: swap;
+  unicode-range: U+0030-0039;
+  size-adjust: 88%;
+  src: url('../../node_modules/@fontsource/atkinson-hyperlegible/files/atkinson-hyperlegible-latin-700-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Overcount Pixel';
+  font-display: swap;
+  src: url('../../node_modules/@fontsource/pixelify-sans/files/pixelify-sans-latin-500-normal.woff2')
+    format('woff2');
+}
+
+/* Light · Pantry */
+:root {
+  color-scheme: light;
+  --bg: #f4efe6;
+  --card: #fffbf3;
+  --card-sunken: #f8f3ea;
+  --border: #e4d9c6;
+  --ink: #2b2823;
+  --ink-muted: #675f53;
+  --accent: #4f8f87;
+  --accent-ink: #276660;
+  --accent-soft: #e3eeec;
+  --on-accent: #fffbf3;
+  --deco: #c2734f;
+  --correct-bg: #e1ecd8;
+  --correct-ink: #35652f;
+  --wrong-bg: #f3e0e7;
+  --wrong-ink: #8e3352;
+}
+
+/* Dark · Late shift */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #1f1d1a;
+  --card: #2a2723;
+  --card-sunken: #24221e;
+  --border: #3a362f;
+  --ink: #eee7da;
+  --ink-muted: #b3aa9b;
+  --accent: #5fa69c;
+  --accent-ink: #7cc1b7;
+  --accent-soft: #23332f;
+  --on-accent: #1f1d1a;
+  --deco: #d99474;
+  --correct-bg: #2c3a28;
+  --correct-ink: #a6cf99;
+  --wrong-bg: #3e2730;
+  --wrong-ink: #eba5bc;
+}
