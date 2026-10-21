@@ -11,8 +11,8 @@ from typing import Any
 
 from .expr import display_text, parse, to_group_latex, to_latex
 from .instances import build_instances
-from .schema import Family, Mistake, Problem, SkeletonGroup
 from .roadmap import load_roadmap, roadmap_json
+from .schema import Family, Mistake, Problem, SkeletonGroup
 from .taxonomy import kind_of
 
 _OP_DISPLAY = {"*": "×", "+": "+", "-": "−", "/": "÷"}

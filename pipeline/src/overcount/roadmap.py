@@ -27,10 +27,11 @@ class Roadmap(BaseModel):
 
     @model_validator(mode="after")
     def each_topic_and_method_has_one_home(self) -> "Roadmap":
-        for name, everything, placed in (
+        groups: list[tuple[str, tuple[str, ...], list[str]]] = [
             ("topic", TOPICS, [t for n in self.nodes for t in n.topics]),
             ("method", METHODS, [m for n in self.nodes for m in n.methods]),
-        ):
+        ]
+        for name, everything, placed in groups:
             twice = sorted({x for x in placed if placed.count(x) > 1})
             missing = sorted(set(everything) - set(placed))
             if twice:
