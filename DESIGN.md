@@ -326,6 +326,19 @@ the same as the problem card tabs. Filters live in the address, so they survive 
 - **Considered:** A · back link and previous / next; C · A plus a problem menu.
 - **Mockup:** [design/mockups/d12-problem-nav.html](design/mockups/d12-problem-nav.html)
 
+## D13 · Difficulty colours
+
+**Decided: C · green, amber, red (LeetCode style).**
+
+- Easy = `--correct-bg` / `--correct-ink`, medium = `--amber-bg` / `--amber-ink` (new tokens:
+  `#f6ecd2` / `#7a5a12` light, `#3a3220` / `#e3c278` dark), hard = `--wrong-bg` / `--wrong-ink`.
+- Every difficulty label carries 1, 2 or 3 signal bars, so it doesn't rely on colour alone
+  (green vs red is the pair colour-blind readers confuse).
+- Tinted chips in lists (Practice rows); the coloured word with bars in a problem card's top
+  line and on Home's daily problem. The Practice difficulty filter chips stay neutral.
+- **Considered:** A · teal, terracotta, berry; B · one teal getting darker.
+- **Mockup:** [design/mockups/d13-difficulty.html](design/mockups/d13-difficulty.html)
+
 ## No emoji
 
 - No emoji in the interface or in learner-facing content. The example lines read

@@ -55,6 +55,9 @@
   --deco: #c2734f;
   /* Light terracotta, for a second shaded group next to --accent-soft (D11 deck grid). */
   --deco-soft: #f3e2d8;
+  /* Medium difficulty (D13); easy and hard reuse the correct and wrong pairs. */
+  --amber-bg: #f6ecd2;
+  --amber-ink: #7a5a12;
   --correct-bg: #e1ecd8;
   --correct-ink: #35652f;
   --wrong-bg: #f3e0e7;
@@ -76,6 +79,8 @@
   --on-accent: #1f1d1a;
   --deco: #d99474;
   --deco-soft: #3b2c24;
+  --amber-bg: #3a3220;
+  --amber-ink: #e3c278;
   --correct-bg: #2c3a28;
   --correct-ink: #a6cf99;
   --wrong-bg: #3e2730;

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { loadIndex } from '../lib/bank'
+import { Difficulty } from '../components/Difficulty'
 import { MethodLesson } from '../components/MethodLesson'
 import { TryDots } from '../components/TryDots'
 import { problemProgress, progressStore, solvedProblemIds } from '../lib/progress'
@@ -277,7 +278,7 @@ function ProblemList(props: {
                   </span>
                   <span className="flex shrink-0 gap-2 text-xs">
                     <Chip>{KIND_LABEL[p.kind]}</Chip>
-                    <Chip>{p.difficulty}</Chip>
+                    <Difficulty level={p.difficulty} />
                   </span>
                   <span className="flex min-w-[4.5rem] shrink-0 justify-end">
                     <TryDots tries={problemProgress(attempts, p.id).tries} max={5} />

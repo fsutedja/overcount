@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Difficulty } from '../components/Difficulty'
 import { recordedAttempts } from '../lib/attempts'
 import { loadIndex } from '../lib/bank'
 import { currentNode, dailyProblem, dayStreak, heatmap, mapRows, methodTally, nodeTally, type Tally } from '../lib/home'
@@ -237,7 +238,7 @@ function DailyCard({ index, today }: { index: BankIndex; today: Date }) {
       </h2>
       {/* No method name here: naming it would give the problem away (D6 spoiler rule). */}
       <p className="mb-3 text-sm text-ink-muted capitalize">
-        {problem.difficulty} · {problem.kind}
+        <Difficulty level={problem.difficulty} variant="text" /> · {problem.kind}
       </p>
       <Link
         to={`/problem/${encodeURIComponent(problem.id)}`}

@@ -5,6 +5,7 @@ import { createAttempt, recordAttempt, recordedAttempts, type HelpLevel } from '
 import { NUDGE_AFTER_WRONG, problemProgress } from '../lib/progress'
 import { formatValue } from '../lib/grade'
 import { fillTemplate } from '../lib/template'
+import { Difficulty } from './Difficulty'
 import { HelpSkeleton } from './HelpSkeleton'
 import { HelpSteps } from './HelpSteps'
 import { MathInput } from './MathInput'
@@ -105,7 +106,7 @@ export function ProblemPage({ problem, instance, fromMethod = null, onNewNumbers
           />
           <div className="px-5 pt-2 pb-5">
             <p className="text-xs tracking-wide text-ink-muted uppercase">
-              {problem.difficulty} · {problem.kind} ·{' '}
+              <Difficulty level={problem.difficulty} variant="text" /> · {problem.kind} ·{' '}
               {problem.tags.contexts.map((c) => c.split('-')[0]).join(', ')}
             </p>
             <div className="mt-1 flex items-start justify-between gap-3">

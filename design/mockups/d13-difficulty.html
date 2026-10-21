@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D13 difficulty colours</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4efe6;--card:#fffbf3;--card-sunken:#f8f3ea;--border:#e4d9c6;--ink:#2b2823;--ink-muted:#675f53;--accent:#4f8f87;--accent-ink:#276660;--accent-soft:#e3eeec;--on-accent:#fffbf3;--deco:#c2734f;--deco-soft:#f3e2d8;--deco-ink:#9a4f2e;--correct-bg:#e1ecd8;--correct-ink:#35652f;--wrong-bg:#f3e0e7;--wrong-ink:#8e3352;--amber-bg:#f6ecd2;--amber-ink:#7a5a12}
+:root[data-theme=dark]{--bg:#1f1d1a;--card:#2a2723;--card-sunken:#24221e;--border:#3a362f;--ink:#eee7da;--ink-muted:#b3aa9b;--accent:#5fa69c;--accent-ink:#7cc1b7;--accent-soft:#23332f;--on-accent:#1f1d1a;--deco:#d99474;--deco-soft:#3b2c24;--deco-ink:#e6a98c;--correct-bg:#2c3a28;--correct-ink:#a6cf99;--wrong-bg:#3e2730;--wrong-ink:#eba5bc;--amber-bg:#3a3220;--amber-ink:#e3c278}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',sans-serif;padding:24px 16px 60px;line-height:1.45}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--ink-muted);margin:0 0 20px}
+.opt{border:2px dashed var(--border);border-radius:18px;padding:16px 18px;margin-bottom:24px}
+.opt>h2{margin:0 0 2px;font-size:18px}.why{color:var(--ink-muted);font-size:14px;margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.row{display:flex;align-items:center;gap:10px;padding:11px 16px;border-top:1px solid var(--border)}.row:first-child{border-top:0}.row .t{flex:1;font-weight:700}
+.tag{border:1px solid var(--border);border-radius:6px;padding:1px 8px;font-size:13px;color:var(--ink-muted)}
+.d{border-radius:6px;padding:1px 8px;font-size:13px;font-weight:700;border:1px solid transparent}
+.meta{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-muted);margin:0;padding:12px 16px}
+.bars{display:inline-flex;gap:2px;align-items:flex-end;margin-right:5px;vertical-align:-1px}.bars i{width:3px;border-radius:1px;background:currentColor}.bars i.off{opacity:.25}
+.tb{position:fixed;top:12px;right:12px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--ink);font:inherit;cursor:pointer;z-index:2}
+</style>
+</head>
+<body>
+<button class="tb" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">Light / dark</button>
+<div class="wrap">
+<h1>D13 · Colour-coding difficulty</h1>
+<p class="sub">Each option shows the Practice list rows and a problem card's top line. All three add a small signal-bars icon (1, 2 or 3 bars) so difficulty doesn't rely on colour alone.</p>
+<div id="opts"></div>
+</div>
+<script>
+const ROWS = [['President and advisor','easy'],['President and an optional advisor','medium'],['Robotics club team','easy'],['Team with a captain (a hard variant)','hard']];
+const OPTS = [
+  { name: 'A · Teal, terracotta, berry', why: 'The site\'s three accent colours: easy teal, medium terracotta, hard berry. Warm-to-strong, all from the existing palette. Berry is also the "wrong" colour, so "hard" may feel like a warning.',
+    style: { easy: 'background:var(--accent-soft);color:var(--accent-ink)', medium: 'background:var(--deco-soft);color:var(--deco-ink)', hard: 'background:var(--wrong-bg);color:var(--wrong-ink)' } },
+  { name: 'B · One teal, getting darker', why: 'Easy is a teal outline, medium light teal, hard solid dark teal. Reads as "more" without implying good or bad, stays calm, and works for colour-blind readers by lightness alone.',
+    style: { easy: 'border-color:var(--accent);color:var(--accent-ink);background:transparent', medium: 'background:var(--accent-soft);color:var(--accent-ink)', hard: 'background:var(--accent-ink);color:var(--on-accent)' } },
+  { name: 'C · Green, amber, red (LeetCode style)', why: 'The familiar convention: green easy, amber medium, red hard. Instantly recognisable; needs a new amber colour, and green vs red is the pair colour-blind readers confuse (the bars help).',
+    style: { easy: 'background:var(--correct-bg);color:var(--correct-ink)', medium: 'background:var(--amber-bg);color:var(--amber-ink)', hard: 'background:var(--wrong-bg);color:var(--wrong-ink)' } },
+];
+const bars = (d) => { const n = { easy: 1, medium: 2, hard: 3 }[d]; return `<span class="bars">${[4, 7, 10].map((h, i) => `<i style="height:${h}px" class="${i < n ? '' : 'off'}"></i>`).join('')}</span>`; };
+const chip = (o, d) => `<span class="d" style="${o.style[d]}">${bars(d)}${d[0].toUpperCase() + d.slice(1)}</span>`;
+document.getElementById('opts').innerHTML = OPTS.map((o) => `<section class="opt"><h2>${o.name}</h2><p class="why">${o.why}</p>
+  <div class="card">${ROWS.map(([t, d]) => `<div class="row"><span class="t">${t}</span><span class="tag">Counting</span>${chip(o, d)}</div>`).join('')}</div>
+  <div class="card" style="margin-top:10px"><p class="meta"><span style="${o.style.medium.replace(/background:[^;]+;?/, '')};font-weight:700">${bars('medium')}Medium</span> · Counting · Committees</p></div></section>`).join('');
+</script>
+</body>
+</html>
