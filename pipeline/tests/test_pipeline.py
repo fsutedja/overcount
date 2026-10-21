@@ -115,3 +115,18 @@ def test_sum_index_may_not_reuse_a_variable() -> None:
     family["problems"][0]["answer"]["expr"] = "Sum(1, n, 1, n)"
     with pytest.raises(ValidationError, match="reuses a variable"):
         Family.model_validate(family)
+
+
+def test_roadmap_gives_every_topic_and_method_one_home() -> None:
+    from overcount.roadmap import Roadmap, load_roadmap
+
+    roadmap = load_roadmap(CONTENT / "roadmap.yaml")
+    assert sum(len(n.methods) for n in roadmap.nodes) == 19
+    data = roadmap.model_dump()
+    data["nodes"][1]["methods"].append("permutations")  # already in counting-basics
+    with pytest.raises(ValidationError, match="exactly one"):
+        Roadmap.model_validate(data)
+    data["nodes"][1]["methods"].pop()
+    data["nodes"][0]["methods"].remove("circular")
+    with pytest.raises(ValidationError, match="missing"):
+        Roadmap.model_validate(data)

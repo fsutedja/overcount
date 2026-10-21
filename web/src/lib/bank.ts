@@ -8,7 +8,16 @@ async function getJson<T>(path: string): Promise<T> {
   return (await response.json()) as T
 }
 
-export const loadIndex = () => getJson<BankIndex>('/bank/index.json')
+let indexPromise: Promise<BankIndex> | null = null
+
+/** The index is small and shared by every page, so it's fetched once. */
+export function loadIndex(): Promise<BankIndex> {
+  indexPromise ??= getJson<BankIndex>('/bank/index.json').catch((error: unknown) => {
+    indexPromise = null
+    throw error
+  })
+  return indexPromise
+}
 
 export const loadFamily = (familyId: string) => getJson<Family>(`/bank/families/${encodeURIComponent(familyId)}.json`)
 

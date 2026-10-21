@@ -121,7 +121,23 @@ export interface ProblemSummary {
   instance_count: number
 }
 
+export interface MethodInfo {
+  id: string
+  name: string
+  blurb: string
+}
+
+/** A stop on the learning path, owning some topics and counting methods (content/roadmap.yaml). */
+export interface RoadmapNode {
+  id: string
+  title: string
+  blurb: string
+  topics: string[]
+  methods: MethodInfo[]
+}
+
 export interface BankIndex {
   schema_version: 1
+  roadmap: RoadmapNode[]
   problems: ProblemSummary[]
 }

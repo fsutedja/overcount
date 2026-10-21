@@ -83,7 +83,8 @@ export function ProblemPage({ problem, instance }: ProblemPageProps) {
           />
           <div className="px-5 pt-2 pb-5">
             <p className="text-xs tracking-wide text-ink-muted uppercase">
-              {problem.difficulty} · {problem.tags.contexts.map((c) => c.split('-')[0]).join(', ')}
+              {problem.difficulty} · {problem.kind} ·{' '}
+              {problem.tags.contexts.map((c) => c.split('-')[0]).join(', ')}
             </p>
             <h1 id="problem-title" className="mt-1 text-xl font-bold">
               {problem.title}

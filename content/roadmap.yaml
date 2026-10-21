@@ -1,0 +1,62 @@
+# The learning path (PLAN.md §5). Every topic tag and every counting method belongs to exactly one
+# node; `overcount build` checks that and publishes this into web/public/bank/index.json.
+# The method placement is a proposal to confirm at design checkpoint D3.
+
+nodes:
+  - id: counting-basics
+    title: Counting basics
+    blurb: Multiply, add, arrange, and handle the restrictions that make counting tricky.
+    topics: [counting/basics, counting/permutations, counting/symmetry-circular]
+    methods:
+      - product-sum-rule
+      - permutations
+      - multiset-permutations
+      - choose-then-order
+      - glue-block
+      - gap-method
+      - restricted-first
+      - symmetry-relative-order
+      - circular
+      - divide-overcounting
+
+  - id: combinations
+    title: Combinations
+    blurb: Choosing groups where order doesn't matter.
+    topics: [counting/combinations]
+    methods: [combinations, lattice-paths, binomial-identities]
+
+  - id: stars-and-bars
+    title: Stars and bars
+    blurb: Sharing identical items among distinct boxes.
+    topics: [counting/stars-bars]
+    methods: [stars-and-bars, balls-into-boxes]
+
+  - id: complement
+    title: Complement
+    blurb: Count what you don't want and subtract it.
+    topics: [counting/complement]
+    methods: [complement, pigeonhole]
+
+  - id: inclusion-exclusion
+    title: Inclusion–exclusion
+    blurb: Add the groups, subtract the overlaps.
+    topics: [counting/inclusion-exclusion]
+    methods: [inclusion-exclusion, derangements]
+
+  - id: probability-basics
+    title: Probability basics
+    blurb: Equally likely outcomes, independence, and expected value.
+    topics: [probability/basics, probability/independence, probability/expectation]
+    methods: []
+
+  - id: conditional
+    title: Conditional probability
+    blurb: Updating probabilities when you learn something.
+    topics: [probability/conditional-bayes]
+    methods: []
+
+  - id: distributions
+    title: Distributions
+    blurb: Binomial, hypergeometric, geometric, and Poisson.
+    topics: [distributions/binomial, distributions/hypergeometric, distributions/geometric, distributions/poisson]
+    methods: []

@@ -1,5 +1,186 @@
 {
   "schema_version": 1,
+  "roadmap": [
+    {
+      "id": "counting-basics",
+      "title": "Counting basics",
+      "blurb": "Multiply, add, arrange, and handle the restrictions that make counting tricky.",
+      "topics": [
+        "counting/basics",
+        "counting/permutations",
+        "counting/symmetry-circular"
+      ],
+      "methods": [
+        {
+          "id": "product-sum-rule",
+          "name": "Product and sum rules",
+          "blurb": "Multiply for steps that all happen, add for either/or cases."
+        },
+        {
+          "id": "permutations",
+          "name": "Permutations",
+          "blurb": "Ordered arrangements: n! and P(n, k)."
+        },
+        {
+          "id": "multiset-permutations",
+          "name": "Repeated items",
+          "blurb": "Arrangements with repeats: n! / (a! b! …)."
+        },
+        {
+          "id": "choose-then-order",
+          "name": "Choose, then order",
+          "blurb": "Pick who, then arrange them."
+        },
+        {
+          "id": "glue-block",
+          "name": "Glue into a block",
+          "blurb": "Items that must be together move as one."
+        },
+        {
+          "id": "gap-method",
+          "name": "Gap method",
+          "blurb": "Place the others first, then fill the gaps so items stay apart."
+        },
+        {
+          "id": "restricted-first",
+          "name": "Restricted first",
+          "blurb": "Place the fussy items first, then the rest."
+        },
+        {
+          "id": "symmetry-relative-order",
+          "name": "Symmetry",
+          "blurb": "Every relative order is equally likely, e.g. 11! / 3."
+        },
+        {
+          "id": "circular",
+          "name": "Circular arrangements",
+          "blurb": "Around a table: fix one seat or divide by rotations."
+        },
+        {
+          "id": "divide-overcounting",
+          "name": "Divide out overcounting",
+          "blurb": "Count with labels, then divide by the orderings that don't matter."
+        }
+      ]
+    },
+    {
+      "id": "combinations",
+      "title": "Combinations",
+      "blurb": "Choosing groups where order doesn't matter.",
+      "topics": [
+        "counting/combinations"
+      ],
+      "methods": [
+        {
+          "id": "combinations",
+          "name": "Combinations",
+          "blurb": "Unordered selections: C(n, k)."
+        },
+        {
+          "id": "lattice-paths",
+          "name": "Lattice paths",
+          "blurb": "Paths on a grid: choose which steps go right."
+        },
+        {
+          "id": "binomial-identities",
+          "name": "Binomial identities",
+          "blurb": "Count one thing two ways to prove an identity."
+        }
+      ]
+    },
+    {
+      "id": "stars-and-bars",
+      "title": "Stars and bars",
+      "blurb": "Sharing identical items among distinct boxes.",
+      "topics": [
+        "counting/stars-bars"
+      ],
+      "methods": [
+        {
+          "id": "stars-and-bars",
+          "name": "Stars and bars",
+          "blurb": "Identical items into distinct boxes: empty allowed, at least one, minimums."
+        },
+        {
+          "id": "balls-into-boxes",
+          "name": "Balls into boxes",
+          "blurb": "Distinct or identical balls into distinct boxes."
+        }
+      ]
+    },
+    {
+      "id": "complement",
+      "title": "Complement",
+      "blurb": "Count what you don't want and subtract it.",
+      "topics": [
+        "counting/complement"
+      ],
+      "methods": [
+        {
+          "id": "complement",
+          "name": "Complement",
+          "blurb": "Count everything, then subtract what you don't want."
+        },
+        {
+          "id": "pigeonhole",
+          "name": "Pigeonhole",
+          "blurb": "More items than boxes forces a repeat."
+        }
+      ]
+    },
+    {
+      "id": "inclusion-exclusion",
+      "title": "Inclusion–exclusion",
+      "blurb": "Add the groups, subtract the overlaps.",
+      "topics": [
+        "counting/inclusion-exclusion"
+      ],
+      "methods": [
+        {
+          "id": "inclusion-exclusion",
+          "name": "Inclusion–exclusion",
+          "blurb": "Add the groups, subtract the overlaps."
+        },
+        {
+          "id": "derangements",
+          "name": "Derangements",
+          "blurb": "Nothing ends up in its own place: Σ (−1)^k / k!."
+        }
+      ]
+    },
+    {
+      "id": "probability-basics",
+      "title": "Probability basics",
+      "blurb": "Equally likely outcomes, independence, and expected value.",
+      "topics": [
+        "probability/basics",
+        "probability/independence",
+        "probability/expectation"
+      ],
+      "methods": []
+    },
+    {
+      "id": "conditional",
+      "title": "Conditional probability",
+      "blurb": "Updating probabilities when you learn something.",
+      "topics": [
+        "probability/conditional-bayes"
+      ],
+      "methods": []
+    },
+    {
+      "id": "distributions",
+      "title": "Distributions",
+      "blurb": "Binomial, hypergeometric, geometric, and Poisson.",
+      "topics": [
+        "distributions/binomial",
+        "distributions/hypergeometric",
+        "distributions/geometric",
+        "distributions/poisson"
+      ],
+      "methods": []
+    }
+  ],
   "problems": [
     {
       "id": "candy-bags",

@@ -1,3 +1,4 @@
+import { progressStore } from './progress'
 import type { MistakeTag } from '../types/problem'
 
 /** 0 = free answer, 1 = used the Help skeleton, 2 = saw the solution. */
@@ -38,13 +39,10 @@ export function createAttempt(
   }
 }
 
-// Kept in memory until milestone 8 adds the localStorage-backed ProgressStore.
-const attempts: Attempt[] = []
-
 export function recordAttempt(attempt: Attempt): void {
-  attempts.push(attempt)
+  progressStore.add(attempt)
 }
 
 export function recordedAttempts(): readonly Attempt[] {
-  return attempts
+  return progressStore.list()
 }

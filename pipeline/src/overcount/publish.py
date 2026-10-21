@@ -12,6 +12,7 @@ from typing import Any
 from .expr import display_text, parse, to_group_latex, to_latex
 from .instances import build_instances
 from .schema import Family, Mistake, Problem, SkeletonGroup
+from .roadmap import load_roadmap, roadmap_json
 from .taxonomy import kind_of
 
 _OP_DISPLAY = {"*": "×", "+": "+", "-": "−", "/": "÷"}
@@ -138,7 +139,8 @@ def build_bank(content_dir: Path) -> Bank:
         # Family files hold ~100 instances per problem and are only read by the app: keep them compact.
         family_data = {"family_id": family.family_id, "problems": problems}
         files[f"families/{family.family_id}.json"] = _dump(family_data, compact=True)
-    files["index.json"] = _dump({"schema_version": 1, "problems": index})
+    roadmap = roadmap_json(load_roadmap(content_dir / "roadmap.yaml"))
+    files["index.json"] = _dump({"schema_version": 1, "roadmap": roadmap, "problems": index})
     return Bank(files)
 
 
