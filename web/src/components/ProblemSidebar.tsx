@@ -73,7 +73,7 @@ export function ProblemSidebar({ problem, fromMethod }: { problem: Problem; from
     <>
       {/* Wide screens: a column beside the problem. */}
       <aside className="hidden lg:block lg:pt-8">
-        <div className="mb-3">{back}</div>
+        <div className="mb-3 pl-5.5">{back}</div>
         <div className="sticky top-6 rounded-xl border border-border bg-card p-3">{list}</div>
       </aside>
       {/* Narrower screens: a button that unfolds the same list. */}
