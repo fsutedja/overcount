@@ -256,7 +256,7 @@ which places it on the roadmap.
 - **Visual** `{type, legend?}`: one of dice, coins, sequence, circle, subset, boxes, stars-bars,
   cards, path, matching. Each type fixes the outcome's shape (validated, at most 12 pieces), so
   the web draws it with one shared component instead of LLM-written SVG. `legend` is an optional
-  short line such as "★ = a cookie, | = a divider between kids".
+  short line such as "● = a cookie, | = a divider between kids".
 - **Published per instance:** the hand-picked pair plus up to 4 more pairs sampled from the
   checker's own outcomes (seeded, so builds are reproducible). Each has its text form (e.g.
   "A=3, B=0, C=4") and reason. Every pair is checked: ✅ passes `counts`, ❌ doesn't, and both are

@@ -131,17 +131,14 @@
         }
       ],
       "deck": "standard",
-      "example": {
-        "yes_reason": "all face cards",
-        "no_reason": "7♠ is neither a heart nor a face card"
-      },
       "visual": {
         "type": "cards"
       },
       "checker": {
         "outcomes": "outcomes",
         "counts": "counts_root",
-        "example": "example_root"
+        "example": "example_root",
+        "reason": "reason_root"
       }
     },
     {
@@ -276,17 +273,14 @@
         }
       ],
       "deck": "standard",
-      "example": {
-        "yes_reason": "all red cards",
-        "no_reason": "7♠ is black and not a face card"
-      },
       "visual": {
         "type": "cards"
       },
       "checker": {
         "outcomes": "outcomes",
         "counts": "counts_red",
-        "example": "example_red"
+        "example": "example_red",
+        "reason": "reason_red"
       }
     },
     {
@@ -410,17 +404,14 @@
         }
       ],
       "deck": "standard",
-      "example": {
-        "yes_reason": "all hearts, not all face cards",
-        "no_reason": "all hearts AND all face cards: both"
-      },
       "visual": {
         "type": "cards"
       },
       "checker": {
         "outcomes": "outcomes",
         "counts": "counts_exclusive",
-        "example": "example_exclusive"
+        "example": "example_exclusive",
+        "reason": "reason_exclusive"
       }
     }
   ]

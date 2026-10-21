@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { card } from '../lib/outcome'
-import type { InstanceExample, VisualType } from '../types/problem'
+import type { ExampleOutcome, InstanceExample, VisualType } from '../types/problem'
 
 /*
  * The "one outcome" diagram (DESIGN.md, D4 · Pantry pieces): chunky pieces with an ink outline
@@ -97,9 +97,12 @@ function row(
   }
 }
 
-function draw(type: VisualType, example: InstanceExample): Draw {
-  const { outcome } = example.yes
-  const hi = (i: number) => example.highlight.includes(i)
+/** What a diagram needs: one outcome, plus the instance's pool and captions. */
+type DrawInput = { side: ExampleOutcome; pool?: InstanceExample['pool']; captions?: string[] }
+
+function draw(type: VisualType, example: DrawInput): Draw {
+  const { outcome } = example.side
+  const hi = (i: number) => example.side.highlight.includes(i)
   const caption = (fallback: (i: number) => string | undefined) => (i: number) => example.captions?.[i] ?? fallback(i)
 
   switch (type) {
@@ -157,8 +160,8 @@ function draw(type: VisualType, example: InstanceExample): Draw {
     }
 
     case 'subset': {
-      // Each named group (e.g. juniors, seniors) gets its own row with its name, and a dashed
-      // line between groups, so different kinds of people don't look interchangeable.
+      // Each named group (e.g. juniors, seniors) gets its own labelled row, so different kinds
+      // of people don't look interchangeable.
       const pool = example.pool ?? outcome.map(String)
       const groups = Array.isArray(pool) ? [['', pool] as const] : Object.entries(pool)
       const chosen = new Set(outcome.map(String))
@@ -168,10 +171,7 @@ function draw(type: VisualType, example: InstanceExample): Draw {
       let y = 4
       const body: ReactNode[] = []
       groups.forEach(([name, items], g) => {
-        if (g > 0) {
-          body.push(<line key={`div${g}`} x1={left} x2={left + perRow * 46} y1={y + 2} y2={y + 2} strokeWidth={1.5} strokeDasharray="5 5" className="stroke-ink-muted" />)
-          y += 12
-        }
+        if (g > 0) y += 10
         if (named) {
           body.push(<text key={`name${g}`} x={left} y={y + 12} fontSize={13} fontWeight={700} className="fill-ink-muted">{name}</text>)
           y += 20
@@ -207,22 +207,24 @@ function draw(type: VisualType, example: InstanceExample): Draw {
       }, caption((i) => `box ${i + 1}: ${outcome[i]}`))
 
     case 'stars-bars': {
-      const tokens: ('star' | 'bar')[] = []
-      outcome.forEach((v, i) => {
-        if (i > 0) tokens.push('bar')
-        for (let k = 0; k < Number(v); k++) tokens.push('star')
-      })
+      // Stars for items, bars as dividers; with captions, each group's name sits under it.
+      const body: ReactNode[] = []
       let x = 6
-      const body = tokens.map((t, i) => {
-        const at = x
-        x += t === 'star' ? 30 : 20
-        return t === 'star' ? (
-          <Bead key={i} cx={at + 12} cy={30} r={11} fill="fill-accent" />
-        ) : (
-          <rect key={i} x={at + 4} y={8} width={7} height={44} rx={2} strokeWidth={2} className="fill-deco stroke-ink" />
-        )
+      outcome.forEach((v, i) => {
+        if (i > 0) {
+          body.push(<rect key={`bar${i}`} x={x + 4} y={8} width={7} height={44} rx={2} strokeWidth={2} className="fill-deco stroke-ink" />)
+          x += 20
+        }
+        const start = x
+        for (let k = 0; k < Number(v); k++) {
+          body.push(<Bead key={`s${i}-${k}`} cx={x + 12} cy={30} r={11} fill={hi(i) ? 'fill-deco' : 'fill-accent'} />)
+          x += 30
+        }
+        if (Number(v) === 0) x += 14
+        const label = example.captions?.[i]
+        if (label) body.push(<Caption key={`c${i}`} x={(start + x) / 2} y={74}>{label}</Caption>)
       })
-      return { width: x + 6, height: 60, body }
+      return { width: x + 6, height: example.captions ? 82 : 60, body }
     }
 
     case 'cards':
@@ -299,16 +301,16 @@ function draw(type: VisualType, example: InstanceExample): Draw {
   }
 }
 
-/** A small diagram of the ✅ outcome. The text form is its accessible name. */
-export function OutcomeVisual({ type, example }: { type: VisualType; example: InstanceExample }) {
-  const { width, height, body } = draw(type, example)
+/** A small diagram of one outcome. Its text form is the accessible name. */
+export function OutcomeVisual({ type, side, pool, captions }: { type: VisualType } & DrawInput) {
+  const { width, height, body } = draw(type, { side, pool, captions })
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
       width={width}
       className="mx-auto block h-auto max-w-full"
       role="img"
-      aria-label={`One outcome: ${example.yes.text}`}
+      aria-label={`One outcome: ${side.text}`}
     >
       {body}
     </svg>

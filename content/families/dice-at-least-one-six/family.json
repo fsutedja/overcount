@@ -107,17 +107,15 @@
           "explanation": "Subtract the sequences with zero sixes from the total number of sequences to find those with at least one 6."
         }
       ],
-      "example": {
-        "yes_reason": "it has a 6",
-        "no_reason": "no 6 at all"
-      },
       "visual": {
         "type": "dice"
       },
       "checker": {
         "outcomes": "outcomes",
         "counts": "counts_root",
-        "example": "example_root"
+        "example": "example_root",
+        "reason": "reason_root",
+        "highlight": "highlight"
       }
     },
     {
@@ -242,17 +240,15 @@
           "explanation": "Subtract both unwanted cases from the total to count sequences with at least two sixes."
         }
       ],
-      "example": {
-        "yes_reason": "two 6s",
-        "no_reason": "only one 6"
-      },
       "visual": {
         "type": "dice"
       },
       "checker": {
         "outcomes": "outcomes",
         "counts": "counts_two_or_more",
-        "example": "example_two_or_more"
+        "example": "example_two_or_more",
+        "reason": "reason_two_or_more",
+        "highlight": "highlight"
       }
     },
     {
@@ -363,17 +359,15 @@
           "explanation": "Subtracting sequences with neither 1 nor 6 from all sequences without 1 leaves those that have at least one 6."
         }
       ],
-      "example": {
-        "yes_reason": "a 6 and no 1s",
-        "no_reason": "it has a 1"
-      },
       "visual": {
         "type": "dice"
       },
       "checker": {
         "outcomes": "outcomes",
         "counts": "counts_no_ones",
-        "example": "example_no_ones"
+        "example": "example_no_ones",
+        "reason": "reason_no_ones",
+        "highlight": "highlight"
       }
     }
   ]

@@ -14,6 +14,19 @@ def _teachers(t):
     return [f"T{i}" for i in range(1, t + 1)]
 
 
+def _reason(pair):
+    president, advisor = pair
+    if president == "—":
+        return "the club needs a president"
+    if president[0] == "T":
+        return f"{president} is a teacher; the president is a student"
+    if advisor[0] in "JS":
+        return f"{advisor} is a student; the advisor is a teacher"
+    if advisor == "—":
+        return "a student president, no advisor"
+    return "a student president, a teacher advisor"
+
+
 def outcomes_root(J, S, t):
     everyone = _students(J, S) + _teachers(t)
     return product(everyone, everyone)
@@ -27,6 +40,10 @@ def example_root(J, S, t):
     return {"yes": ["J1", "T1"], "no": ["T1", "J1"], "captions": ["president", "advisor"]}
 
 
+def reason_root(pair, J, S, t):
+    return _reason(pair)
+
+
 def outcomes_optional_advisor(J, S, t):
     everyone = _students(J, S) + _teachers(t)
     return product(everyone, everyone + ["—"])
@@ -38,3 +55,7 @@ def counts_optional_advisor(pair, J, S, t):
 
 def example_optional_advisor(J, S, t):
     return {"yes": ["S1", "—"], "no": ["T1", "—"], "captions": ["president", "advisor"]}
+
+
+def reason_optional_advisor(pair, J, S, t):
+    return _reason(pair)

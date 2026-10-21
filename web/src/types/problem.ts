@@ -89,15 +89,22 @@ export type VisualType =
 /** An outcome as plain data: die faces, labels, counts, cards like "KH", path steps "R"/"U". */
 export type Outcome = (number | string)[]
 
-/** One instance's ✅/❌ example, computed and checked by the pipeline. */
-export interface InstanceExample {
-  yes: { outcome: Outcome; text: string }
-  no: { outcome: Outcome; text: string }
-  /** Positions in the yes outcome to highlight (e.g. the 6s). */
+/** One outcome as shown in an example, with its text form and a one-line reason. */
+export interface ExampleOutcome {
+  outcome: Outcome
+  text: string
+  reason: string
+  /** Positions to highlight in the diagram (e.g. where the 6s are). */
   highlight: number[]
+}
+
+/** One instance's examples, computed and checked by the pipeline. */
+export interface InstanceExample {
+  /** ✅/❌ pairs: the first is hand-picked, the rest feed "Show another example". */
+  pairs: { yes: ExampleOutcome; no: ExampleOutcome }[]
   /** Subset visuals: everything that could be chosen, either one list or named groups. */
   pool?: string[] | Record<string, string[]>
-  /** One short label per piece of the yes outcome, e.g. "president". */
+  /** One short label per piece, e.g. "president", or bags A, B, C. */
   captions?: string[]
 }
 
@@ -128,9 +135,8 @@ export interface Problem {
     skeleton: Skeleton
   }
   solution: SolutionStep[]
-  /** Why the ✅ outcome counts and the ❌ one doesn't; may contain {{var}}. */
-  example: { yes_reason: string; no_reason: string }
-  visual: { type: VisualType }
+  /** How one outcome is drawn; `legend` explains the pieces, e.g. "★ = a candy". */
+  visual: { type: VisualType; legend?: string }
   instances: Instance[]
 }
 

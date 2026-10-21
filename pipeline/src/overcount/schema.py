@@ -148,7 +148,9 @@ class Checker(Model):
 
     - outcomes(**vars): every candidate outcome a beginner might write down.
     - counts(outcome, **vars): True if the outcome counts.
-    - example(**vars): {"yes": outcome, "no": outcome, "highlight"?, "pool"?, "captions"?}.
+    - example(**vars): {"yes": outcome, "no": outcome, "pool"?, "captions"?}, hand-picked.
+    - reason(outcome, **vars): a one-line reason for any outcome ("two 6s", "only one 6").
+    - highlight(outcome, **vars): optional; positions to highlight (e.g. where the 6s are).
 
     The answer is checked by counting candidates that pass `counts` (a fraction of all of them
     for probabilities). With unequal chances, leave `outcomes` out and add a simulator instead.
@@ -157,16 +159,14 @@ class Checker(Model):
     outcomes: FunctionName | None = None
     counts: FunctionName
     example: FunctionName
+    reason: FunctionName
+    highlight: FunctionName | None = None
 
 
 class Visual(Model):
     type: VisualType
-
-
-class Example(Model):
-    #: Why the yes outcome counts / the no outcome doesn't, e.g. "two 6s", "only one 6".
-    yes_reason: Annotated[str, Field(min_length=1, max_length=60)]
-    no_reason: Annotated[str, Field(min_length=1, max_length=60)]
+    #: One short line explaining the pieces, e.g. "● = a cookie, | = a divider between kids".
+    legend: Annotated[str, Field(min_length=1, max_length=70)] | None = None
 
 
 class Origin(Model):
@@ -193,9 +193,7 @@ class Problem(Model):
     tags: Tags
     answer: Answer
     solution: list[SolutionStep] = Field(min_length=1)
-    #: What one outcome looks like: a ✅ and a ❌ outcome (from the checker) with reasons, drawn
-    #: as a small diagram of this type.
-    example: Example
+    #: How one outcome is drawn. The ✅/❌ outcomes and their reasons come from the checker.
     visual: Visual
     checker: Checker
     #: For answers the outcome count can't give (unequal chances, expectations).
@@ -212,7 +210,6 @@ class Problem(Model):
         texts = [self.statement, self.answer.prompt]
         texts += [m.feedback for m in self.answer.common_wrong + list(self.answer.skeleton.slot_mistakes)]
         texts += [step.title for step in self.solution] + [step.explanation for step in self.solution]
-        texts += [self.example.yes_reason, self.example.no_reason]
         unknown = {name for text in texts for name in PLACEHOLDER.findall(text)} - set(self.variables)
         if unknown:
             raise ValueError(f"text uses unknown placeholders {sorted(unknown)}")

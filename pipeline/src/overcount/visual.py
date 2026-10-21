@@ -78,7 +78,7 @@ def example_errors(kind: str, example: Any) -> list[str]:
     """Checks what a checker's example_* function returned (outcomes, highlight, pool, captions)."""
     if not isinstance(example, dict) or not {"yes", "no"} <= set(example):
         return ['example_* must return a dict with "yes" and "no" outcomes']
-    extra = set(example) - {"yes", "no", "highlight", "pool", "captions"}
+    extra = set(example) - {"yes", "no", "pool", "captions"}
     if extra:
         return [f"example_* returned unknown keys {sorted(extra)}"]
     errors = [f"yes: {e}" for e in shape_errors(kind, example["yes"])]
@@ -86,9 +86,6 @@ def example_errors(kind: str, example: Any) -> list[str]:
     if errors:
         return errors
     yes = example["yes"]
-    highlight = example.get("highlight", [])
-    if not isinstance(highlight, list) or not all(_is_count(i) and i < len(yes) for i in highlight):
-        errors.append(f"highlight must be positions 0..{len(yes) - 1} in the yes outcome, got {highlight!r}")
     if kind == "subset":
         pool = example.get("pool")
         # A pool is a list of labels, or named groups ({"juniors": [...], "seniors": [...]}),
@@ -118,6 +115,26 @@ def example_errors(kind: str, example: Any) -> list[str]:
     return errors
 
 
+MAX_REASON = 60
+
+
+def pair_errors(kind: str, pair: Any) -> list[str]:
+    """Checks one ✅/❌ pair as described by the checker: shapes, reasons, highlights."""
+    errors = []
+    for side in ("yes", "no"):
+        entry = pair[side]
+        outcome, reason = entry["outcome"], entry["reason"]
+        errors += [f"{side}: {e}" for e in shape_errors(kind, outcome)]
+        if not isinstance(reason, str) or not 1 <= len(reason) <= MAX_REASON:
+            errors.append(f"reason_* must return a line of 1–{MAX_REASON} characters, got {reason!r}")
+        highlight = entry.get("highlight", [])
+        if not isinstance(highlight, list) or not all(
+            _is_count(i) and isinstance(outcome, list) and i < len(outcome) for i in highlight
+        ):
+            errors.append(f"highlight_* must return positions in the outcome, got {highlight!r}")
+    return errors
+
+
 def normalize(kind: str, outcome: Any) -> Any:
     """A comparable form: tuples become lists, and unordered types are sorted."""
     if isinstance(outcome, (list, tuple)):
@@ -130,8 +147,11 @@ def _card(card: str) -> str:
     return card[:-1] + SUITS[card[-1]]
 
 
-def outcome_text(kind: str, outcome: list[Any]) -> str:
-    """The outcome written out for reading, e.g. "6, 6, 1, 3, 2" or "★★ | ★ | ★★★"."""
+def outcome_text(kind: str, outcome: list[Any], captions: list[str] | None = None) -> str:
+    """The outcome written out for reading, e.g. "6, 6, 1, 3, 2", "★★ | ★ | ★★★", or with
+    captions for boxes and stars & bars, "A=3, B=0, C=4"."""
+    if kind in ("boxes", "stars-bars") and captions and len(captions) == len(outcome):
+        return ", ".join(f"{c}={v}" for c, v in zip(captions, outcome, strict=True))
     match kind:
         case "circle":
             return " → ".join(outcome) + f" → (back to {outcome[0]})"

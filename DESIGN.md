@@ -189,7 +189,7 @@ complements.
   captions), circle, subset, boxes, stars & bars, cards, path (grid, route in accent, start and
   end in deco), matching (items on top, spots below, lines between).
 - **Subsets with more than one kind of item** (juniors and seniors) show each kind as its own
-  labelled row with a dashed line between, so they don't look interchangeable.
+  labelled row (no divider line), so they don't look interchangeable.
 - **Considered:** A · Tiles (flat, closest to the current UI), B · Line drawing (outlines only).
 - **Mockup:** [design/mockups/d4-visual-styles.html](design/mockups/d4-visual-styles.html)
 

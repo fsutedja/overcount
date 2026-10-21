@@ -7,9 +7,15 @@ const SUITS: Record<string, string> = { H: '♥', D: '♦', C: '♣', S: '♠' }
 
 export const card = (code: string) => ({ rank: code.slice(0, -1), suit: SUITS[code.slice(-1)] ?? '?', red: /[HD]$/.test(code) })
 
-/** The outcome written out for reading, e.g. "6, 6, 1, 3, 2" or "★★ | ★ | ★★★". */
-export function outcomeText(type: VisualType, outcome: Outcome): string {
+/**
+ * The outcome written out for reading, e.g. "6, 6, 1, 3, 2" or "★★ | ★ | ★★★", or with captions
+ * for boxes and stars & bars, "A=3, B=0, C=4".
+ */
+export function outcomeText(type: VisualType, outcome: Outcome, captions?: string[]): string {
   const items = outcome.map(String)
+  if ((type === 'boxes' || type === 'stars-bars') && captions?.length === outcome.length) {
+    return items.map((v, i) => `${captions[i]}=${v}`).join(', ')
+  }
   switch (type) {
     case 'circle':
       return `${items.join(' → ')} → (back to ${items[0]})`

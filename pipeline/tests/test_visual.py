@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from overcount.visual import example_errors, normalize, outcome_text, shape_errors
+from overcount.visual import example_errors, normalize, outcome_text, pair_errors, shape_errors
 
 
 @pytest.mark.parametrize(
@@ -42,14 +42,25 @@ def test_shape_errors(kind: str, outcome: list[Any], message: str) -> None:
 
 
 def test_example_errors() -> None:
-    assert example_errors("dice", {"yes": [6], "no": [1], "highlight": [0]}) == []
+    assert example_errors("dice", {"yes": [6], "no": [1]}) == []
     assert example_errors("dice", {"yes": [6]})
-    assert any("positions" in e for e in example_errors("dice", {"yes": [6], "no": [1], "highlight": [3]}))
     assert any("pool" in e for e in example_errors("subset", {"yes": ["A"], "no": ["B"]}))
     grouped = {"yes": ["J1", "S1"], "no": ["J1", "J2"], "pool": {"juniors": ["J1", "J2"], "seniors": ["S1"]}}
     assert example_errors("subset", grouped) == []
     assert example_errors("subset", grouped | {"no": ["J9"]})
     assert any("captions" in e for e in example_errors("dice", {"yes": [6], "no": [1], "captions": []}))
+
+
+def test_pair_errors_check_reasons_and_highlights() -> None:
+    good = {"outcome": [6, 1], "reason": "one 6", "highlight": [0]}
+    assert pair_errors("dice", {"yes": good, "no": good | {"highlight": []}}) == []
+    assert any("reason" in e for e in pair_errors("dice", {"yes": good, "no": good | {"reason": ""}}))
+    assert any("positions" in e for e in pair_errors("dice", {"yes": good, "no": good | {"highlight": [5]}}))
+
+
+def test_captions_label_counts() -> None:
+    assert outcome_text("stars-bars", [3, 0, 4], ["A", "B", "C"]) == "A=3, B=0, C=4"
+    assert outcome_text("dice", [3, 4], ["x", "y"]) == "3, 4"
 
 
 def test_unordered_types_compare_sorted() -> None:

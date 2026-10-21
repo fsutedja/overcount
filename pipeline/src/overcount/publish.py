@@ -100,8 +100,7 @@ def problem_json(problem: Problem, family_id: str, checker: Path) -> Json:
             }
             for step in problem.solution
         ],
-        "example": {"yes_reason": problem.example.yes_reason, "no_reason": problem.example.no_reason},
-        "visual": {"type": problem.visual.type},
+        "visual": problem.visual.model_dump(exclude_none=True),
         "instances": _instances_json(problem, checker),
     }
 

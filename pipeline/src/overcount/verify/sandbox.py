@@ -133,24 +133,52 @@ def run_count(kwargs, call):
         good += counts(outcome, kwargs)
     return encode(Fraction(good, total) if request.get("ratio") else good)
 
+def describe(outcome, kwargs):
+    entry = {"outcome": outcome_json(outcome), "reason": functions["reason"](outcome, **kwargs)}
+    if "highlight" in functions:
+        entry["highlight"] = outcome_json(functions["highlight"](outcome, **kwargs))
+    return entry
+
 def run_example(kwargs, call):
     example = functions["example"](**kwargs)
     if not isinstance(example, dict) or "yes" not in example or "no" not in example:
         raise TypeError('example_* must return a dict with "yes" and "no"')
-    report = {"example": {k: outcome_json(v) for k, v in example.items()}}
+    report = {"extra": {k: outcome_json(v) for k, v in example.items() if k not in ("yes", "no")}}
     report["yes_counts"] = counts(example["yes"], kwargs)
     report["no_counts"] = counts(example["no"], kwargs)
-    if "outcomes" in functions and request.get("membership"):
+    yes_samples, no_samples = [], []
+    if "outcomes" in functions and (request.get("membership") or request.get("extras")):
+        # One pass over every outcome: check the hand-picked pair are real outcomes, and pick a
+        # few more of each kind at random (reservoir sampling, seeded so builds are repeatable).
+        import random
+        rng = random.Random(call.get("seed", 0))
+        extras = request.get("extras", 0)
         wanted = {"yes": plain(example["yes"]), "no": plain(example["no"])}
         found = {"yes": False, "no": False}
+        seen = {"yes": 0, "no": 0}
         for outcome in functions["outcomes"](**kwargs):
             normal = plain(outcome)
-            for side, target in wanted.items():
-                if not found[side] and normal == target:
-                    found[side] = True
-            if all(found.values()):
-                break
-        report["yes_is_outcome"], report["no_is_outcome"] = found["yes"], found["no"]
+            if normal == wanted["yes"]:
+                found["yes"] = True
+                continue
+            if normal == wanted["no"]:
+                found["no"] = True
+                continue
+            if not extras:
+                continue
+            side = "yes" if counts(outcome, kwargs) else "no"
+            bucket = yes_samples if side == "yes" else no_samples
+            seen[side] += 1
+            if len(bucket) < extras:
+                bucket.append(outcome)
+            else:
+                k = rng.randrange(seen[side])
+                if k < extras:
+                    bucket[k] = outcome
+        if request.get("membership"):
+            report["yes_is_outcome"], report["no_is_outcome"] = found["yes"], found["no"]
+    pairs = [(example["yes"], example["no"])] + list(zip(yes_samples, no_samples))
+    report["pairs"] = [{"yes": describe(y, kwargs), "no": describe(n, kwargs)} for y, n in pairs]
     return report
 
 run = {"value": run_value, "count": run_count, "example": run_example}[request["mode"]]
@@ -199,10 +227,18 @@ def run_examples(
     *,
     unordered: bool,
     membership: bool,
+    extras: int = 0,
 ) -> list[dict[str, Any]]:
     """Calls example_* per call and reports whether its yes/no outcomes count (and exist, when
-    `membership` and an outcomes function are given)."""
-    request = {"mode": "example", "functions": functions, "unordered": unordered, "membership": membership}
+    `membership` and an outcomes function are given), plus up to `extras` more sampled pairs.
+    Every outcome comes back with its reason (and highlight, when the checker has one)."""
+    request = {
+        "mode": "example",
+        "functions": functions,
+        "unordered": unordered,
+        "membership": membership,
+        "extras": extras,
+    }
     results: list[dict[str, Any]] = _run(checker_path, request, calls)
     return results
 

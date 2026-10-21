@@ -81,22 +81,29 @@ describe('bank tags', () => {
 })
 
 describe('bank examples', () => {
-  it('gives every instance an example whose text matches the web text form', () => {
+  it('gives every instance example pairs whose text matches the web text form', () => {
     for (const problem of problems) {
       for (const instance of problem.instances) {
-        const { yes, no } = instance.example
-        expect(outcomeText(problem.visual.type, yes.outcome)).toBe(yes.text)
-        expect(outcomeText(problem.visual.type, no.outcome)).toBe(no.text)
-        expect(yes.text).not.toBe(no.text)
+        const { pairs, captions } = instance.example
+        expect(pairs.length).toBeGreaterThan(0)
+        for (const { yes, no } of pairs) {
+          expect(outcomeText(problem.visual.type, yes.outcome, captions)).toBe(yes.text)
+          expect(outcomeText(problem.visual.type, no.outcome, captions)).toBe(no.text)
+          expect(yes.text).not.toBe(no.text)
+          expect(yes.reason.length).toBeGreaterThan(0)
+          expect(no.reason.length).toBeGreaterThan(0)
+        }
       }
     }
   })
 
-  it('fills every placeholder in the example reasons', () => {
+  it('never puts the answer in an example', () => {
     for (const problem of problems) {
-      const instance = problem.instances[0]
-      for (const reason of [problem.example.yes_reason, problem.example.no_reason]) {
-        expect(fillTemplate(reason, instance.vars)).not.toMatch(/\{\{/)
+      for (const instance of problem.instances.slice(0, 15)) {
+        const answer = instance.values.answer
+        if (answer.type !== 'rational' || Number(answer.exact) < 20) continue
+        const shown = JSON.stringify(instance.example)
+        expect(shown).not.toMatch(new RegExp(`\\b${answer.exact}\\b`))
       }
     }
   })

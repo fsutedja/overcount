@@ -157,6 +157,13 @@ def test_example_gate_catches_a_wrong_example(tmp_path: Path, old: str, new: str
     assert any(message in f.message for f in failures), failures
 
 
+def test_example_gate_catches_a_bad_reason(tmp_path: Path) -> None:
+    folder = copy_family(tmp_path, "dice-at-least-one-six")
+    _break_checker(folder, 'return "it has a 6" if 6 in roll else "no 6 at all"', 'return ""')
+    failures = verify_family(folder).failures
+    assert any("reason_* must return" in f.message for f in failures), failures
+
+
 def test_example_gate_catches_an_outcome_of_the_wrong_size(tmp_path: Path) -> None:
     # A fixed 4-roll example on versions with 3–7 rolls.
     folder = copy_family(tmp_path, "dice-at-least-one-six")
@@ -198,9 +205,8 @@ DICE: dict[str, Any] = {
                     "explanation": "At least one six is everything except no sixes in {{n}} rolls.",
                 }
             ],
-            "example": {"yes_reason": "it has a 6", "no_reason": "no 6 at all"},
             "visual": {"type": "dice"},
-            "checker": {"counts": "counts", "example": "example"},
+            "checker": {"counts": "counts", "example": "example", "reason": "reason"},
             "simulator": "simulate",
         }
     ],
@@ -209,7 +215,8 @@ DICE: dict[str, Any] = {
 
 DICE_EXAMPLE = (
     "def counts(roll, n):\n    return 6 in roll\n\n"
-    "def example(n):\n    return {'yes': [6] + [1] * (n - 1), 'no': [1] * n, 'highlight': [0]}\n\n"
+    "def example(n):\n    return {'yes': [6] + [1] * (n - 1), 'no': [1] * n}\n\n"
+    "def reason(roll, n):\n    return 'has a 6' if 6 in roll else 'no 6'\n\n"
 )
 
 
