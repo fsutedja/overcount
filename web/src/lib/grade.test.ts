@@ -88,3 +88,25 @@ describe('Σ answers', () => {
     expect(gradeLatex('\\sum_{k=0}^{5000}k', rational('0'))).toMatchObject({ kind: 'invalid' })
   })
 })
+
+describe('blanks inside a Σ that hold an expression in the index', () => {
+  const expected = { type: 'indexed', latex: '6 - k', index: 'k' } as const
+
+  it('accepts any equivalent form', () => {
+    for (const latex of ['6-k', '-k+6', '\\frac{12-2k}{2}']) expect(gradeLatex(latex, expected)).toEqual({ kind: 'correct' })
+  })
+
+  it('rejects a different expression', () => {
+    expect(gradeLatex('k-6', expected)).toEqual({ kind: 'wrong' })
+    expect(gradeLatex('6', expected)).toEqual({ kind: 'wrong' })
+  })
+
+  it('rejects letters other than the index', () => {
+    expect(gradeLatex('n-k', expected).kind).toBe('invalid')
+  })
+
+  it('grades a typed derangement in the unsimplified form', () => {
+    const latex = '\\sum_{k=0}^{6}(-1)^{k}\\binom{6}{k}(6-k)!'
+    expect(gradeLatex(latex, { type: 'rational', exact: '265' })).toEqual({ kind: 'correct' })
+  })
+})

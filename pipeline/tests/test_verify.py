@@ -95,8 +95,17 @@ def test_golden_families_pass() -> None:
 
 def test_checker_gate_catches_a_wrong_answer(tmp_path: Path) -> None:
     folder = copy_family(tmp_path)
-    # The classic mistake: ordered picks instead of unordered.
-    edit_family(folder, lambda d: d["problems"][0]["answer"].update({"expr": "P(J,j)*P(S,s)"}))
+
+    # The classic mistake: ordered picks instead of unordered (skeleton made to match, so only
+    # the brute-force checker can tell).
+    def ordered(d: dict[str, Any]) -> None:
+        answer = d["problems"][0]["answer"]
+        answer["expr"] = "P(J,j)*P(S,s)"
+        for part in answer["skeleton"]["parts"]:
+            if "expr" in part:
+                part["expr"] = part["expr"].replace("C(", "P(")
+
+    edit_family(folder, ordered)
     report = verify_family(folder)
     assert not report.passed
     assert {f.gate for f in report.failures} == {"checker"}
@@ -108,6 +117,16 @@ def test_checker_gate_catches_an_unsafe_checker(tmp_path: Path) -> None:
     (folder / "checker.py").write_text("import os\n\ndef counts_root(team, J, S, j, s):\n    return True\n")
     report = verify_family(folder)
     assert any("not allowed" in f.message for f in report.failures)
+
+
+def test_schema_gate_catches_a_skeleton_that_does_not_add_up(tmp_path: Path) -> None:
+    folder = copy_family(tmp_path)
+    edit_family(
+        folder, lambda d: d["problems"][0]["answer"]["skeleton"]["slots"]["d"].update({"answer": "s+1"})
+    )
+    failures = verify_family(folder).failures
+    assert [f.gate for f in failures] == ["schema"]
+    assert "skeleton filled with its slot answers" in failures[0].message
 
 
 def test_schema_gate_catches_invalid_json(tmp_path: Path) -> None:
@@ -266,7 +285,7 @@ def test_route_sends_failures_to_review_with_a_report(tmp_path: Path) -> None:
     target = route(verify_family(folder), families, review)
     assert target == review / "committee-mixed"
     report = (target / "REPORT.md").read_text()
-    assert "**checker** · `committee-mixed`" in report
+    assert "**schema** · `committee-mixed`" in report
     assert "overcount promote committee-mixed" in report
 
 

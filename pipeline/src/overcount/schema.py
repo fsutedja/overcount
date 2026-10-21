@@ -9,7 +9,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from .expr import parse, unblanked_numbers
+from .expr import parse, slot_indices, unblanked_numbers
 from .taxonomy import Context, Difficulty, Method, MistakeTag, StepKind, Topic
 from .visual import VisualType
 
@@ -89,6 +89,21 @@ class Skeleton(Model):
     parts: list[SkeletonGroup | SkeletonOp] = Field(min_length=1)
     slots: dict[str, Slot] = Field(min_length=1)
     slot_mistakes: list[SlotMistake] = []
+
+    @property
+    def source(self) -> str:
+        """The whole skeleton as one expression, joined the same way the web app grades it."""
+        ops = {"*": "*", "+": "+", "-": "-", "/": "/"}
+        return " ".join(part.expr if isinstance(part, SkeletonGroup) else ops[part.op] for part in self.parts)
+
+    @property
+    def slot_indices(self) -> dict[str, str]:
+        """Slots inside a Σ body → its index letter (their answers may use it, e.g. `n-k`)."""
+        found: dict[str, str] = {}
+        for part in self.parts:
+            if isinstance(part, SkeletonGroup):
+                found |= slot_indices(parse(part.expr))
+        return found
 
     @model_validator(mode="after")
     def parts_and_slots_line_up(self) -> "Skeleton":
@@ -242,6 +257,15 @@ class Problem(Model):
             if clash:
                 raise ValueError(
                     f"Σ index {sorted(clash)} in {source!r} reuses a variable name; pick another letter"
+                )
+        indices = self.answer.skeleton.slot_indices
+        for slot, spec in self.answer.skeleton.slots.items():
+            allowed = set(self.variables) | ({indices[slot]} if slot in indices else set())
+            unknown = parse(spec.answer).variables - allowed
+            if unknown:
+                where = f" (only the Σ index {indices[slot]!r} may be added)" if slot in indices else ""
+                raise ValueError(
+                    f"slot {slot!r} answer {spec.answer!r} uses unknown names {sorted(unknown)}{where}"
                 )
         is_cards = "cards-poker" in self.tags.contexts
         if is_cards and self.deck is None:

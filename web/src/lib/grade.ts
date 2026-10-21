@@ -62,9 +62,17 @@ function literalNumber(node: MathJson): number | null {
 const isCountArgument = (value: number | null) =>
   value !== null && Number.isInteger(value) && value >= 0 && value <= MAX_ARGUMENT
 
-/** A count argument, or the index letter of an enclosing Σ (its limits are checked separately). */
+function mentions(node: MathJson, names: ReadonlySet<string>): boolean {
+  if (typeof node === 'string') return names.has(node)
+  return Array.isArray(node) && node.some((child) => mentions(child, names))
+}
+
+/**
+ * A count argument, or (inside a Σ) an expression in its index such as k or 6 − k. The index's
+ * range is limited by the Σ's limits, which are checked separately.
+ */
 const isCountOrIndex = (arg: MathJson, bound: ReadonlySet<string>) =>
-  (typeof arg === 'string' && bound.has(arg)) || isCountArgument(literalNumber(arg))
+  isCountArgument(literalNumber(arg)) || (bound.size > 0 && mentions(arg, bound) && findProblem(arg, bound) === null)
 
 /** Checks a Σ: ["Sum", body, ["Limits", index, lo, hi]], then its body with the index allowed. */
 function findSumProblem(args: MathJson[], bound: ReadonlySet<string>): string | null {
@@ -133,8 +141,39 @@ function expectedExpression(expected: Extract<StoredValue, { type: 'rational' }>
   return ce.box(['Rational', Number(numerator), Number(denominator)])
 }
 
+/** Replaces every use of a symbol with a number in a MathJSON tree. */
+function substitute(node: MathJson, name: string, value: number): MathJson {
+  if (node === name) return value
+  return Array.isArray(node) ? node.map((child) => substitute(child, name, value)) : node
+}
+
+const INDEX_SAMPLES = [0, 1, 2, 3, 4, 5]
+
+/**
+ * Grades a blank inside a Σ whose answer is an expression in the index (e.g. 6 − k): both
+ * sides are evaluated exactly for k = 0…5 and must agree wherever the expected one is defined.
+ * So 6 − k, −k + 6 and (12 − 2k)/2 are all right; k − 6 is wrong.
+ */
+function gradeIndexed(latex: string, expected: Extract<StoredValue, { type: 'indexed' }>): GradeResult {
+  const parsed = ce.parse(latex)
+  const bound = new Set([expected.index])
+  const problem = parsed.isValid ? findProblem(parsed.json as MathJson, bound) : findProblem(['Error'])
+  if (problem) return { kind: 'invalid', message: problem.replace('no letters like x', `only the letter ${expected.index}`) }
+  const reference = ce.parse(expected.latex).json as MathJson
+  let compared = 0
+  for (const k of INDEX_SAMPLES) {
+    const want = ce.box(substitute(reference, expected.index, k) as never).evaluate()
+    if (!Number.isFinite(want.re)) continue
+    const got = ce.box(exactDecimals(substitute(parsed.json as MathJson, expected.index, k)) as never).evaluate()
+    if (got.isEqual(want) !== true) return { kind: 'wrong' }
+    compared++
+  }
+  return compared >= 2 ? { kind: 'correct' } : { kind: 'wrong' }
+}
+
 export function gradeLatex(latex: string, expected: StoredValue): GradeResult {
   if (latex.trim() === '') return { kind: 'invalid', message: 'Enter an answer first.' }
+  if (expected.type === 'indexed') return gradeIndexed(latex, expected)
   const parsed = ce.parse(latex)
   const problem = parsed.isValid ? findProblem(parsed.json as MathJson) : findProblem(['Error'])
   if (problem) return { kind: 'invalid', message: problem }
@@ -163,6 +202,7 @@ export function matchesLatex(latex: string, referenceLatex: string): boolean {
 /** The computed number, shown as a bonus once the problem is solved. */
 export function formatValue(value: StoredValue): string {
   if (value.type === 'real') return value.approx.toPrecision(6)
+  if (value.type === 'indexed') return value.latex
   const [numerator, denominator] = value.exact.split('/')
   const pretty = (digits: string) => BigInt(digits).toLocaleString('en-US')
   return denominator ? `${pretty(numerator)}/${pretty(denominator)}` : pretty(numerator)

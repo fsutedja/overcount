@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 import sympy as sp
 
-from .expr import ExprError, StoredValue, evaluate, parse, parse_constraint, stored_value
+from .expr import ExprError, StoredValue, evaluate, parse, parse_constraint, stored_value, to_sympy
 from .schema import IntRange, Problem
 
 #: Instances shipped per problem. The default instance is always first.
@@ -58,19 +58,40 @@ def build_instance(problem: Problem, assignment: dict[str, sp.Expr]) -> Instance
         if not all(c.holds(assignment) for c in constraints):
             return None
         answer = evaluate(parse(problem.answer.expr), assignment)
+        skeleton = problem.answer.skeleton
+        indices = skeleton.slot_indices
+        # A slot inside a Σ body may use the index (its value is an expression in k); every other
+        # slot is a number.
         slots = {
-            slot: evaluate(parse(spec.answer), assignment)
-            for slot, spec in problem.answer.skeleton.slots.items()
+            slot: to_sympy(parse(spec.answer), assignment)
+            if slot in indices
+            else evaluate(parse(spec.answer), assignment)
+            for slot, spec in skeleton.slots.items()
         }
+        filled = evaluate(parse(skeleton.source), assignment | slots)
     except ExprError:
         return None
     if not _plausible(problem, answer):
         return None
+    if sp.simplify(filled - answer) != 0:
+        raise InstanceError(
+            f"the skeleton filled with its slot answers gives {filled}, not the answer {answer} "
+            f"(for {', '.join(f'{k}={v}' for k, v in assignment.items())})"
+        )
 
     vars_ = {name: _format(value) for name, value in assignment.items()}
-    values = {"answer": stored_value(answer)} | {f"slot.{slot}": stored_value(v) for slot, v in slots.items()}
+    values = {"answer": stored_value(answer)} | {
+        f"slot.{slot}": _slot_value(v, indices.get(slot)) for slot, v in slots.items()
+    }
     key = ",".join(f"{name}={vars_[name]}" for name in problem.variables)
     return Instance(key, vars_, values)
+
+
+def _slot_value(value: sp.Expr, index: str | None) -> StoredValue:
+    """A number, or for a slot inside a Σ body, the expression in its index, e.g. "5 - k"."""
+    if index is not None and value.free_symbols:
+        return {"type": "indexed", "latex": sp.latex(value), "index": index}
+    return stored_value(value)
 
 
 def _plausible(problem: Problem, answer: sp.Expr) -> bool:

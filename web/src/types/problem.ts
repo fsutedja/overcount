@@ -3,7 +3,11 @@
 // Text fields may contain {{var}} placeholders, filled from the instance.
 
 /** An exact rational ("840", "7/30") or, for answers involving e, a decimal approximation. */
-export type StoredValue = { type: 'rational'; exact: string } | { type: 'real'; approx: number }
+export type StoredValue =
+  | { type: 'rational'; exact: string }
+  | { type: 'real'; approx: number }
+  /** A blank inside a Σ whose answer uses the index, e.g. "5 - k" (only for skeleton slots). */
+  | { type: 'indexed'; latex: string; index: string }
 
 export type Difficulty = 'easy' | 'medium' | 'hard'
 

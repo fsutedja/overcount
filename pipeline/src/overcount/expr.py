@@ -130,6 +130,27 @@ def _check(node: ast.AST) -> None:
             raise ExprError(f"unsupported syntax: {ast.dump(node)[:60]}")
 
 
+def slot_indices(expr: Expr) -> dict[str, str]:
+    """Slots inside a Σ body → that Σ's index letter. Such a slot's answer may use the index
+    (e.g. `n-k`), so the learner fills in an expression rather than a number."""
+    found: dict[str, str] = {}
+
+    def visit(node: ast.AST, index: str | None) -> None:
+        match node:
+            case ast.Call(func=ast.Name(id="Sum"), args=[body, ast.Name(id=name), lo, hi]):
+                visit(lo, index)
+                visit(hi, index)
+                visit(body, name)
+                return
+            case ast.Name(id=slot) if _is_slot(slot) and index is not None:
+                found[slot.removeprefix(SLOT_PREFIX)] = index
+        for child in ast.iter_child_nodes(node):
+            visit(child, index)
+
+    visit(expr.tree, None)
+    return found
+
+
 def unblanked_numbers(expr: Expr) -> list[str]:
     """Numbers in a Help-skeleton group that the learner can't fill in (empty when every number is
     a [slot]). Only 1 (as in (−1)^k or 1/k!) and a Σ's own index may appear as-is."""

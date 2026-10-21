@@ -134,3 +134,45 @@ def test_roadmap_gives_every_topic_and_method_one_home() -> None:
     data["nodes"][0]["methods"].remove("circular")
     with pytest.raises(ValidationError, match="missing"):
         Roadmap.model_validate(data)
+
+
+def derangement_family(**slot_answers: str) -> dict[str, Any]:
+    """Round-table, rewritten as "nobody in their own seat" with the unsimplified Σ skeleton."""
+    family = copy.deepcopy(golden("round-table"))
+    family["problems"] = family["problems"][:1]
+    problem = family["problems"][0]
+    answers = {"e": "k", "a": "n", "b": "k", "c": "n-k", "lo": "0", "hi": "n"} | slot_answers
+    problem["answer"].update(
+        {
+            "expr": "n!*Sum((-1)^k/k!, k, 0, n)",
+            "common_wrong": [],
+            "skeleton": {
+                "parts": [
+                    {"group": "inclusion–exclusion", "expr": "Sum((-1)^[e]*C([a],[b])*([c])!, k, [lo], [hi])"}
+                ],
+                "slots": {slot: {"answer": answer} for slot, answer in answers.items()},
+            },
+        }
+    )
+    problem["solution"][-1]["expr"] = "n!*Sum((-1)^k/k!, k, 0, n)"
+    return family
+
+
+def test_slots_inside_a_sum_can_hold_expressions_in_the_index() -> None:
+    problem = Family.model_validate(derangement_family()).problems[0]
+    first = build_instances(problem)[0]
+    assert first.values["answer"] == {"type": "rational", "exact": "265"}  # n = 6
+    assert first.values["slot.c"] == {"type": "indexed", "latex": "6 - k", "index": "k"}
+    assert first.values["slot.e"] == {"type": "indexed", "latex": "k", "index": "k"}
+    assert first.values["slot.lo"] == {"type": "rational", "exact": "0"}
+
+
+def test_only_slots_inside_a_sum_may_use_its_index() -> None:
+    with pytest.raises(ValidationError, match="unknown names"):
+        Family.model_validate(derangement_family(hi="n+k"))
+
+
+def test_a_skeleton_that_does_not_equal_the_answer_is_rejected() -> None:
+    problem = Family.model_validate(derangement_family(c="n-k+1")).problems[0]
+    with pytest.raises(ValueError, match="skeleton filled with its slot answers"):
+        build_instances(problem)

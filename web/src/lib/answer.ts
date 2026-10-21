@@ -27,6 +27,7 @@ export function gradeFreeAnswer(latex: string, problem: Problem, instance: Insta
 
 function storedLatex(value: StoredValue): string {
   if (value.type === 'real') return String(value.approx)
+  if (value.type === 'indexed') return value.latex
   const [numerator, denominator] = value.exact.split('/')
   return denominator ? `\\frac{${numerator}}{${denominator}}` : numerator
 }
