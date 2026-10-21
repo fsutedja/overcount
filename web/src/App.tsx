@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Header } from './components/Header'
+import { MobileNav } from './components/MobileNav'
 import { HomeRoute } from './pages/HomeRoute'
 import { PracticePage } from './pages/PracticePage'
 import { ProgressPage } from './pages/ProgressPage'
@@ -17,7 +18,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <Header />
-      <main>
+      {/* Bottom padding on phones keeps content clear of the tab bar. */}
+      <main className="pb-[calc(4rem+env(safe-area-inset-bottom))] sm:pb-0">
         <Suspense fallback={loading}>
           <Routes>
             <Route path="/" element={<HomeRoute problemRoute={<ProblemRoute />} />} />
@@ -30,6 +32,7 @@ export default function App() {
           </Routes>
         </Suspense>
       </main>
+      <MobileNav />
     </BrowserRouter>
   )
 }

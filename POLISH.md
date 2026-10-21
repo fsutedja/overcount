@@ -17,8 +17,7 @@ milestone touches the same area, or in milestone 12 (polish and deploy).
 - [x] **Slot hint width:** superseded; blanks are now empty boxes with no hints.
 - [ ] **Header nav links** (Roadmap, Practice, Progress) are placeholders until milestones 7–9.
 
-- [ ] **Mobile nav:** the header links are hidden below 640px, so phones can't reach /practice
-  yet. Add a compact menu.
+- [x] **Mobile nav:** done, a bottom tab bar on phones (DESIGN.md, D15).
 - [x] **Σ in the Help skeleton:** done; bounds are stacked blanks.
 - [x] **Deploy routing:** `web/vercel.json` rewrites every path to index.html (real files such as
   /bank/*.json are served first), so /practice and /problem/:id work on reload. Set the Vercel

@@ -268,7 +268,7 @@ function ActivityCard({ streak, solved, cells }: { streak: number; solved: numbe
           <span key={cell.date} title={cell.date} className={`aspect-square rounded-[3px] border ${HEAT[cell.level]}`} />
         ))}
       </div>
-      <p className="mt-2 text-xs text-ink-muted">Last 5 weeks · darker = more solved</p>
+      <p className="mt-2 text-xs text-ink-muted">Last 5 weeks</p>
     </section>
   )
 }

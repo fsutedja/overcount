@@ -352,6 +352,16 @@ small-numbers check already explain what each part of the formula counts, and a 
   C · a hint card beside the focused blank.
 - **Mockup:** [design/mockups/d14-blank-links.html](design/mockups/d14-blank-links.html)
 
+## D15 · Navigation on phones
+
+**Decided: C · Tab bar at the bottom.** Below 640px (where the header links are hidden) a bar
+is fixed to the bottom with Roadmap, Practice and Progress, each a small line icon over its
+label. The current page is accent-ink with a 2px accent-ink line on top; the others are
+ink-muted. Pages get matching bottom padding so nothing hides under it; it respects the
+phone's safe area. Desktop keeps the header links.
+- **Considered:** A · second row of links under the logo, B · menu button with a drop-down.
+- **Mockup:** [design/mockups/d15-mobile-nav.html](design/mockups/d15-mobile-nav.html)
+
 ## No emoji
 
 - No emoji in the interface or in learner-facing content. The example lines read
