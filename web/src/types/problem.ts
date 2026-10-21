@@ -50,7 +50,7 @@ export interface CommonWrong {
 
 /**
  * One labelled part of the Help skeleton, e.g. C([a], [b]) labelled "juniors". `latex` is both
- * rendered (each [slot] becomes a "?" blank) and graded (each [slot] gets the learner's number).
+ * rendered (each [slot] becomes an empty box) and graded (each [slot] gets the learner's number).
  */
 export interface SkeletonGroup {
   label: string
@@ -60,7 +60,7 @@ export interface SkeletonGroup {
 export interface Skeleton {
   /** Groups joined by operators: group, op, group, op, group… */
   parts: ({ group: SkeletonGroup } | { op: { latex: string } })[]
-  /** Blank ids, in order. Blanks show only "?"; the group labels say what each part counts. */
+  /** Blank ids, in order. Blanks are empty boxes; the group labels say what each part counts. */
   slots: string[]
   slot_mistakes: (CommonWrong & { slot: string })[]
 }

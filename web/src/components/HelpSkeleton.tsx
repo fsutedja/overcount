@@ -12,20 +12,16 @@ interface HelpSkeletonProps {
 
 const slotIds = (latex: string) => [...latex.matchAll(/\[(\w+)\]/g)].map((m) => m[1])
 
-/**
- * "\binom{[a]}{[b]}" → editable MathLive blanks. Each blank holds an inner \placeholder{}, which
- * MathLive draws as the "?" placeholder symbol until the learner types over it.
- */
-const withBlanks = (latex: string) =>
-  latex.replace(/\[(\w+)\]/g, (_, slot: string) => `\\placeholder[${slot}]{\\placeholder{}}`)
+/** "\binom{[a]}{[b]}" → "\binom{\placeholder[a]{}}{\placeholder[b]{}}": empty boxes to fill in. */
+const withBlanks = (latex: string) => latex.replace(/\[(\w+)\]/g, (_, slot: string) => `\\placeholder[${slot}]{}`)
 
-/** A blank's typed value, with the "?" placeholder treated as empty. */
+/** A blank's typed value (an untouched blank reads as empty). */
 const blankValue = (field: MathfieldElement, slot: string) =>
   field.getPromptValue(slot).replace(/\\placeholder\{\}/g, '').trim()
 
 /**
  * The Help view: the answer's structure rendered as real math (stacked Σ bounds, raised
- * exponents, stacked fractions), with a "?" blank for every number and each group's label
+ * exponents, stacked fractions), with an empty box for every number and each group's label
  * underneath. Each group is a read-only MathLive field whose blanks are editable; wrong blanks
  * are marked after checking.
  */
@@ -72,7 +68,6 @@ function SkeletonGroup({ label, latex, autoFocus, wrongSlots, onChange, onSubmit
     const field = ref.current
     if (!field) return
     field.readOnly = true
-    field.placeholderSymbol = '?'
     field.mathVirtualKeyboardPolicy = 'auto'
     field.value = withBlanks(latex)
     if (autoFocus) field.focus()

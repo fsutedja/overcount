@@ -45,7 +45,7 @@ object and nothing else:
         {"op": "*" | "+" | "-" | "/"}. Start and end with a group. Labels are 1–3 words
         naming what that part counts (e.g. "juniors", "rotations").
       - `slots`: {"a": {"answer": "J"}, ...}. Each `[slot]` is used exactly once. `answer` is an
-        expression in the variables. Blanks show only "?" (no hints), so the group labels must
+        expression in the variables. Blanks are empty boxes (no hints), so the group labels must
         say what each part counts.
       - **Every number is a blank.** Inside a group, every number the learner needs is a
         `[slot]`: Σ lower and upper bounds, factorial bases, coefficients, exponents. Only `1`

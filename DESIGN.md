@@ -224,6 +224,13 @@ complements.
 - **Considered:** A · Lesson card above the list, B · Lesson beside the list.
 - **Mockup:** [design/mockups/d6-method-explainer.html](design/mockups/d6-method-explainer.html)
 
+## Help skeleton blanks
+
+- The skeleton is rendered math (MathLive, read-only) with editable blanks. Blanks are **empty
+  boxes**: no "?" and no hint text. The group labels underneath say what each part counts.
+- A wrong blank is outlined in `--wrong-ink` after checking; MathLive's own accent hue is set
+  to the teal of `--accent`.
+
 ## D3 · Home and progress
 
 Pending (before milestone 9).

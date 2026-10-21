@@ -79,7 +79,7 @@ class SkeletonOp(Model):
 
 
 class Slot(Model):
-    #: Blanks show only "?": a hint inside the box would give the answer away. The group's label
+    #: Blanks are empty boxes: a hint inside the box would give the answer away. The group's label
     #: underneath says what that part counts.
     #: Expression in the problem's variables giving this slot's value, e.g. "J".
     answer: NonEmpty

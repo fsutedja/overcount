@@ -12,8 +12,8 @@ milestone touches the same area, or in milestone 12 (polish and deploy).
   (much less gzipped). If it grows, ship extra pairs for fewer number sets or load them lazily.
 - [ ] **Help skeleton on phones:** at phone width the one-line skeleton wraps onto two lines.
   Decide whether that's fine or whether the slot boxes should shrink.
-- [x] **Skeleton powers and fractions:** done; the skeleton is rendered math with "?" blanks.
-- [x] **Slot hint width:** superseded; blanks now show only "?".
+- [x] **Skeleton powers and fractions:** done; the skeleton is rendered math with empty boxes as blanks.
+- [x] **Slot hint width:** superseded; blanks are now empty boxes with no hints.
 - [ ] **Header nav links** (Roadmap, Practice, Progress) are placeholders until milestones 7–9.
 
 - [ ] **Mobile nav:** the header links are hidden below 640px, so phones can't reach /practice
