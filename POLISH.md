@@ -19,8 +19,9 @@ milestone touches the same area, or in milestone 12 (polish and deploy).
 - [ ] **Mobile nav:** the header links are hidden below 640px, so phones can't reach /practice
   yet. Add a compact menu.
 - [x] **Σ in the Help skeleton:** done; bounds are stacked blanks.
-- [ ] **Deploy routing:** add a Vercel rewrite to index.html so /practice and /problem/:id work on
-  reload.
+- [x] **Deploy routing:** `web/vercel.json` rewrites every path to index.html (real files such as
+  /bank/*.json are served first), so /practice and /problem/:id work on reload. Set the Vercel
+  project's root directory to `web/` when deploying.
 
 ## Content
 - [ ] **Stirling and identical boxes:** balls-into-boxes skips distinct or identical balls into
