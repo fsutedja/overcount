@@ -12,7 +12,7 @@ milestone touches the same area, or in milestone 12 (polish and deploy).
   Decide whether that's fine or whether the slot boxes should shrink.
 - [ ] **Skeleton powers and fractions:** `[a]^[b]` shows a literal `^` between two boxes. Render the
   exponent box raised (and fractions stacked) so the skeleton looks like the math it stands for.
-- [ ] **Slot hint width:** longer hints get cut off ("non-sixes" shows as "non-sixe"). Let boxes
+- [x] **Slot hint width:** (fixed in f77fb15: boxes grow to fit, hints capped at 14 characters) longer hints get cut off ("non-sixes" shows as "non-sixe"). Let boxes
   grow to fit their hint, or cap hints at a short length in the prompt and schema.
 - [ ] **Header nav links** (Roadmap, Practice, Progress) are placeholders until milestones 7–9.
 

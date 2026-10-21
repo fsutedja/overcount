@@ -41,12 +41,24 @@
   are only for Hard problems. The `family-v2` prompt teaches this, and `hearts-or-face-cards`
   passed under it and is published.
 
+- **Practice by method** (2026-10-21): 19 counting methods (`taxonomy.py`), each placed under one
+  roadmap node (`content/roadmap.yaml`). There are no separate `/methods` or `/topics` pages.
+  `/practice` is a temporary methods list (until the roadmap Home), and `/practice?method=&kind=`
+  filters problems. Every problem gets a Counting/Probability kind derived from its primary topic.
+  Progress is saved in localStorage behind `ProgressStore` (pulled forward from milestones 7–8).
+- **Σ in the grammar** (`Sum(body, k, lo, hi)`) instead of a derangement function; matching
+  problems use the Pitman form. Stirling/identical-box cases are out of scope for now.
+- **Review before publishing:** generated families stay in `staging/` until `overcount approve`.
+  `overcount review` writes a side-by-side page, and `stats` shows the funnel.
+
 **Next**
-1. **Generate the remaining targets** in `content/targets.yaml` with `family-v2` (the free tier
-   allows this across a few runs).
-2. **Milestones 7–9:** Practice and Daily pages; progress saved with `ProgressStore`; the Home
+1. **Pilot review:** 3 methods (stars-and-bars, derangements, symmetry-relative-order) plus the 3
+   family-v1 regenerations. Approve or reject them on `staging/review.html`.
+2. **Generate the other 16 methods** (48 families) in background batches, each followed by a
+   review.
+3. **Milestones 7–9:** Daily page, heatmap and charts; progress saved with `ProgressStore`; the Home
    roadmap. Design checkpoint D3 comes before milestone 9.
-3. **Follow-ups** are tracked in [POLISH.md](POLISH.md), for example lazy-loading the 1.6 MB
+4. **Follow-ups** are tracked in [POLISH.md](POLISH.md), for example lazy-loading the 1.6 MB
    Compute Engine bundle before the deploy.
 
 ## Context
