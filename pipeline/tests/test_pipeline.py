@@ -210,3 +210,18 @@ def test_roadmap_after_must_point_to_earlier_stops() -> None:
     data["nodes"][0]["after"] = ["combinations"]
     with pytest.raises(ValidationError, match="earlier stops"):
         Roadmap.model_validate(data)
+
+
+@pytest.mark.parametrize(
+    ("groups", "visual_type", "message"),
+    [
+        ([{"label": "hearts", "suits": ["X"]}], "cards", "unknown suits"),
+        ([{"label": "nothing"}], "cards", "needs suits, ranks"),
+        ([{"label": "hearts", "suits": ["H"]}], "dice", "only for the cards visual"),
+    ],
+)
+def test_deck_groups_are_checked(groups: list[dict[str, Any]], visual_type: str, message: str) -> None:
+    from overcount.schema import Visual
+
+    with pytest.raises(ValidationError, match=message):
+        Visual.model_validate({"type": visual_type, "deck_groups": groups})

@@ -12,7 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from .expr import parse, slot_indices, unblanked_numbers
 from .lessons import plain_text
 from .taxonomy import Context, Difficulty, Method, MistakeTag, StepKind, Topic
-from .visual import VisualType
+from .visual import RANKS, SUITS, VisualType
 
 PLACEHOLDER = re.compile(r"\{\{(\w+)\}\}")
 SLOT_MARKER = re.compile(r"\[(\w+)\]")
@@ -214,10 +214,38 @@ class Checker(Model):
     highlight: FunctionName | None = None
 
 
+class DeckGroup(Model):
+    """A set of cards shaded on the card-deck grid (DESIGN.md, D11), e.g. hearts or face cards.
+
+    A card is in the group if its suit is in `suits` (when given) and its rank in `ranks`
+    (when given)."""
+
+    label: Annotated[str, Field(min_length=1, max_length=20)]
+    suits: list[str] = []
+    ranks: list[str] = []
+
+    @model_validator(mode="after")
+    def known_cards(self) -> "DeckGroup":
+        if not self.suits and not self.ranks:
+            raise ValueError("a deck group needs suits, ranks, or both")
+        bad = [s for s in self.suits if s not in SUITS] + [r for r in self.ranks if r not in RANKS]
+        if bad:
+            raise ValueError(f"unknown suits or ranks {bad}; use H D C S and A 2 … 10 J Q K")
+        return self
+
+
 class Visual(Model):
     type: VisualType
     #: One short line explaining the pieces, e.g. "● = a cookie, | = a divider between kids".
     legend: Annotated[str, Field(min_length=1, max_length=70)] | None = None
+    #: Card problems only: up to two groups to shade on the 13×4 deck grid (D11).
+    deck_groups: list[DeckGroup] = Field(default_factory=list, max_length=2)
+
+    @model_validator(mode="after")
+    def groups_only_for_cards(self) -> "Visual":
+        if self.deck_groups and self.type != "cards":
+            raise ValueError("deck_groups are only for the cards visual")
+        return self
 
 
 class Origin(Model):

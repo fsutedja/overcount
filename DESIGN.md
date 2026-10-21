@@ -295,6 +295,21 @@ the same as the problem card tabs. Filters live in the address, so they survive 
 - **Considered:** A · a row of chips per filter, B · a row of dropdowns.
 - **Mockup:** [design/mockups/d10-dots-and-filters.html](design/mockups/d10-dots-and-filters.html)
 
+## D11 · Card-deck grid
+
+**Decided: A · both groups shaded, stripes where they overlap.**
+
+- Card problems that name their groups (`visual.deck_groups`, at most 2) show the 13×4 deck in
+  the Example tab instead of the plain row of cards: suits as rows (♥ ♦ ♣ ♠, red suits in
+  `--wrong-ink`), ranks as columns.
+- The first group is shaded `--accent-soft`, the second `--deco-soft` (new token: light
+  terracotta, `#f3e2d8` light / `#3b2c24` dark), cards in both are striped with the two, and
+  the ✅ hand's cards get a 2.5px `--ink` outline. "Show another example" moves the outline.
+- A legend names each group with its size, "both" and "the ✅ hand", so the groups don't rely on
+  colour alone.
+- **Considered:** B · only the hand, groups named by edge labels; C · two small decks.
+- **Mockup:** [design/mockups/d11-card-deck.html](design/mockups/d11-card-deck.html)
+
 ## Help flow (answer panel)
 
 - The free answer box comes first. **Fill in the blanks** (accent-ink link, where Help used to be)

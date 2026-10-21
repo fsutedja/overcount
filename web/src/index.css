@@ -15,6 +15,7 @@
   --color-accent-soft: var(--accent-soft);
   --color-on-accent: var(--on-accent);
   --color-deco: var(--deco);
+  --color-deco-soft: var(--deco-soft);
   --color-correct-bg: var(--correct-bg);
   --color-correct-ink: var(--correct-ink);
   --color-wrong-bg: var(--wrong-bg);

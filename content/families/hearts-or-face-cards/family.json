@@ -146,7 +146,23 @@
       ],
       "deck": "standard",
       "visual": {
-        "type": "cards"
+        "type": "cards",
+        "deck_groups": [
+          {
+            "label": "hearts",
+            "suits": [
+              "H"
+            ]
+          },
+          {
+            "label": "face cards",
+            "ranks": [
+              "J",
+              "Q",
+              "K"
+            ]
+          }
+        ]
       },
       "checker": {
         "outcomes": "outcomes",
@@ -302,7 +318,24 @@
       ],
       "deck": "standard",
       "visual": {
-        "type": "cards"
+        "type": "cards",
+        "deck_groups": [
+          {
+            "label": "red cards",
+            "suits": [
+              "H",
+              "D"
+            ]
+          },
+          {
+            "label": "face cards",
+            "ranks": [
+              "J",
+              "Q",
+              "K"
+            ]
+          }
+        ]
       },
       "checker": {
         "outcomes": "outcomes",
@@ -444,7 +477,23 @@
       ],
       "deck": "standard",
       "visual": {
-        "type": "cards"
+        "type": "cards",
+        "deck_groups": [
+          {
+            "label": "hearts",
+            "suits": [
+              "H"
+            ]
+          },
+          {
+            "label": "face cards",
+            "ranks": [
+              "J",
+              "Q",
+              "K"
+            ]
+          }
+        ]
       },
       "checker": {
         "outcomes": "outcomes",

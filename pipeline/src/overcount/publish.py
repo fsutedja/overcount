@@ -105,7 +105,9 @@ def problem_json(problem: Problem, family_id: str, checker: Path) -> Json:
             for step in problem.help_steps
         ],
         "help_check": help_check(problem, instances, checker),
-        "visual": problem.visual.model_dump(exclude_none=True),
+        # Only the fields a problem sets (an empty deck_groups list is left out).
+        "visual": {"type": problem.visual.type}
+        | problem.visual.model_dump(exclude_none=True, exclude_defaults=True),
         "instances": _instances_json(problem, instances, checker),
     }
 

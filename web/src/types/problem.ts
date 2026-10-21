@@ -109,6 +109,13 @@ export type VisualType =
   | 'path'
   | 'matching'
 
+/** Cards shaded on the deck grid (D11): suit in `suits` (if given) and rank in `ranks` (if given). */
+export interface DeckGroup {
+  label: string
+  suits?: string[]
+  ranks?: string[]
+}
+
 /** An outcome as plain data: die faces, labels, counts, cards like "KH", path steps "R"/"U". */
 export type Outcome = (number | string)[]
 
@@ -161,7 +168,7 @@ export interface Problem {
   help_check: HelpCheck
   solution: SolutionStep[]
   /** How one outcome is drawn; `legend` explains the pieces, e.g. "★ = a candy". */
-  visual: { type: VisualType; legend?: string }
+  visual: { type: VisualType; legend?: string; deck_groups?: DeckGroup[] }
   instances: Instance[]
 }
 

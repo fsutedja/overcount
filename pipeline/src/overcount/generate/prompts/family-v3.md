@@ -115,6 +115,11 @@ Visual types and the exact shape of ONE outcome for each (an outcome is a JSON l
 - At most 12 pieces per outcome, so keep variable ranges small enough for that.
 - `legend` (optional, ≤ 70 characters) explains the pieces, e.g. "● = a cookie, | = a divider
   between kids".
+- Card problems: `deck_groups` (optional, at most 2) names the sets the problem is about, and
+  the site shades them on a 13×4 deck grid with their overlap striped, e.g.
+  `[{"label": "hearts", "suits": ["H"]}, {"label": "face cards", "ranks": ["J", "Q", "K"]}]`.
+  Suits are H D C S; ranks are A 2 … 10 J Q K. Use it whenever the problem is about one or two
+  groups of cards.
 
 ## Card problems (context "cards-poker")
 

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Instance, Problem } from '../types/problem'
+import { DeckGrid } from './DeckGrid'
 import { OutcomeVisual } from './OutcomeVisual'
 
 /**
@@ -27,7 +28,12 @@ export function ExampleBlock({ problem, instance }: { problem: Problem; instance
 
   return (
     <div className="space-y-3">
-      <OutcomeVisual type={problem.visual.type} side={pair.yes} pool={pool} captions={captions} />
+      {problem.visual.deck_groups?.length ? (
+        // Card problems with groups show the whole deck, groups shaded and the hand outlined (D11).
+        <DeckGrid groups={problem.visual.deck_groups} hand={pair.yes.outcome.map(String)} />
+      ) : (
+        <OutcomeVisual type={problem.visual.type} side={pair.yes} pool={pool} captions={captions} />
+      )}
       {problem.visual.legend && <p className="text-center text-sm text-ink-muted">{problem.visual.legend}</p>}
       <ul className="space-y-1.5" aria-live="polite">
         <li className="rounded-lg bg-correct-bg px-3 py-1.5 text-correct-ink">
