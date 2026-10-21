@@ -1,6 +1,6 @@
 # The learning path (PLAN.md §5). Every topic tag and every counting method belongs to exactly one
 # node; `overcount build` checks that and publishes this into web/public/bank/index.json.
-# The method placement is a proposal to confirm at design checkpoint D3.
+# `after` lists the stops that come right before a stop; the Home map (DESIGN.md, D3) draws them.
 
 nodes:
   - id: counting-basics
@@ -20,42 +20,49 @@ nodes:
       - divide-overcounting
 
   - id: combinations
+    after: [counting-basics]
     title: Combinations
     blurb: Choosing groups where order doesn't matter.
     topics: [counting/combinations]
     methods: [combinations, lattice-paths, binomial-identities]
 
   - id: stars-and-bars
+    after: [combinations]
     title: Stars and bars
     blurb: Sharing identical items among distinct boxes.
     topics: [counting/stars-bars]
     methods: [stars-and-bars, balls-into-boxes]
 
   - id: complement
+    after: [combinations]
     title: Complement
     blurb: Count what you don't want and subtract it.
     topics: [counting/complement]
     methods: [complement, pigeonhole]
 
   - id: inclusion-exclusion
+    after: [stars-and-bars, complement]
     title: Inclusion–exclusion
     blurb: Add the groups, subtract the overlaps.
     topics: [counting/inclusion-exclusion]
     methods: [inclusion-exclusion, derangements]
 
   - id: probability-basics
+    after: [inclusion-exclusion]
     title: Probability basics
     blurb: Equally likely outcomes, independence, and expected value.
     topics: [probability/basics, probability/independence, probability/expectation]
     methods: []
 
   - id: conditional
+    after: [probability-basics]
     title: Conditional probability
     blurb: Updating probabilities when you learn something.
     topics: [probability/conditional-bayes]
     methods: []
 
   - id: distributions
+    after: [probability-basics]
     title: Distributions
     blurb: Binomial, hypergeometric, geometric, and Poisson.
     topics: [distributions/binomial, distributions/hypergeometric, distributions/geometric, distributions/poisson]

@@ -18,12 +18,24 @@ class Node(BaseModel):
     blurb: str = Field(min_length=1)
     topics: list[Topic] = Field(min_length=1)
     methods: list[Method] = []
+    #: Stops that come right before this one; the Home map draws a line from each.
+    after: list[Slug] = []
 
 
 class Roadmap(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     nodes: list[Node] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def after_points_to_earlier_stops(self) -> "Roadmap":
+        seen: set[str] = set()
+        for node in self.nodes:
+            unknown = [n for n in node.after if n not in seen]
+            if unknown:
+                raise ValueError(f"{node.id}: 'after' must name earlier stops, got {unknown}")
+            seen.add(node.id)
+        return self
 
     @model_validator(mode="after")
     def each_topic_and_method_has_one_home(self) -> "Roadmap":
@@ -53,6 +65,7 @@ def roadmap_json(roadmap: Roadmap) -> list[dict[str, Any]]:
             "title": node.title,
             "blurb": node.blurb,
             "topics": list(node.topics),
+            "after": list(node.after),
             "methods": [
                 {"id": method, "name": METHOD_INFO[method][0], "blurb": METHOD_INFO[method][1]}
                 for method in node.methods

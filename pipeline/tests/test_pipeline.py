@@ -199,3 +199,14 @@ def test_help_check_lists_the_terms_of_a_sum() -> None:
     assert check["vars"] == {"n": "4"}
     assert check["worked"] == "24 - 24 + 12 - 4 + 1"  # = 9 derangements of 4
     assert "outcomes" not in check  # 9 is more than we list
+
+
+def test_roadmap_after_must_point_to_earlier_stops() -> None:
+    import yaml
+
+    from overcount.roadmap import Roadmap
+
+    data = yaml.safe_load((REPO_ROOT / "content" / "roadmap.yaml").read_text())
+    data["nodes"][0]["after"] = ["combinations"]
+    with pytest.raises(ValidationError, match="earlier stops"):
+        Roadmap.model_validate(data)

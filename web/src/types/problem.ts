@@ -196,6 +196,8 @@ export interface RoadmapNode {
   title: string
   blurb: string
   topics: string[]
+  /** Stops that come right before this one (the Home map draws a line from each). */
+  after: string[]
   methods: MethodInfo[]
 }
 

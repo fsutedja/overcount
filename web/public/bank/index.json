@@ -10,6 +10,7 @@
         "counting/permutations",
         "counting/symmetry-circular"
       ],
+      "after": [],
       "methods": [
         {
           "id": "product-sum-rule",
@@ -70,6 +71,9 @@
       "topics": [
         "counting/combinations"
       ],
+      "after": [
+        "counting-basics"
+      ],
       "methods": [
         {
           "id": "combinations",
@@ -95,6 +99,9 @@
       "topics": [
         "counting/stars-bars"
       ],
+      "after": [
+        "combinations"
+      ],
       "methods": [
         {
           "id": "stars-and-bars",
@@ -115,6 +122,9 @@
       "topics": [
         "counting/complement"
       ],
+      "after": [
+        "combinations"
+      ],
       "methods": [
         {
           "id": "complement",
@@ -134,6 +144,10 @@
       "blurb": "Add the groups, subtract the overlaps.",
       "topics": [
         "counting/inclusion-exclusion"
+      ],
+      "after": [
+        "stars-and-bars",
+        "complement"
       ],
       "methods": [
         {
@@ -157,6 +171,9 @@
         "probability/independence",
         "probability/expectation"
       ],
+      "after": [
+        "inclusion-exclusion"
+      ],
       "methods": []
     },
     {
@@ -165,6 +182,9 @@
       "blurb": "Updating probabilities when you learn something.",
       "topics": [
         "probability/conditional-bayes"
+      ],
+      "after": [
+        "probability-basics"
       ],
       "methods": []
     },
@@ -177,6 +197,9 @@
         "distributions/hypergeometric",
         "distributions/geometric",
         "distributions/poisson"
+      ],
+      "after": [
+        "probability-basics"
       ],
       "methods": []
     }
