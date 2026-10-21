@@ -10,7 +10,7 @@ structure as a one-line formula with empty boxes to fill in, explains *why* step
 only then shows the worked solution. Answers are math expressions like `C(7,3)·C(5,2)`, graded
 by exact value, so any equivalent form counts.
 
-<!-- Demo GIF goes here (docs/demo.gif). -->
+![Solving a problem: a first try, the fill-in-the-blanks skeleton, a Help step, then "Correct. That's 840."](docs/demo.gif)
 
 ## How it works
 
