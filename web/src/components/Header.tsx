@@ -12,7 +12,8 @@ const NAV_ITEMS: { label: string; to?: string }[] = [
 export function Header() {
   return (
     // Pinned on tablets and up so the nav stays in reach; phones use the bottom tab bar instead.
-    <header className="z-20 border-b border-border bg-bg sm:sticky sm:top-0">
+    // Soft terracotta with a striped band below, like a shop awning (DESIGN.md, D16).
+    <header className="z-20 bg-deco-soft sm:sticky sm:top-0">
       <div className="mx-auto flex max-w-5xl items-center gap-10 px-4 py-3">
         <Link to="/" className="flex items-center gap-3" aria-label="Overcount home">
           <img src={logoMark} alt="" className="h-7 w-auto [image-rendering:pixelated]" />
@@ -47,6 +48,11 @@ export function Header() {
           <ThemeToggle />
         </div>
       </div>
+      <div
+        aria-hidden="true"
+        className="h-2"
+        style={{ background: 'repeating-linear-gradient(90deg, var(--deco) 0 18px, var(--card) 18px 36px)' }}
+      />
     </header>
   )
 }

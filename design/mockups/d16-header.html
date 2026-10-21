@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D16 header background</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Pixelify+Sans&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4efe6;--card:#fffbf3;--card-sunken:#f8f3ea;--border:#e4d9c6;--ink:#2b2823;--ink-muted:#675f53;--accent:#4f8f87;--accent-ink:#276660;--accent-soft:#e3eeec;--on-accent:#fffbf3;--deco:#c2734f;--deco-soft:#f3e2d8;--deco-ink:#9a4f2e;--counter:#3a3530;--counter-ink:#f4efe6}
+:root[data-theme=dark]{--bg:#1f1d1a;--card:#2a2723;--card-sunken:#24221e;--border:#3a362f;--ink:#eee7da;--ink-muted:#b3aa9b;--accent:#5fa69c;--accent-ink:#7cc1b7;--accent-soft:#23332f;--on-accent:#1f1d1a;--deco:#d99474;--deco-soft:#3b2c24;--deco-ink:#e6a98c;--counter:#2f2b26;--counter-ink:#eee7da}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',sans-serif;padding:24px 16px 60px;line-height:1.45}
+.wrap{max-width:900px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--ink-muted);margin:0 0 20px}
+.opt{margin-bottom:30px}
+.opt>h2{margin:0 0 2px;font-size:18px}.why{color:var(--ink-muted);font-size:14px;margin:0 0 10px}
+.frame{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--bg)}
+.hdr{display:flex;align-items:center;gap:28px;padding:12px 20px;position:relative}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Pixelify Sans';font-size:22px;line-height:1}
+.logo .lo{color:var(--accent-ink)}.logo .lc{color:var(--deco)}
+.pan{width:26px;height:18px;border-radius:0 0 9px 9px;background:#2b2823;position:relative}.pan:after{content:"";position:absolute;right:-10px;top:6px;width:10px;height:4px;background:#2b2823}
+.pan i{position:absolute;left:7px;top:-5px;width:11px;height:8px;background:#fffbf3;border-radius:50%}.pan i:after{content:"";position:absolute;left:3px;top:2px;width:4px;height:4px;background:#e2a83b;border-radius:50%}
+.nav{display:flex;gap:22px;font-size:14px;font-weight:700;color:var(--ink-muted)}
+.nav .on{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent-ink);text-decoration-thickness:2px;text-underline-offset:4px}
+.moon{margin-left:auto;color:var(--ink-muted)}
+.page{padding:18px 20px 22px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ph{background:var(--card);border:1px solid var(--border);border-radius:12px;height:90px}
+.lbl{font-weight:700;font-size:14px;margin:0 0 6px}
+
+/* A: order-ticket cream with scalloped bottom edge */
+.a{background:var(--card)}
+.a:after{content:"";position:absolute;left:0;right:0;bottom:-7px;height:8px;background:radial-gradient(circle at 7px 0,var(--card) 6px,transparent 6.5px) 0 0/14px 8px repeat-x;z-index:1}
+.a-line{border-bottom:1px solid var(--border)}
+
+/* B: kitchen tiles, light teal with faint grout lines */
+.b{background-color:var(--accent-soft);background-image:linear-gradient(to right,rgba(39,102,96,.10) 1px,transparent 1px),linear-gradient(to bottom,rgba(39,102,96,.10) 1px,transparent 1px);background-size:22px 22px;border-bottom:2px solid var(--accent)}
+
+/* C: awning, terracotta-soft with a striped band below */
+.c{background:var(--deco-soft)}
+.c-stripe{height:8px;background:repeating-linear-gradient(90deg,var(--deco) 0 18px,var(--card) 18px 36px)}
+
+/* D: dark counter top */
+.d{background:var(--counter);border-bottom:3px solid var(--deco)}
+.d .nav{color:#cfc6b6}.d .nav .on{color:var(--counter-ink);text-decoration-color:var(--deco)}
+.d .logo .lo{color:#7cc1b7}.d .logo .lc{color:#d99474}.d .moon{color:#cfc6b6}
+.tb{position:fixed;top:12px;right:12px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--ink);font:inherit;cursor:pointer;z-index:3}
+</style>
+</head>
+<body>
+<button class="tb" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">Light / dark</button>
+<div class="wrap">
+<h1>D16 · Header background</h1>
+<p class="sub">The pinned header on a problem page. Each option sets it apart from the page background with a light kitchen touch; all colours are from the existing palette.</p>
+<template id="inner"><span class="logo"><span class="pan"><i></i></span><span><span class="lo">over</span><span class="lc">count</span></span></span><nav class="nav"><span>Roadmap</span><span class="on">Practice</span><span>Progress</span></nav><span class="moon">◐</span></template>
+<template id="page"><div class="page"><div><p class="lbl">Problem</p><div class="ph"></div></div><div><p class="lbl">Your answer</p><div class="ph"></div></div></div></template>
+
+<section class="opt"><h2>A · Order ticket</h2><p class="why">Card cream, like the problem card, with a small scalloped bottom edge echoing its ticket top. The quietest: lighter than the page, same feel as the cards.</p>
+<div class="frame"><div class="hdr a" data-i></div><div data-p></div></div></section>
+
+<section class="opt"><h2>B · Kitchen tiles</h2><p class="why">Light teal with faint tile grout lines and a teal line underneath. Reads as a tiled kitchen wall; ties the header to the "over" teal.</p>
+<div class="frame"><div class="hdr b" data-i></div><div data-p></div></div></section>
+
+<section class="opt"><h2>C · Shop awning</h2><p class="why">Soft terracotta with a terracotta and cream striped band below, like a restaurant awning. The most playful; ties to the "count" terracotta.</p>
+<div class="frame"><div class="hdr c" data-i></div><div class="c-stripe"></div><div data-p></div></div></section>
+
+<section class="opt"><h2>D · Counter top</h2><p class="why">A dark warm counter colour with a terracotta edge, in both themes. Strongest contrast, frames the page like a kitchen pass; the logo uses its brighter teal and terracotta to stay readable.</p>
+<div class="frame"><div class="hdr d" data-i></div><div data-p></div></div></section>
+</div>
+<script>
+document.querySelectorAll('[data-i]').forEach((el)=>el.appendChild(document.getElementById('inner').content.cloneNode(true)));
+document.querySelectorAll('[data-p]').forEach((el)=>el.replaceWith(document.getElementById('page').content.cloneNode(true)));
+</script>
+</body>
+</html>
