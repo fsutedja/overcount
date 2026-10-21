@@ -10,6 +10,13 @@ const KIND_LABEL: Record<Kind, string> = {
   counting: 'Counting',
   probability: 'Probability',
 }
+const DIFFICULTIES = ['easy', 'medium', 'hard'] as const
+const CONTEXT_LABEL: Record<string, string> = {
+  dice: 'Dice',
+  'cards-poker': 'Cards',
+  'balls-urns': 'Balls and urns',
+  'committees-seating': 'Committees and seating',
+}
 
 /**
  * /practice: a temporary list of methods grouped by roadmap node (until the roadmap Home in
@@ -145,18 +152,32 @@ function ProblemList(props: {
 }) {
   const { index, method, kind, tab, solved } = props
   const attempts = useMemo(() => progressStore.list(), [])
+  const [params, setParams] = useSearchParams()
+  const difficulty = DIFFICULTIES.find((d) => d === params.get('difficulty')) ?? null
+  const context = params.get('context')
   const info = index.roadmap.flatMap((n) => n.methods).find((m) => m.id === method)
   const inMethod = index.problems.filter((p) => !method || p.tags.methods.includes(method))
+  const contexts = [...new Set(inMethod.flatMap((p) => p.tags.contexts))].sort()
   const shown = inMethod
     .filter((p) => !kind || p.kind === kind)
+    .filter((p) => !difficulty || p.difficulty === difficulty)
+    .filter((p) => !context || p.tags.contexts.includes(context))
     .sort((a, b) => a.family_id.localeCompare(b.family_id) || Number(!!a.variant_of) - Number(!!b.variant_of))
-  const link = (k: Kind | null, t: 'practice' | 'learn' = 'practice') => {
-    const query = new URLSearchParams()
-    if (method) query.set('method', method)
-    if (k) query.set('kind', k)
-    if (t === 'learn') query.set('tab', 'learn')
-    return `/practice?${query.toString()}`
+  /** The current filters with some changed (null removes one). */
+  const withFilters = (changes: Record<string, string | null>) => {
+    const query = new URLSearchParams(params)
+    for (const [key, value] of Object.entries(changes)) {
+      if (value === null) query.delete(key)
+      else query.set(key, value)
+    }
+    return query
   }
+  const link = (k: Kind | null, t: 'practice' | 'learn' = 'practice') =>
+    `/practice?${withFilters({ kind: k, tab: t === 'learn' ? 'learn' : null }).toString()}`
+  const chip = (active: boolean) =>
+    `rounded-full border px-3 py-1 font-bold ${
+      active ? 'border-accent-ink bg-accent-soft text-accent-ink' : 'border-border text-ink-muted hover:text-ink'
+    }`
   const { done, total } = progressFor(inMethod, solved)
 
   return (
@@ -198,21 +219,41 @@ function ProblemList(props: {
     return (
       <>
         <div className="mt-4 flex flex-wrap items-center gap-4">
-          <nav aria-label="Kind" className="flex gap-2 text-sm">
+          {/* One chip row (DESIGN.md, D10): kind | difficulty | context. */}
+          <nav aria-label="Filters" className="flex flex-wrap items-center gap-2 text-sm">
             {([null, 'counting', 'probability'] as const).map((k) => (
-              <Link
-                key={k ?? 'all'}
-                to={link(k)}
-                aria-current={kind === k ? 'true' : undefined}
-                className={`rounded-full border px-3 py-1 font-bold ${
-                  kind === k
-                    ? 'border-accent-ink bg-accent-soft text-accent-ink'
-                    : 'border-border text-ink-muted hover:text-ink'
-                }`}
-              >
+              <Link key={k ?? 'all'} to={link(k)} aria-current={kind === k ? 'true' : undefined} className={chip(kind === k)}>
                 {k ? KIND_LABEL[k] : 'All'}
               </Link>
             ))}
+            <span className="mx-1 h-[18px] w-px bg-border" aria-hidden="true" />
+            {DIFFICULTIES.map((d) => (
+              <Link
+                key={d}
+                // Clicking the chosen difficulty again clears it.
+                to={`/practice?${withFilters({ difficulty: difficulty === d ? null : d }).toString()}`}
+                aria-current={difficulty === d ? 'true' : undefined}
+                className={`${chip(difficulty === d)} capitalize`}
+              >
+                {d}
+              </Link>
+            ))}
+            <span className="mx-1 h-[18px] w-px bg-border" aria-hidden="true" />
+            <label className="flex items-center">
+              <span className="sr-only">Context</span>
+              <select
+                value={context ?? ''}
+                onChange={(event) => setParams(withFilters({ context: event.target.value || null }))}
+                className="rounded-lg border border-border bg-card px-2.5 py-1 font-bold text-ink"
+              >
+                <option value="">Context: All</option>
+                {contexts.map((c) => (
+                  <option key={c} value={c}>
+                    Context: {CONTEXT_LABEL[c] ?? c}
+                  </option>
+                ))}
+              </select>
+            </label>
           </nav>
           {method && (
             <span className="flex items-center gap-2 text-sm text-ink-muted">

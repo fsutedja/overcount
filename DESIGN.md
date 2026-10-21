@@ -197,12 +197,13 @@ complements.
 
 **Decided: C · Try dots, without a star.**
 
-- One small dot per try, oldest first: `--correct-ink` for right, `--wrong-ink` for wrong. Dots
+- One small mark per try, oldest first: a filled `--correct-ink` dot for right and a hollow
+  `--wrong-ink` **ring** for wrong (D10: shape as well as colour, for colour-blind readers). Marks
   stop at the first right answer, so a first-try right answer is a single green dot.
 - Mastered (right within 2 tries) and solved (right later) are told apart by the dots alone; no
   star or badge.
-- On the problem page, next to the answer prompt: the dots, an empty outlined dot for the next
-  try, and "try N" while unsolved. More than 8 dots collapse into "+n".
+- On the problem page, next to the answer prompt: the dots, a **dashed** circle for the next
+  try (so it can't be mistaken for a wrong-try ring), and "try N" while unsolved. More than 8 dots collapse into "+n".
 - In practice lists, the dots sit at the right end of each row (they replace the ✓).
 - **Help nudge:** after 3 wrong tries, "← stuck? try Help" appears beside the Help link in
   `--ink-muted`. It never blocks answering.
@@ -280,6 +281,19 @@ complements.
 - Hidden when a problem has fewer than 5 number sets.
 - **Considered:** B · buttons after solving (incl. "Try a variation"), C · both.
 - **Mockup:** [design/mockups/d9-new-numbers.html](design/mockups/d9-new-numbers.html)
+
+## D10 · Try marks for colour-blind readers, and Practice filters
+
+**Try marks: A · wrong tries as rings.** Green and berry fail a deuteranopia check (ΔE 4.1), so
+wrong tries are hollow rings and the next try is a dashed circle (see D5).
+- **Considered:** B · a small ×.
+
+**Practice filters: C · one chip row with dividers.** On a method's Practice tab: kind chips
+(All, Counting, Probability) | difficulty chips (Easy, Medium, Hard; click again to clear) |
+a "Context: …" dropdown listing only the contexts that method has. Thin `--border` dividers,
+the same as the problem card tabs. Filters live in the address, so they survive a reload.
+- **Considered:** A · a row of chips per filter, B · a row of dropdowns.
+- **Mockup:** [design/mockups/d10-dots-and-filters.html](design/mockups/d10-dots-and-filters.html)
 
 ## Help flow (answer panel)
 
