@@ -15,9 +15,9 @@
 | Design D1, D2 | Palette, type and logo; two-pane layout; math-symbol step icons. See [DESIGN.md](DESIGN.md), which takes precedence over §5b wherever they differ |
 
 **Changed from the original plan**
-- **Answer-first flow:** a free answer, then Help (a one-line skeleton), then Show solution. This
-  replaced the step-by-step player and the Guided/Free toggle, so milestones 2 and 3 became one
-  milestone.
+- **Answer-first flow:** a free answer, then "Fill in the blanks" (a one-line skeleton), then
+  Help (why-steps), then Show solution (see Status: Lessons, Help and blanks). This replaced the
+  step-by-step player and the Guided/Free toggle, so milestones 2 and 3 became one milestone.
 - **Problem format:** steps are now read-only `solution` text. Common mistakes live on the final
   answer, and the skeleton has group labels, slot hints and `slot_mistakes` (see §2a).
 - **Step kinds:** `cases` (Σ) and `inclusion-exclusion` (∪) were added, so addition and
@@ -66,22 +66,26 @@
     tested). Method pages have Practice | Learn tabs (Practice first); problem cards have
     Example | Method tabs (D6, D7).
   - Help flow: free answer → "Fill in the blanks" opens the skeleton at once (empty boxes, wrong
-    ones shaded berry) → "Help" reveals numbered why-steps one at a time plus a small-numbers
-    check computed by the pipeline → "Show solution" shows the worked numbers only.
+    ones shaded berry) → "Help" shows numbered why-steps one at a time with ‹ › arrows, ending
+    in a small-numbers check computed by the pipeline → "Show solution", right under Help with
+    the same arrows, shows each step's math with this problem's numbers and its value.
+  - Undefined blanks (0⁰, 0 ÷ 0) get their own message.
   - Blanks inside a Σ may hold expressions in its index (n − k), graded by trying k = 0…5. The
     pipeline checks every skeleton adds up to the answer.
   - Attempt tracking with try dots (D5); mastered = right within 2 tries; Help nudge after 3
     wrong tries.
 
 **Next**
-1. **You try the new Help flow** (blanks first, Help on request, Show solution with numbers).
-2. **Regenerate 3 samples with `family-v3`** (marbles-in-jars, hat-check-no-match,
-   line-relative-order) only after your go-ahead; review each on `/dev/preview/<slug>`.
-   Nothing is sent to Gemini before that.
+1. **Regenerate 3 samples with `family-v3`** (marbles-in-jars, hat-check-no-match,
+   line-relative-order), one at a time, then review each on `/dev/preview/<slug>`. On 2026-10-21
+   gemini-3.8-flash answered 503 (overloaded) and gemini-3.7-flash has no free daily quota for
+   this key; a run now stops after the first overloaded target, and the request count follows
+   Google's Pacific-time day.
+2. **Design checkpoint D3 (Home):** options A path / B branching map / C dashboard are in
+   `design/mockups/d3-home.html`, waiting for a choice; then milestone 9.
 3. **Generate the other methods** (~48 families) in daily batches within the free quota, each
    reviewed before publishing.
-4. **Milestones 7–9:** daily problem, Progress page (heatmap, chart), the Home roadmap (design
-   checkpoint D3 first).
+4. **Milestones 7–8:** daily problem, "practice again", Progress page (heatmap, chart).
 5. **Follow-ups** are tracked in [POLISH.md](POLISH.md), e.g. lazy-loading the Compute Engine
    bundle before the deploy.
 
