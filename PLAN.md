@@ -108,9 +108,8 @@ into the schema now. This is a resume project, so clean code and the README matt
   `e`, `+ - * /`, parentheses, and variables. Variable names are a single letter, optionally
   with a digit (`n`, `k2`).
 - **Python (sympy):**
-  - `parse_expr` with a locked `local_dict` (`C`→`binomial`, `P`→`ff`, `e`→`E`), the
-    `factorial_notation` and `convert_xor` transformations, and `evaluate=False` for printing.
-    It never sees untrusted input except our own content.
+  - Expressions are parsed with Python's `ast` against a whitelist (never `eval`'d), then built
+    into sympy: `C`→`binomial`, `P`→`ff`, `n!`→`factorial`, `e`→`E`, `Sum`→`Sum`.
   - A custom LaTeX printer emits `\binom{}{}`, `\operatorname{P}(n,k)` and `\placeholder[id]{}`
     for skeleton slots.
 - **Build precomputes instances:**
@@ -296,8 +295,8 @@ type Attempt = {
 - **Batching and limits:**
   - Targets run in batches (one request per family, covering the root and its variants).
   - A token-bucket limiter is set from `.env` (`GEMINI_RPM`, `GEMINI_RPD`).
-  - `tenacity` retries with exponential backoff + jitter on 429 and 5xx, and honours the
-    server's retry delay.
+  - A small hand-written retry loop handles 429 and 5xx with exponential backoff and jitter,
+    and honours the server's retry delay. A 404 (model unavailable) stops the run at once.
   - When the daily quota is exhausted, the run stops cleanly and is resumable:
     `data/generation_log.jsonl` records each target's status, and done targets are skipped.
 - **Config:**
@@ -341,8 +340,8 @@ CI. Until then, a vitest covers CE grading of the golden problems' canonical ans
 
 ## 4. Tech stack & folder structure
 
-- **Pipeline:** Python 3.12, `uv`, `pydantic` v2, `sympy`, `typer`, `google-genai`, `tenacity`,
-  `python-dotenv`, `pyyaml`, `ruff`, `mypy`, `pytest`.
+- **Pipeline:** Python 3.14 (compatible with 3.12+), `uv`, `pydantic` v2, `sympy`, `typer`,
+  `google-genai`, `python-dotenv`, `pyyaml`, `ruff`, `mypy`, `pytest`.
 - **Web:** Vite + React + TS + Tailwind, `mathlive` + `@cortex-js/compute-engine` (no mathjs; see the
   spike result in §1), KaTeX for statements and explanations, Framer Motion, React Router, Recharts (line
   chart), a custom SVG heatmap, Vitest. Static deploy on Vercel.
@@ -383,13 +382,10 @@ overcount/
 ## 5. Home page: NeetCode-style roadmap
 - **Roadmap graph:** nodes drawn in learning order and joined by connector lines (custom SVG
   edges over a CSS grid, no graph library; vertical on mobile).
-- **Each node card** shows the title, a "solved / total" progress bar and a link to
-  `/topics/:nodeId`.
-  - Progress = distinct root problems whose primary topic is in that node, with ≥ 1 correct
-    attempt (derived from the attempt log + `index.json`).
-  - The total counts roots only. Variants show up on the topic page.
-- **Topic page:** the node's blurb, then its problems as a list (title, difficulty, context
-  chips, solved ✓, variant count), with difficulty and context filters.
+- **Each node card** shows the title and lists its **counting methods** (from
+  `content/roadmap.yaml`), each with solved / total and a link to `/practice?method=…`. One
+  taxonomy, one place: there are no `/topics` pages. Nodes without methods (the probability
+  ones) link to their problems.
 - **Rest of Home:** the daily problem card and the mini heatmap stay on Home. Practice (all
   problems with filters) stays as a separate page.
 
@@ -493,7 +489,7 @@ resume section.
      math-symbol icons.
    - The two-pane layout, the final bonus number, and attempt records with `help_level` and
      mistake tags (stored in memory for now; `ProgressStore` comes in milestone 8).
-4. ✅ **Pipeline core:** uv project, Pydantic schemas → JSON Schema → TS types, sympy expressions,
+4. ✅ **Pipeline core:** uv project, Pydantic schemas (web types hand-written, checked by the bank cross-check), sympy expressions,
    instance sampler, `build`. Three golden families authored in Claude Code (committee, ×-vs-+
    trap, circular-seating overcount; each with 1 variant) replace the hand-written web JSON.
 5. ✅ **Verify:** sandbox + the 3 MVP gates, staging → content / needs_review routing with
@@ -507,9 +503,11 @@ resume section.
 8. **Progress:** attempt logging via `ProgressStore`; a Progress page with a heatmap (one square
    per day, shaded by the number of distinct problems solved correctly that day) and a daily line
    chart (attempts vs. correct).
-9. **Home roadmap + topic pages:** `roadmap.yaml` → `index.json`, the roadmap graph with
-   per-node progress bars, `/topics/:nodeId`, and the daily problem card + mini heatmap on Home.
-10. **Visuals:** `pick` and `slots`, bound to instance values and Help skeleton slot entries.
+9. **Home roadmap:** the roadmap graph with each node's methods and solved / total (replacing the
+   temporary `/practice` methods list), and the daily problem card + mini heatmap on Home.
+10. **Visuals:** `pick` and `slots`, bound to instance values and Help skeleton slot entries,
+    plus a **13×4 card-deck grid** (ranks × suits, relevant cards highlighted) for card problems.
+    Style options are shown to you before building.
 11. **Content runs:** generate by `targets.yaml` coverage (counting, inclusion–exclusion/
     complement, distributions, probability). Fix `needs_review` items in Claude Code sessions.
     Target ≈ 50 roots, ≥ 3 per topic tag, all contexts and difficulties.
