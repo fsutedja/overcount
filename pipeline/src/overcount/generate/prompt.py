@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from ..taxonomy import CONTEXTS, MISTAKE_TAGS, STEP_KINDS, TOPICS
+from ..taxonomy import CONTEXTS, METHODS, MISTAKE_TAGS, STEP_KINDS, TOPICS
 from .base import Target
 
 PROMPT_VERSION = "family-v2"
@@ -26,6 +26,7 @@ def system_prompt(families_dir: Path) -> str:
     return (
         template.replace("<<TOPICS>>", _quoted(TOPICS))
         .replace("<<CONTEXTS>>", _quoted(CONTEXTS))
+        .replace("<<METHODS>>", _quoted(METHODS))
         .replace("<<MISTAKE_TAGS>>", _quoted(MISTAKE_TAGS))
         .replace("<<STEP_KINDS>>", _quoted(STEP_KINDS))
         .replace("<<EXAMPLES>>", "\n\n".join(examples))
@@ -39,8 +40,14 @@ def user_prompt(target: Target) -> str:
         f"- primary topic: {target.topic}",
         f"- context: {target.context}",
         f"- root difficulty: {target.difficulty}",
+        f"- methods: {', '.join(target.methods)}",
         f"- number of variants: {target.variants}",
     ]
+    if target.keep_variants:
+        lines.append("- this REPLACES an existing family; keep these variant ids and twists, in this order:")
+        lines += [
+            f'  - id "{variant_id}", twist "{twist}"' for variant_id, twist in target.keep_variants.items()
+        ]
     if target.inspiration:
         lines.append(f"- inspiration (adapt, don't copy): {target.inspiration}")
     if target.notes:

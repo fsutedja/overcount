@@ -74,6 +74,15 @@ def stamp(family: dict[str, Any], target: Target, model: str) -> dict[str, Any]:
             }
         for variant in problems[1:]:
             variant["variant_of"] = target.id
+        # Regenerations keep the old variant ids and twists, in order, so saved progress still matches.
+        for variant, (variant_id, twist) in zip(problems[1:], target.keep_variants.items(), strict=False):
+            variant["id"], variant["twist"] = variant_id, twist
+        # Every problem drills the target's methods (the model may add more).
+        for problem in problems:
+            tags = problem.setdefault("tags", {})
+            if isinstance(tags, dict):
+                extra = [m for m in tags.get("methods", []) if m not in target.methods]
+                tags["methods"] = [*target.methods, *extra]
     return family
 
 

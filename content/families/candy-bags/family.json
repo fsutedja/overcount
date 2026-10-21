@@ -69,7 +69,7 @@
           ],
           "slots": {
             "a": {
-              "hint": "stars plus bars",
+              "hint": "stars + bars",
               "answer": "n+k-1"
             },
             "b": {
@@ -173,7 +173,7 @@
           ],
           "slots": {
             "a": {
-              "hint": "spaces between candies",
+              "hint": "gaps",
               "answer": "n-1"
             },
             "b": {
@@ -275,7 +275,7 @@
           ],
           "slots": {
             "a": {
-              "hint": "remaining plus bars",
+              "hint": "left + bars",
               "answer": "n-m+k-1"
             },
             "b": {

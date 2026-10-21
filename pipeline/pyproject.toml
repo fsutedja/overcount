@@ -34,6 +34,10 @@ target-version = "py312"
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
 
+[tool.ruff.lint.per-file-ignores]
+# HTML template lines read better unwrapped.
+"src/overcount/verify/review_page.py" = ["E501"]
+
 [tool.mypy]
 strict = true
 plugins = ["pydantic.mypy"]

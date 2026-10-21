@@ -78,7 +78,8 @@ class SkeletonOp(Model):
 
 
 class Slot(Model):
-    hint: NonEmpty
+    #: Shown inside the empty box, so it must stay short (the prompt asks for at most 12 characters).
+    hint: Annotated[str, Field(min_length=1, max_length=14)]
     #: Expression in the problem's variables giving this slot's value, e.g. "J".
     answer: NonEmpty
 

@@ -13,7 +13,13 @@ from overcount.generate.prompt import PROMPT_VERSION
 from overcount.generate.ratelimit import GenerationLog, QuotaExhausted, RateLimiter
 from overcount.generate.run import run_generation
 
-TARGET = Target(id="candy-bags", topic="counting/stars-bars", context="balls-urns", difficulty="easy")
+TARGET = Target(
+    id="candy-bags",
+    topic="counting/stars-bars",
+    context="balls-urns",
+    difficulty="easy",
+    methods=["combinations"],
+)
 GOLDEN = json.loads((FAMILIES_DIR / "round-table" / "family.json").read_text())
 REPLY = json.dumps({"family": GOLDEN, "checker_code": "def solve_root(n):\n    return 1\n"})
 
@@ -161,12 +167,19 @@ def test_sends_the_system_prompt_and_asks_for_json() -> None:
 
 TARGETS = [
     TARGET,
-    Target(id="dice-at-least-one-six", topic="counting/complement", context="dice", difficulty="easy"),
+    Target(
+        id="dice-at-least-one-six",
+        topic="counting/complement",
+        context="dice",
+        difficulty="easy",
+        methods=["combinations"],
+    ),
     Target(
         id="hearts-or-face-cards",
         topic="counting/inclusion-exclusion",
         context="cards-poker",
         difficulty="medium",
+        methods=["inclusion-exclusion"],
     ),
 ]
 
@@ -210,3 +223,40 @@ def test_run_stops_at_once_when_the_model_is_unavailable(tmp_path: Path) -> None
     assert result.stopped_reason is not None and "gemini-test" in result.stopped_reason
     assert len(client.models.calls) == 1
     assert result.staged == [] and result.failed == []
+
+
+def test_stamp_adds_target_methods_and_keeps_old_variant_ids() -> None:
+    target = Target(
+        id="round-table",
+        topic="counting/symmetry-circular",
+        context="committees-seating",
+        difficulty="easy",
+        methods=["circular"],
+        keep_variants={"round-table-mirror": "mirror images count as the same"},
+    )
+    family = json.loads(json.dumps(GOLDEN))
+    family["problems"][1]["id"] = "round-table-something-new"
+    family["problems"][0]["tags"]["methods"] = ["divide-overcounting"]
+    stamped = stamp(family, target, "gemini-test")
+    root, variant = stamped["problems"]
+    assert variant["id"] == "round-table-mirror"
+    assert variant["twist"] == "mirror images count as the same"
+    assert root["tags"]["methods"] == ["circular", "divide-overcounting"]
+
+
+def test_user_prompt_lists_methods_and_kept_variants() -> None:
+    from overcount.generate.prompt import system_prompt, user_prompt
+
+    target = Target(
+        id="candy-bags",
+        topic="counting/stars-bars",
+        context="balls-urns",
+        difficulty="easy",
+        methods=["stars-and-bars"],
+        keep_variants={"candy-bags-nonempty": "every bag gets at least one candy"},
+    )
+    text = user_prompt(target)
+    assert "- methods: stars-and-bars" in text
+    assert 'id "candy-bags-nonempty"' in text
+    system = system_prompt(FAMILIES_DIR)
+    assert '"derangements"' in system and "Sum(body, k, lo, hi)" in system and "<<" not in system

@@ -10,7 +10,7 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
 from ..schema import Slug
-from ..taxonomy import Context, Difficulty, Topic
+from ..taxonomy import Context, Difficulty, Method, Topic
 
 
 class Target(BaseModel):
@@ -23,7 +23,11 @@ class Target(BaseModel):
     topic: Topic
     context: Context
     difficulty: Difficulty
+    #: Counting methods every problem in the family drills.
+    methods: list[Method] = Field(min_length=1)
     variants: int = Field(default=2, ge=0, le=3)
+    #: When regenerating a family: existing variant ids → twists, kept so saved progress still matches.
+    keep_variants: dict[Slug, str] = Field(default_factory=dict)
     #: Optional idea or classic problem to adapt; the wording and numbers must be original.
     inspiration: str | None = None
     notes: str | None = None

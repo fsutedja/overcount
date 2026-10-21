@@ -13,6 +13,8 @@ object and nothing else:
 - `problems`: the root problem first (its `id` is the target id), then the requested number of
   variants. Each variant has `id` = "<target id>-<short-suffix>", `variant_of` = the target id,
   and `twist`: a few words saying how it differs (e.g. "at least one ace").
+- **Difficulty spread:** the root is "easy", the first variant "medium", the second "hard" (a
+  third, if asked for, "hard" too). All of them drill the target's methods.
 - Every problem has these fields:
   - `origin`: {"kind": "generated"}
   - `title`: short.
@@ -22,7 +24,9 @@ object and nothing else:
     probabilities: {"values": ["1/6", "1/2"], "default": "1/6"}.
   - `constraints`: comparisons over variables, e.g. ["k < n"].
   - `difficulty`: "easy" | "medium" | "hard".
-  - `tags`: {"topics": [...], "contexts": [...]}. The first topic is the primary one.
+  - `tags`: {"topics": [...], "contexts": [...], "methods": [...]}. The first topic is the primary
+    one. `methods` are the counting techniques the problem drills: always include the target's
+    methods, plus any other method the solution genuinely uses.
   - `answer`:
     - `prompt`: what the answer is, e.g. "Number of hands".
     - `expr`: the exact answer expression.
@@ -36,7 +40,8 @@ object and nothing else:
         {"op": "*" | "+" | "-" | "/"}. Start and end with a group. Labels are 1–3 words
         naming what that part counts (e.g. "juniors", "rotations").
       - `slots`: {"a": {"hint": "total", "answer": "J"}, ...}. Each `[slot]` is used exactly
-        once. Hints are 1–2 words. `answer` is an expression in the variables.
+        once. Hints are 1–2 words and **at most 12 characters** (they're shown inside a small
+        box): "total", "pick", "gaps", "stars + bars". `answer` is an expression in the variables.
       - `slot_mistakes` (optional): [{"slot", "expr", "feedback", "mistake_tag"}].
   - `solution`: 2–4 steps {"kind", "title", "expr", "explanation"}, where the last step's
     `expr` equals the answer. Explanations are one or two plain sentences.
@@ -59,15 +64,32 @@ object and nothing else:
   {{r}} ranks in each of 4 suits".
 - Problems in any other context must not have a `deck` field.
 
+## Matching and derangement problems
+
+Write them the Pitman way, with a sum, so the number of people/items can vary:
+- P(nobody gets their own hat) with n people: `Sum((-1)^k/k!, k, 0, n)`
+- number of derangements of n items: `n!*Sum((-1)^k/k!, k, 0, n)`
+
+Don't use a special derangement function; there isn't one in the grammar.
+
+## Methods that are out of scope for now
+
+Don't write problems that need Stirling numbers or integer partitions (distinct balls into
+identical boxes, identical balls into identical boxes). For balls-into-boxes, use distinct or
+identical balls into **distinct** boxes.
+
 ## Expression grammar
 
-Integers, variables, `+ - * / ^`, parentheses, `C(n,k)`, `P(n,k)`, `n!` and `e`. Write fractions
-as `1/6`, never decimals.
+Integers, variables, `+ - * / ^`, parentheses, `C(n,k)`, `P(n,k)`, `n!`, `e`, and sums
+`Sum(body, k, lo, hi)` meaning Σ from k = lo to hi of body. The index (here `k`) is a single
+letter that is NOT one of the problem's variables, and it may only be used inside the body.
+Bounds are whole numbers or variables. Write fractions as `1/6`, never decimals.
 
 ## Vocabularies (use these exact strings)
 
 - Topics: <<TOPICS>>
 - Contexts: <<CONTEXTS>>
+- Methods: <<METHODS>>
 - Mistake tags: <<MISTAKE_TAGS>>
 - Solution step kinds: <<STEP_KINDS>>
 

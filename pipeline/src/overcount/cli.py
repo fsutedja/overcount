@@ -2,6 +2,7 @@
 
 import json
 import os
+import shutil
 from collections import Counter
 from pathlib import Path
 from typing import Annotated
@@ -16,6 +17,7 @@ from .generate.ratelimit import GenerationLog, RateLimiter
 from .generate.run import run_generation
 from .publish import build_bank, stale_files, write_bank
 from .verify.gates import FamilyReport
+from .verify.review_page import summarize, write_review
 from .verify.route import RouteError, family_folders, route, verify_folder, write_review_report
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -45,17 +47,25 @@ DEFAULT_MODEL = "gemini-3.8-flash"
 @app.command()
 def generate(
     limit: Annotated[int | None, typer.Option(help="Generate at most this many families this run")] = None,
-    only: Annotated[str | None, typer.Option(help="Generate just this target id")] = None,
+    only: Annotated[
+        list[str] | None, typer.Option(help="Generate just these target ids (repeatable)")
+    ] = None,
+    method: Annotated[
+        list[str] | None, typer.Option(help="Only targets drilling these methods (repeatable)")
+    ] = None,
     force: Annotated[bool, typer.Option(help="Regenerate targets that are already done")] = False,
     dry_run: Annotated[bool, typer.Option(help="Show what would be sent, without calling the API")] = False,
 ) -> None:
     """Draft new problem families with Gemini into staging/. Then run `verify staging`."""
     targets = load_targets(TARGETS_FILE)
     if only:
-        targets = [t for t in targets if t.id == only]
-        if not targets:
-            typer.echo(f"No target called {only!r} in content/targets.yaml.", err=True)
+        unknown = set(only) - {t.id for t in targets}
+        if unknown:
+            typer.echo(f"No target called {sorted(unknown)} in content/targets.yaml.", err=True)
             raise typer.Exit(1)
+        targets = [t for t in targets if t.id in only]
+    if method:
+        targets = [t for t in targets if set(t.methods) & set(method)]
 
     if dry_run:
         prompt = system_prompt(FAMILIES_DIR)
@@ -116,11 +126,15 @@ def verify(
     path: Annotated[
         Path, typer.Argument(help="staging/, needs_review/<slug>, or content/families")
     ] = FAMILIES_DIR,
+    route_staged: Annotated[
+        bool, typer.Option("--route/--no-route", help="Move staged families after verifying them")
+    ] = True,
 ) -> None:
     """Run the schema, brute-force checker, and simulation gates.
 
-    Families verified from staging/ are moved: passing ones to content/families/, failing ones to
-    needs_review/ with a REPORT.md. Elsewhere, families stay put and are only reported on.
+    Families verified from staging/ are moved (unless --no-route): passing ones to
+    content/families/, failing ones to needs_review/ with a REPORT.md. Elsewhere, families stay
+    put and are only reported on.
     """
     path = path.resolve()
     reports = verify_folder(path)
@@ -129,9 +143,12 @@ def verify(
         return
     staged = path == STAGING_DIR or path.parent == STAGING_DIR
     in_review = path == REVIEW_DIR or path.parent == REVIEW_DIR
+    log = GenerationLog(GENERATION_LOG)
     for report in reports:
         _print_report(report)
-        if staged:
+        if staged or in_review:
+            log.append(**summarize(report))
+        if staged and route_staged:
             try:
                 target = route(report, FAMILIES_DIR, REVIEW_DIR)
             except RouteError as error:
@@ -146,6 +163,56 @@ def verify(
     typer.echo(f"\n{len(reports) - failed} passed, {failed} failed.")
     if failed and not staged:
         raise typer.Exit(1)
+
+
+@app.command()
+def review() -> None:
+    """Verify every staged family (without moving it) and write staging/review.html."""
+    reports = verify_folder(STAGING_DIR)
+    if not reports:
+        typer.echo("Nothing is staged.")
+        return
+    log = GenerationLog(GENERATION_LOG)
+    for report in reports:
+        _print_report(report)
+        log.append(**summarize(report))
+    page = write_review(reports, FAMILIES_DIR, STAGING_DIR / "review.html")
+    typer.echo(f"\nWrote {page.relative_to(REPO_ROOT)}. Open it, then approve or reject each family.")
+
+
+@app.command()
+def approve(slug: Annotated[str, typer.Argument(help="Folder name in staging/")]) -> None:
+    """Re-verify a staged family, publish it (replacing the live version, if any), rebuild the bank."""
+    folder = STAGING_DIR / slug
+    if not (folder / "family.json").exists():
+        typer.echo(f"staging/{slug} doesn't exist.", err=True)
+        raise typer.Exit(1)
+    report = verify_folder(folder)[0]
+    _print_report(report)
+    if not report.passed:
+        typer.echo("Not approved: it fails a gate. Fix it, or reject it.", err=True)
+        raise typer.Exit(1)
+    target = FAMILIES_DIR / slug
+    replaced = target.exists()
+    if replaced:
+        shutil.rmtree(target)  # the old version stays in git history
+    (folder / "REPORT.md").unlink(missing_ok=True)
+    shutil.move(folder, target)
+    write_bank(build_bank(CONTENT_DIR), BANK_DIR)
+    GenerationLog(GENERATION_LOG).append(target_id=slug, status="approved", replaced=replaced)
+    typer.echo(f"Approved {slug}{' (replaced the live version)' if replaced else ''}; the bank is rebuilt.")
+
+
+@app.command()
+def reject(slug: Annotated[str, typer.Argument(help="Folder name in staging/")]) -> None:
+    """Delete a staged draft. The live version, if any, stays as it is."""
+    folder = STAGING_DIR / slug
+    if not folder.exists():
+        typer.echo(f"staging/{slug} doesn't exist.", err=True)
+        raise typer.Exit(1)
+    shutil.rmtree(folder)
+    GenerationLog(GENERATION_LOG).append(target_id=slug, status="rejected")
+    typer.echo(f"Rejected {slug}; the staged draft is deleted.")
 
 
 @app.command()
@@ -188,6 +255,13 @@ def stats() -> None:
     if index.exists():
         instances = sum(p["instance_count"] for p in json.loads(index.read_text())["problems"])
 
+    statuses = Counter(e.get("status") for e in GenerationLog(GENERATION_LOG).entries())
+    typer.echo("Funnel (from data/generation_log.jsonl)")
+    typer.echo(f"  generated     {statuses['staged']} drafts")
+    typer.echo(f"  verify runs   {statuses['verified_pass']} passed, {statuses['verified_fail']} failed")
+    typer.echo(f"  approved      {statuses['approved']}")
+    typer.echo(f"  rejected      {statuses['rejected']}")
+    typer.echo(f"  API problems  {statuses['error'] + statuses['invalid_reply'] + statuses['quota']}\n")
     typer.echo("Pipeline")
     typer.echo(f"  staged        {len(family_folders(STAGING_DIR))} families")
     typer.echo(f"  needs review  {len(family_folders(REVIEW_DIR))} families")
