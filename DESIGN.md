@@ -228,7 +228,8 @@ complements.
 
 - The skeleton is rendered math (MathLive, read-only) with editable blanks. Blanks are **empty
   boxes**: no "?" and no hint text. The group labels underneath say what each part counts.
-- A wrong blank is outlined in `--wrong-ink` after checking; MathLive's own accent hue is set
+- A wrong blank is **only shaded** with `--wrong-bg` (the berry tint) after checking: no
+  strike-through, no ✗, no glow, and its digits stay `--ink`. MathLive's own accent hue is set
   to the teal of `--accent`.
 
 ## D7 · Method lesson on the problem page

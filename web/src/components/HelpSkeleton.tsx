@@ -15,6 +15,21 @@ const slotIds = (latex: string) => [...latex.matchAll(/\[(\w+)\]/g)].map((m) => 
 /** "\binom{[a]}{[b]}" → "\binom{\placeholder[a]{}}{\placeholder[b]{}}": empty boxes to fill in. */
 const withBlanks = (latex: string) => latex.replace(/\[(\w+)\]/g, (_, slot: string) => `\\placeholder[${slot}]{}`)
 
+/**
+ * A wrong blank is only shaded with the wrong (berry) tint (DESIGN.md): MathLive's own marking
+ * (outline glow, a slash across the box, a coloured digit) is turned off. Its styles live inside
+ * each field's shadow DOM, so this sheet is adopted there.
+ */
+const wrongBlankStyle = (() => {
+  if (typeof CSSStyleSheet === 'undefined') return null
+  const sheet = new CSSStyleSheet()
+  sheet.replaceSync(`
+    .ML__incorrectPromptBox { outline: 1px solid rgb(172, 172, 172); box-shadow: none; background-color: var(--wrong-bg); }
+    .ML__incorrectPromptBox svg { display: none; }
+  `)
+  return sheet
+})()
+
 /** A blank's typed value (an untouched blank reads as empty). */
 const blankValue = (field: MathfieldElement, slot: string) =>
   field.getPromptValue(slot).replace(/\\placeholder\{\}/g, '').trim()
@@ -68,6 +83,9 @@ function SkeletonGroup({ label, latex, autoFocus, wrongSlots, onChange, onSubmit
     const field = ref.current
     if (!field) return
     field.readOnly = true
+    if (wrongBlankStyle && field.shadowRoot && !field.shadowRoot.adoptedStyleSheets.includes(wrongBlankStyle)) {
+      field.shadowRoot.adoptedStyleSheets = [...field.shadowRoot.adoptedStyleSheets, wrongBlankStyle]
+    }
     field.mathVirtualKeyboardPolicy = 'auto'
     field.value = withBlanks(latex)
     if (autoFocus) field.focus()

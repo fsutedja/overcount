@@ -57,7 +57,8 @@
   /* Theme colours instead of MathLive's defaults: wrong blanks use the wrong token, and the
      brackets around the blank being edited aren't tinted blue. */
   math-field {
-    --incorrect-color: var(--wrong-ink);
+    /* Wrong blanks are shown by a berry shade only (HelpSkeleton), so their digits stay ink. */
+    --incorrect-color: var(--ink);
     --correct-color: var(--correct-ink);
     --smart-fence-color: currentColor;
     --contains-highlight-background-color: transparent;
