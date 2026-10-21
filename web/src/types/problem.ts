@@ -178,3 +178,25 @@ export interface BankIndex {
   roadmap: RoadmapNode[]
   problems: ProblemSummary[]
 }
+
+/** One formula in a method lesson: rendered LaTeX and when it applies. */
+export interface LessonFormula {
+  id: string
+  latex: string
+  when: string
+}
+
+/** A method's "How it works" lesson (content/methods.yaml). Text marks math with $…$. */
+export interface Lesson {
+  name: string
+  summary: string
+  how: string[]
+  formulas: LessonFormula[]
+  example: string
+  trap: string
+}
+
+export interface Lessons {
+  schema_version: 1
+  methods: Record<string, Lesson>
+}

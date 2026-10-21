@@ -1,4 +1,4 @@
-import type { BankIndex, Family, Problem } from '../types/problem'
+import type { BankIndex, Family, Lessons, Problem } from '../types/problem'
 
 /** Loads the static problem bank built by the pipeline (web/public/bank/). */
 
@@ -17,6 +17,17 @@ export function loadIndex(): Promise<BankIndex> {
     throw error
   })
   return indexPromise
+}
+
+let lessonsPromise: Promise<Lessons> | null = null
+
+/** Method lessons, fetched the first time one is opened. */
+export function loadLessons(): Promise<Lessons> {
+  lessonsPromise ??= getJson<Lessons>('/bank/methods.json').catch((error: unknown) => {
+    lessonsPromise = null
+    throw error
+  })
+  return lessonsPromise
 }
 
 export const loadFamily = (familyId: string) => getJson<Family>(`/bank/families/${encodeURIComponent(familyId)}.json`)
