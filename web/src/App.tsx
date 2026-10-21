@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Header } from './components/Header'
+import { HomeRoute } from './pages/HomeRoute'
 import { PracticePage } from './pages/PracticePage'
 
 // Problem pages need the math engine and the math input (most of the bundle), so they load on
@@ -18,7 +19,7 @@ export default function App() {
       <main>
         <Suspense fallback={loading}>
           <Routes>
-            <Route path="/" element={<ProblemRoute />} />
+            <Route path="/" element={<HomeRoute problemRoute={<ProblemRoute />} />} />
             <Route path="/problem/:id" element={<ProblemRoute />} />
             <Route path="/practice" element={<PracticePage />} />
             {import.meta.env.DEV && <Route path="/dev/visuals" element={<VisualsGallery />} />}

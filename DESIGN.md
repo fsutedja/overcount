@@ -272,8 +272,10 @@ complements.
 - Each stop is a card with its title, "solved / total" and a progress bar; the stop you're on
   has an accent-ink outline; stops with no problems yet are faded ("coming soon"). Clicking a
   stop opens its methods.
-- Today's problem and the activity card (day streak, solved, 5-week heatmap) sit in a side
-  column.
+- The side column holds, top to bottom: today's problem, the picked stop (title, blurb and its
+  methods as chips with solved / total; the current stop is picked at first), and the activity
+  card (day streak, solved, 5-week heatmap, 15 squares per row as in the mockup).
+- The daily problem card shows difficulty and kind, not the method (spoiler rule).
 - **Phones: A · One path.** The same stops in the same order on one dotted line, with numbered
   dots (finished = filled teal, current = accent-ink outline). The current stop is open and lists
   its methods as chips with solved / total; tapping another stop opens it. Today's problem and

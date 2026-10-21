@@ -4,7 +4,7 @@ import { ThemeToggle } from './ThemeToggle'
 
 /** Nav items without a page yet stay as plain, non-clickable labels. */
 const NAV_ITEMS: { label: string; to?: string }[] = [
-  { label: 'Roadmap' },
+  { label: 'Roadmap', to: '/' },
   { label: 'Practice', to: '/practice' },
   { label: 'Progress' },
 ]
@@ -26,6 +26,7 @@ export function Header() {
               <NavLink
                 key={label}
                 to={to}
+                end
                 className={({ isActive }) =>
                   isActive
                     ? 'text-ink underline decoration-accent-ink decoration-2 underline-offset-4'
