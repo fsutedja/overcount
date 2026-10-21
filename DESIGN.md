@@ -247,6 +247,26 @@ complements.
 - **Considered:** A · Lesson unfolds under a pill, C · Short cheat card under the answer box.
 - **Mockup:** [design/mockups/d7-lesson-in-page.html](design/mockups/d7-lesson-in-page.html)
 
+## D8 · Progress page
+
+**Decided: C · Tabs, "Overview | Problems".**
+
+- **Overview:** headline numbers (solved, mastered, tries, day streak, best streak; labels in
+  Pixelify Sans, numbers in Atkinson), then the activity heatmap and the tries chart on the left
+  and progress by roadmap stop on the right (stacked on phones).
+- **Activity heatmap, GitHub style:** the last 52 weeks, one column per week (Sunday on top),
+  month names above, Mon / Wed / Fri labels on the left, a "Less → More" legend, and a hover
+  tooltip with the date and count. Shades: the 4 teal steps used on Home (0, 1, 2, 3+ problems
+  solved that day).
+- **Tries per day:** two lines over the last 30 days on one axis (both are counts): "tries" as
+  a dashed `--ink-muted` line and "right" as a solid `--accent` line, each labelled at its end,
+  with a legend and a hover crosshair + tooltip.
+- **Problems tab:** filter chips (All, Mastered, Solved, Tried, Not started) and one row per
+  problem with its status and try dots, linking to the problem.
+- **Considered:** A · One report, B · Two columns.
+- **Mockup:** [design/mockups/d8-progress.html](design/mockups/d8-progress.html) (the chart and
+  heatmap were changed after review as described above).
+
 ## Help flow (answer panel)
 
 - The free answer box comes first. **Fill in the blanks** (accent-ink link, where Help used to be)
