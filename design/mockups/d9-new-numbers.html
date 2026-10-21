@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D9 new numbers</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4efe6;--card:#fffbf3;--card-sunken:#f8f3ea;--border:#e4d9c6;--ink:#2b2823;--ink-muted:#675f53;--accent:#4f8f87;--accent-ink:#276660;--accent-soft:#e3eeec;--on-accent:#fffbf3;--correct-bg:#e1ecd8;--correct-ink:#35652f}
+:root[data-theme=dark]{--bg:#1f1d1a;--card:#2a2723;--card-sunken:#24221e;--border:#3a362f;--ink:#eee7da;--ink-muted:#b3aa9b;--accent:#5fa69c;--accent-ink:#7cc1b7;--accent-soft:#23332f;--on-accent:#1f1d1a;--correct-bg:#2c3a28;--correct-ink:#a6cf99}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',sans-serif;padding:24px 16px 60px;line-height:1.45}
+.wrap{max-width:1060px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--ink-muted);margin:0 0 20px}
+.opt{border:2px dashed var(--border);border-radius:18px;padding:18px;margin-bottom:34px}
+.opt>h2{margin:0 0 2px;font-size:18px}.why{color:var(--ink-muted);font-size:14px;margin:0 0 16px}
+.page{display:grid;grid-template-columns:1fr 1.1fr;gap:20px;align-items:start}@media(max-width:780px){.page{grid-template-columns:1fr}}
+.label{font-weight:700;margin:0 0 8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px}
+.answer{border:2px solid var(--accent);border-radius:14px;background:var(--card);padding:16px 18px}
+.meta{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-muted);margin:0}
+.titlerow{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.title{font-size:20px;font-weight:700;margin:2px 0 6px}
+.reroll{font-size:14px;font-weight:700;color:var(--accent-ink);white-space:nowrap}
+.math{font-size:20px;margin:6px 0 10px}
+.ok{background:var(--correct-bg);color:var(--correct-ink);border-radius:10px;padding:10px 14px}
+.btn{display:inline-block;background:var(--accent-ink);color:var(--on-accent);font-weight:700;border-radius:8px;padding:7px 14px}
+.btn2{display:inline-block;border:2px solid var(--accent-ink);color:var(--accent-ink);font-weight:700;border-radius:8px;padding:5px 12px}
+.link{color:var(--accent-ink);font-weight:700}
+.muted{color:var(--ink-muted)}.small{font-size:14px}
+.tb{position:fixed;top:12px;right:12px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--ink);font:inherit;cursor:pointer;z-index:2}
+</style>
+</head>
+<body>
+<button class="tb" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">Light / dark</button>
+<div class="wrap">
+<h1>D9 · "New numbers" and "Try a variation"</h1>
+<p class="sub">Each problem has many checked number sets. These are three places to offer a new set (and, after solving, a harder variation of the same problem). The answer panel is shown after a correct answer.</p>
+
+<template id="problem">
+  <p class="meta">Easy · counting · committees</p>
+  <div class="titlerow"><p class="title">Robotics club team</p><span class="reroll" data-reroll>↻ New numbers</span></div>
+  <p style="margin:0">A robotics club has <b>8</b> juniors and <b>6</b> seniors. In how many ways can a team of <b>3</b> juniors and <b>2</b> seniors be chosen?</p>
+  <p class="small muted" style="margin:12px 0 0">▾ Example · Combinations · Product and sum rules</p>
+</template>
+
+<template id="solved">
+  <p class="label">Your answer</p>
+  <div class="answer"><b>Total number of teams</b>
+    <div class="math">C(8,3) × C(6,2)</div>
+    <div class="ok"><b>✓ Correct.</b> That's 840.</div>
+    <div data-after style="margin-top:12px"></div>
+    <p style="margin:10px 0 0"><span class="link small">See the worked solution</span></p>
+  </div>
+</template>
+
+<section class="opt">
+  <h2>A · "↻ New numbers" next to the title</h2>
+  <p class="why">A small link at the right of the problem title, always there: new numbers for the same problem whenever you like (before or after solving). No extra buttons after solving.</p>
+  <div class="page"><div><p class="label">Problem</p><div class="card" data-use="problem"></div></div><div data-use="solved" data-variant="a"></div></div>
+</section>
+
+<section class="opt">
+  <h2>B · Buttons after solving</h2>
+  <p class="why">Nothing extra while you work. Once you get it right, two buttons appear under "✓ Correct": try the same problem with new numbers, or move on to a harder variation.</p>
+  <div class="page"><div><p class="label">Problem</p><div class="card" data-use="problem" data-hide-reroll></div></div><div data-use="solved" data-variant="b"></div></div>
+</section>
+
+<section class="opt">
+  <h2>C · Both</h2>
+  <p class="why">The quiet "↻ New numbers" link by the title at any time (e.g. if the numbers feel awkward), plus the two buttons after solving as the clear next step.</p>
+  <div class="page"><div><p class="label">Problem</p><div class="card" data-use="problem"></div></div><div data-use="solved" data-variant="b"></div></div>
+</section>
+</div>
+<script>
+document.querySelectorAll('[data-use]').forEach((el) => {
+  el.appendChild(document.getElementById(el.dataset.use).content.cloneNode(true));
+  if (el.hasAttribute('data-hide-reroll')) el.querySelector('[data-reroll]').remove();
+  const after = el.querySelector('[data-after]');
+  if (after) after.innerHTML = el.dataset.variant === 'b'
+    ? '<span class="btn">↻ Try new numbers</span> <span class="btn2" style="margin-left:6px">Try a variation: one junior is captain →</span>'
+    : '';
+});
+</script>
+</body>
+</html>
