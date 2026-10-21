@@ -51,14 +51,29 @@
 - **Review before publishing:** generated families stay in `staging/` until `overcount approve`.
   `overcount review` writes a side-by-side page, and `stats` shows the funnel.
 
+- **Examples and visuals on every problem** (2026-10-21, details in §2a "Examples and visuals"):
+  every problem shows what one outcome looks like, a ✅ outcome that counts and a ❌ one that
+  doesn't, with reasons, plus a small diagram (D4 · Pantry pieces). "Show another example"
+  cycles through more pairs. Checkers now list outcomes and decide which count, and the same
+  functions verify the answer and every example. The plain-wording rules are in the
+  `family-v3` prompt.
+- **Attempt tracking** (2026-10-21, §2c): each attempt stores the answer; repeated identical
+  answers don't count as new tries; "mastered" means solved within 2 tries; after 3 wrong
+  tries the page suggests Help (never blocks).
+
 **Next**
-1. **Pilot review:** 3 methods (stars-and-bars, derangements, symmetry-relative-order) plus the 3
-   family-v1 regenerations. Approve or reject them on `staging/review.html`.
-2. **Generate the other 16 methods** (48 families) in background batches, each followed by a
+1. **Examples rollout:** more examples per problem with per-outcome reasons, "Show another
+   example", then the `family-v3` prompt with retry on bad replies. **3 sample problems are shown
+   for approval before anything is regenerated.**
+2. **Attempt tracking:** attempt counts, mastered/solved, the Help nudge (display options shown
+   first).
+3. **Pilot review:** 3 methods (stars-and-bars, derangements, symmetry-relative-order) plus the 3
+   family-v1 regenerations, all on `family-v3`. Approve or reject them on `staging/review.html`.
+4. **Generate the other 16 methods** (48 families) in background batches, each followed by a
    review.
-3. **Milestones 7–9:** Daily page, heatmap and charts; progress saved with `ProgressStore`; the Home
+5. **Milestones 7–9:** Daily page, heatmap and charts; progress saved with `ProgressStore`; the Home
    roadmap. Design checkpoint D3 comes before milestone 9.
-4. **Follow-ups** are tracked in [POLISH.md](POLISH.md), for example lazy-loading the 1.6 MB
+6. **Follow-ups** are tracked in [POLISH.md](POLISH.md), for example lazy-loading the 1.6 MB
    Compute Engine bundle before the deploy.
 
 ## Context
@@ -226,6 +241,32 @@ which places it on the roadmap.
   statement must describe the deck fully. The schema enforces the deck and difficulty rules;
   the prompt (`family-v2`) asks for the statement wording.
 
+**Examples and visuals** (required on every problem)
+- **Checker convention** (`checker.py`, names listed in `family.json` under `checker`):
+  - `outcomes(**vars)`: every *candidate* outcome a beginner might write down. For a round
+    table that's every ordering; for candy in bags, every way to put 0..n in each bag.
+  - `counts(outcome, **vars) -> bool`: the rule. The answer is verified by counting candidates
+    that pass (a fraction of all candidates for probabilities). With unequal chances, leave out
+    `outcomes` and use a simulator.
+  - `example(**vars)`: a hand-picked ✅ and ❌ outcome, plus optional `highlight` (positions),
+    `pool` (subsets; a list or named groups such as juniors/seniors) and `captions` (one short
+    label per piece, e.g. "president", or kids A, B, C).
+  - `reason(outcome, **vars) -> str`: a one-line reason for any outcome, e.g. "two 6s" or "adds
+    to 9, not 7". Used for every example, including "Show another example".
+- **Visual** `{type, legend?}`: one of dice, coins, sequence, circle, subset, boxes, stars-bars,
+  cards, path, matching. Each type fixes the outcome's shape (validated, at most 12 pieces), so
+  the web draws it with one shared component instead of LLM-written SVG. `legend` is an optional
+  short line such as "★ = a cookie, | = a divider between kids".
+- **Published per instance:** the hand-picked pair plus up to 4 more pairs sampled from the
+  checker's own outcomes (seeded, so builds are reproducible). Each has its text form (e.g.
+  "A=3, B=0, C=4") and reason. Every pair is checked: ✅ passes `counts`, ❌ doesn't, and both are
+  real outcomes of that instance. Nothing about the answer or solution is included.
+- **Wording rules** (prompt `family-v3`): plain words; describe one outcome concretely ("write the
+  results as a list, like 6, 6, 1, 3, 2"); say whether order matters; never use a vague term
+  like "sequence" or "arrangement" without an example.
+- **Generation retry:** a reply missing `example` or `visual`, or failing the example check, is
+  sent back with the error, up to 2 retries per target.
+
 **Roadmap** (`content/roadmap.yaml`, exported into `index.json`): an ordered list of nodes
 `{id, title, blurb, prereqs: [node ids], topic_tags: [...]}`. Each topic tag belongs to exactly
 one node (validated at build).
@@ -269,11 +310,18 @@ type Attempt = {
   attempted_at: string;    // ISO UTC
   local_date: string;      // YYYY-MM-DD in the user's timezone (heatmap/streak bucket)
   correct: boolean;        // counts as "solved" at any help level
+  answer: string;          // the submitted LaTeX (free answer) or filled skeleton
   mistake_tags: string[];  // tags recognised on this submission (logged now, used post-MVP)
   schema_version: 1;
 };
 ```
 - An *attempt* is one answer submission, whether a free answer or a filled skeleton.
+  Submitting the same answer again for the same problem and numbers is ignored (not a new try).
+- **Tries and status per problem:** tries = attempts on that problem. **Mastered** = the first
+  correct answer came within 2 tries; **solved** = correct later than that. The attempt count is
+  shown on the problem page and in progress lists.
+- **Help nudge:** after 3 wrong tries the page suggests opening Help before trying again. It
+  never blocks another answer.
 - The record is stored under `localStorage["overcount.attempts.v1"]` behind a `ProgressStore`
   interface (`add`, `list({from,to})`), implemented by `LocalStorageProgressStore`. A future
   `SupabaseProgressStore` will be a drop-in replacement.
@@ -316,9 +364,11 @@ type Attempt = {
 1. **Schema:** Pydantic models plus taxonomy and mistake-tag enums. Every expression must parse
    with sympy, and placeholders, variables and slots must be defined. Constraints must be
    satisfiable (the sampler finds ≥ 20 valid instances).
-2. **Brute-force checker:** `solve(**vars)` runs on the default instance, the range corners and
-   10 random instances. The result must equal sympy's value of `final.answer` on every one.
-3. **Simulation:** required when `simulator` is set (all probability and distribution problems,
+2. **Brute-force checker:** counting the `outcomes` that pass `counts` on the default instance,
+   the range corners and 10 random instances must equal sympy's value of the answer on every one.
+3. **Example:** on the same instances, the ✅ outcome passes `counts`, the ❌ one doesn't, both are
+   among `outcomes`, both fit the visual type, and `reason` gives a short line for each.
+4. **Simulation:** required when `simulator` is set (all probability and distribution problems,
    and the only evidence for infinite outcome spaces such as geometric and Poisson). Monte Carlo
    on 2 instances, with the exact value inside the 99.9% CI.
 
@@ -500,13 +550,14 @@ resume section.
 7. **Practice + daily + practice again:** filters (topic, context, difficulty), date-seeded
    daily problem and instance, "New numbers" (hidden when a problem has fewer than 5 number
    sets, see card problems in §2a), and "Try a variation" (nudged after a reveal).
-8. **Progress:** attempt logging via `ProgressStore`; a Progress page with a heatmap (one square
+8. **Progress:** attempt logging via `ProgressStore` (attempt counts and mastered/solved are
+   built early, see Status); a Progress page with attempts and mastered/solved per problem, a heatmap (one square
    per day, shaded by the number of distinct problems solved correctly that day) and a daily line
    chart (attempts vs. correct).
 9. **Home roadmap:** the roadmap graph with each node's methods and solved / total (replacing the
    temporary `/practice` methods list), and the daily problem card + mini heatmap on Home.
-10. **Visuals:** `pick` and `slots`, bound to instance values and Help skeleton slot entries,
-    plus a **13×4 card-deck grid** (ranks × suits, relevant cards highlighted) for card problems.
+10. **Visuals:** the outcome diagrams are already built (Status, §2a); what's left is binding
+    them to the Help skeleton slots (highlight the pieces a slot counts), plus a **13×4 card-deck grid** (ranks × suits, relevant cards highlighted) for card problems.
     Style options are shown to you before building.
 11. **Content runs:** generate by `targets.yaml` coverage (counting, inclusion–exclusion/
     complement, distributions, probability). Fix `needs_review` items in Claude Code sessions.
