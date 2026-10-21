@@ -53,6 +53,17 @@ object and nothing else:
         appear in a group; use a slot whose answer is the variable. Example for derangements:
         `[a]!*Sum((-1)^k/k!, k, [b], [c])` with a = "n", b = "0", c = "n".
       - `slot_mistakes` (optional): [{"slot", "expr", "feedback", "mistake_tag"}].
+  - `help_steps`: 2–5 numbered "why" steps, shown one at a time when the learner asks for Help,
+    that build up to the skeleton: {"kind", "title", "text", "expr"?}.
+    - Write them with letters (n, k, J…), never this problem's numbers and never `{{x}}`
+      placeholders, so they teach the idea and leave the arithmetic to the learner.
+    - `text` is one or two plain sentences; write math as LaTeX inside `$…$`, e.g.
+      `$\binom{n}{k}$` or `$(n-k)!$`, never as `^` or `..` in the text. `expr` (optional) is a
+      formula in the expression grammar with letters, e.g. `C(n, k)*(n-k)!`.
+    - Each step explains *why*, not just *what* ("Turning the table changes nothing, so…").
+    - The last step ends with "Now fill in the numbers." and its `expr` (if any) has the same
+      shape as the skeleton.
+    - A small-case check (smallest numbers, worked out) is added automatically after the steps.
   - `solution`: 2–4 steps {"kind", "title", "expr", "explanation"}, where the last step's
     `expr` equals the answer. Explanations are one or two plain sentences.
   - `visual`: {"type": <visual type>, "legend": <optional short line>}. See **Examples and
@@ -114,11 +125,20 @@ Visual types and the exact shape of ONE outcome for each (an outcome is a JSON l
   {{r}} ranks in each of 4 suits".
 - Problems in any other context must not have a `deck` field.
 
-## Matching and derangement problems
+## Matching, derangement and inclusion–exclusion sums
 
-Write them the Pitman way, with a sum, so the number of people/items can vary:
-- P(nobody gets their own hat) with n people: `Sum((-1)^k/k!, k, 0, n)`
-- number of derangements of n items: `n!*Sum((-1)^k/k!, k, 0, n)`
+The skeleton follows the reasoning, so use the **unsimplified alternating sum**, with a blank for
+every piece. Blanks inside a Σ may have answers that use the index (`k`, `n-k`):
+- derangements of n items: answer `n!*Sum((-1)^k/k!, k, 0, n)` (any equivalent form), skeleton
+  `Sum((-1)^[e]*C([a],[b])*([c])!, k, [lo], [hi])` with e = "k", a = "n", b = "k", c = "n-k",
+  lo = "0", hi = "n".
+- P(nobody gets their own hat): the same sum divided by `[f]!` with f = "n".
+- Help steps: (1) start with all $n!$ arrangements; (2) remove the bad ones: choose $k$
+  people who get their own item, $\binom{n}{k}$ ways, and shuffle the rest freely, $(n-k)!$;
+  (3) overlaps were removed too often, so alternate the signs; (4) optionally, simplify to
+  $n!\sum (-1)^k/k!$.
+- Matching visuals label their two rows with `"captions": ["people", "hats"]` (or letters /
+  envelopes…), top row first.
 
 Don't use a special derangement function; there isn't one in the grammar.
 
@@ -150,8 +170,10 @@ Bounds are whole numbers or variables. Write fractions as `1/6`, never decimals.
 - Every function takes the problem's variables as keyword arguments (all of them, even unused).
   Functions can be shared between problems when they fit.
 - `outcomes(**vars)`: yields every **candidate** outcome a beginner might write down, in the
-  visual type's shape (tuples are fine). It must include outcomes that do NOT count, ideally
-  near misses (one candy too many, a team with one junior too many, the same seating turned).
+  visual type's shape (tuples are fine). It must include outcomes that do NOT count, and those
+  must be **near misses**: one candy too many or too few, a team with one junior too many, the
+  same seating turned. For stars-bars and boxes, only list totals within one of the real total
+  (e.g. `if abs(sum(bags) - n) <= 1`); a ❌ example further off is rejected.
   Enumerate with itertools; never re-compute the formula with `math.comb`.
 - `counts(outcome, **vars)`: returns `True` if the outcome counts. **The answer is checked by
   counting the candidates that pass** (for a probability: passing / all candidates, so only

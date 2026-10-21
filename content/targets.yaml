@@ -37,7 +37,7 @@ targets:
   methods:
   - derangements
   variants: 2
-  notes: n people grab hats at random; count arrangements where nobody gets their own. Use the Sum form.
+  notes: n people grab hats at random; count arrangements where nobody gets their own. Skeleton is the unsimplified alternating sum; matching rows labelled people / hats.
 - id: secret-santa-no-self
   topic: counting/inclusion-exclusion
   context: committees-seating

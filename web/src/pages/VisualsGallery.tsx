@@ -17,7 +17,7 @@ const SAMPLES: { type: VisualType; title: string; yes: Outcome; extra?: Extra }[
   { type: 'stars-bars', title: 'Stars & bars: 7 cookies, 3 kids', yes: [3, 0, 4], extra: { captions: ['A', 'B', 'C'] } },
   { type: 'cards', title: 'Cards: a 5-card hand, hearts highlighted', yes: ['AH', 'KH', '7S', '7D', '2C'], extra: { highlight: [0, 1] } },
   { type: 'path', title: 'Path: 4 right, 3 up', yes: ['R', 'R', 'U', 'R', 'U', 'U', 'R'] },
-  { type: 'matching', title: 'Matching: 4 letters into envelopes, none right', yes: [2, 1, 4, 3], extra: { highlight: [] } },
+  { type: 'matching', title: 'Matching: 4 letters into envelopes, none right', yes: [2, 1, 4, 3], extra: { highlight: [], captions: ['letters', 'envelopes'] } },
 ]
 
 export function VisualsGallery() {

@@ -77,6 +77,17 @@ def _check(problem: Problem, instance: Instance, report: dict[str, Any]) -> Inst
     errors = example_errors(kind, handpicked)
     for pair in report["pairs"]:
         errors += pair_errors(kind, pair)
+    if kind in ("stars-bars", "boxes") and not errors:
+        # ❌ examples must be near misses: off by at most one item from a ✅ outcome's total.
+        totals = {sum(p["yes"]["outcome"]) for p in report["pairs"]}
+        for pair in report["pairs"]:
+            missed = sum(pair["no"]["outcome"])
+            if all(abs(missed - total) > 1 for total in totals):
+                errors.append(
+                    f"the ❌ outcome {pair['no']['outcome']} holds {missed} items; make {fns.outcomes} "
+                    "list near misses only (at most one item more or fewer than a ✅ outcome)"
+                )
+                break
     if not errors:
         if not report["yes_counts"]:
             errors.append(f"the ✅ outcome {handpicked['yes']} doesn't pass {fns.counts}")

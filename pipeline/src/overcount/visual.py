@@ -106,12 +106,19 @@ def example_errors(kind: str, example: Any) -> list[str]:
     elif "pool" in example:
         errors.append("pool is only for subset visuals")
     captions = example.get("captions")
+    # Matching diagrams have two rows (e.g. people and hats): their captions label the rows.
+    wanted = 2 if kind == "matching" else len(yes)
     if captions is not None and (
         not isinstance(captions, list)
-        or len(captions) != len(yes)
+        or len(captions) != wanted
         or not all(isinstance(c, str) and 1 <= len(c) <= MAX_CAPTION for c in captions)
     ):
-        errors.append(f"captions must be one label (≤ {MAX_CAPTION} characters) per piece of the yes outcome")
+        what = (
+            "two row labels, top then bottom"
+            if kind == "matching"
+            else "one label per piece of the yes outcome"
+        )
+        errors.append(f"captions must be {what}, each at most {MAX_CAPTION} characters")
     return errors
 
 

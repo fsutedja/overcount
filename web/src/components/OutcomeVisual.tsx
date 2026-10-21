@@ -274,24 +274,33 @@ function draw(type: VisualType, example: DrawInput): Draw {
     }
 
     case 'matching': {
+      // Items on top, spots below (e.g. people and hats); captions label the two rows.
       const n = outcome.length
       const step = 50
+      const left = example.captions ? 64 : 8
       const top = 6
       const bottom = 96
+      const cx = (i: number) => left + i * step + 19
       return {
-        width: n * step + SHADOW,
+        width: left + n * step + SHADOW,
         height: bottom + 38 + SHADOW + 4,
         body: (
           <>
+            {example.captions && (
+              <>
+                <text x={0} y={top + 24} fontSize={13} fontWeight={700} className="fill-ink-muted">{example.captions[0]}</text>
+                <text x={0} y={bottom + 24} fontSize={13} fontWeight={700} className="fill-ink-muted">{example.captions[1]}</text>
+              </>
+            )}
             {outcome.map((spot, i) => (
-              <line key={`l${i}`} x1={8 + i * step + 19} y1={top + 40} x2={8 + (Number(spot) - 1) * step + 19} y2={bottom} strokeWidth={hi(i) ? 4 : 2.5} className={hi(i) ? 'stroke-accent' : 'stroke-ink-muted'} />
+              <line key={`l${i}`} x1={cx(i)} y1={top + 40} x2={cx(Number(spot) - 1)} y2={bottom} strokeWidth={hi(i) ? 4 : 2.5} className={hi(i) ? 'stroke-accent' : 'stroke-ink-muted'} />
             ))}
             {outcome.map((_, i) => (
               <g key={i}>
-                <Bead cx={8 + i * step + 19} cy={top + 19} r={18} fill={hi(i) ? 'fill-accent' : 'fill-card'} />
-                <Label x={8 + i * step + 19} y={top + 19} hi={hi(i)} size={14}>{i + 1}</Label>
-                <Tile x={8 + i * step} y={bottom} w={38} h={38} r={6} />
-                <Label x={8 + i * step + 19} y={bottom + 19} size={14}>{i + 1}</Label>
+                <Bead cx={cx(i)} cy={top + 19} r={18} fill={hi(i) ? 'fill-accent' : 'fill-card'} />
+                <Label x={cx(i)} y={top + 19} hi={hi(i)} size={14}>{i + 1}</Label>
+                <Tile x={cx(i) - 19} y={bottom} w={38} h={38} r={6} />
+                <Label x={cx(i)} y={bottom + 19} size={14}>{i + 1}</Label>
               </g>
             ))}
           </>
