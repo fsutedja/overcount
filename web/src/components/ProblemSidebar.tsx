@@ -30,14 +30,18 @@ export function ProblemSidebar({ problem, fromMethod }: { problem: Problem; from
     .sort((a, b) => a.family_id.localeCompare(b.family_id) || Number(!!a.variant_of) - Number(!!b.variant_of))
   const query = fromMethod ? `?method=${encodeURIComponent(fromMethod)}` : ''
 
+  // Sits above the list box, on the same line as the "Problem" and "Your answer" headings.
+  const back = (
+    <Link
+      to={fromMethod ? `/practice?method=${encodeURIComponent(fromMethod)}` : '/practice'}
+      className="text-sm leading-6 font-bold text-accent-ink hover:underline"
+    >
+      {fromMethod ? '← Back to the list' : '← All methods'}
+    </Link>
+  )
+
   const list = (
     <nav aria-label={title}>
-      <Link
-        to={fromMethod ? `/practice?method=${encodeURIComponent(fromMethod)}` : '/practice'}
-        className="mb-3 block border-b border-border px-2.5 pt-1 pb-2.5 text-sm font-bold text-accent-ink hover:underline"
-      >
-        {fromMethod ? '← Back to the list' : '← All methods'}
-      </Link>
       <h2 className="mb-2 px-2.5 text-xs font-bold tracking-wide text-ink-muted uppercase">{title}</h2>
       <ul className="space-y-1">
         {problems.map((p) => {
@@ -68,11 +72,13 @@ export function ProblemSidebar({ problem, fromMethod }: { problem: Problem; from
   return (
     <>
       {/* Wide screens: a column beside the problem. */}
-      <aside className="hidden lg:mt-[4.25rem] lg:block">
+      <aside className="hidden lg:block lg:pt-8">
+        <div className="mb-3">{back}</div>
         <div className="sticky top-6 rounded-xl border border-border bg-card p-3">{list}</div>
       </aside>
       {/* Narrower screens: a button that unfolds the same list. */}
       <div className="px-4 pt-4 lg:hidden">
+        <div className="mb-2">{back}</div>
         <button
           type="button"
           onClick={() => setOpen(!open)}
