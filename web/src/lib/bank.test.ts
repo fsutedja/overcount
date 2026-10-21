@@ -108,3 +108,13 @@ describe('bank examples', () => {
     }
   })
 })
+
+describe('bank help', () => {
+  it('gives every problem Help steps and a small-case check that grades as the answer', () => {
+    for (const problem of problems) {
+      expect(problem.help_steps.length).toBeGreaterThanOrEqual(2)
+      const { worked, answer } = problem.help_check
+      expect(gradeLatex(worked, answer)).toEqual({ kind: 'correct' })
+    }
+  })
+})

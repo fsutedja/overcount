@@ -56,14 +56,14 @@
         "skeleton": {
           "parts": [
             {
-              "group": "total sequences",
+              "group": "all lists",
               "expr": "[a]^[b]"
             },
             {
               "op": "-"
             },
             {
-              "group": "no sixes",
+              "group": "no 6s",
               "expr": "[c]^[d]"
             }
           ],
@@ -185,21 +185,21 @@
         "skeleton": {
           "parts": [
             {
-              "group": "total sequences",
+              "group": "all lists",
               "expr": "[a]^[b]"
             },
             {
               "op": "-"
             },
             {
-              "group": "no sixes",
+              "group": "no 6s",
               "expr": "[c]^[d]"
             },
             {
               "op": "-"
             },
             {
-              "group": "one six",
+              "group": "exactly one 6",
               "expr": "[e]*[f]^[g]"
             }
           ],

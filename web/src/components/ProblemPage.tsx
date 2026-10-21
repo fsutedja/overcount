@@ -6,6 +6,7 @@ import { NUDGE_AFTER_WRONG, problemProgress } from '../lib/progress'
 import { formatValue } from '../lib/grade'
 import { fillTemplate } from '../lib/template'
 import { HelpSkeleton } from './HelpSkeleton'
+import { HelpSteps } from './HelpSteps'
 import { MathInput } from './MathInput'
 import { ProblemCardTabs } from './ProblemCardTabs'
 import { SolutionSteps } from './SolutionSteps'
@@ -28,6 +29,9 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
   const [freeLatex, setFreeLatex] = useState('')
   const [freeResult, setFreeResult] = useState<AnswerResult | null>(null)
   const [helpOpen, setHelpOpen] = useState(false)
+  /** Help steps shown so far; the blanks appear once every step (and the small case) is shown. */
+  const [stepsShown, setStepsShown] = useState(0)
+  const blanksReady = stepsShown >= problem.help_steps.length
   const [slotValues, setSlotValues] = useState<Record<string, string>>({})
   const [skeletonResult, setSkeletonResult] = useState<SkeletonResult | null>(null)
   const [skeletonMisses, setSkeletonMisses] = useState(0)
@@ -78,6 +82,7 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
 
   const openHelp = () => {
     setHelpOpen(true)
+    setStepsShown((n) => Math.max(n, 1))
     setHelpLevel((level) => (level < 1 ? 1 : level))
   }
 
@@ -143,8 +148,17 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
                 </p>
               </div>
             ) : helpOpen ? (
-              <div className="mt-1">
-                <p className="text-sm text-ink-muted">Here's the structure. Fill in the numbers.</p>
+              <div className="mt-3">
+                <HelpSteps
+                  steps={problem.help_steps}
+                  check={problem.help_check}
+                  revealed={stepsShown}
+                  onNext={() => setStepsShown((n) => n + 1)}
+                  onSkip={() => setStepsShown(problem.help_steps.length)}
+                />
+                {blanksReady && (
+                <>
+                <p className="mt-5 text-sm text-ink-muted">Here's the structure. Fill in the numbers.</p>
                 <div className="mt-4">
                   <HelpSkeleton
                     skeleton={problem.answer.skeleton}
@@ -157,6 +171,8 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
                   />
                 </div>
                 <Feedback result={skeletonResult} fallback="The highlighted boxes don't match. Reread the problem for those numbers." />
+                </>
+                )}
               </div>
             ) : (
               <div className="mt-1">
@@ -182,13 +198,15 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
 
             {!solved && (
               <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-                <button
-                  type="button"
-                  onClick={helpOpen ? checkSkeleton : checkFree}
-                  className="rounded-lg bg-accent-ink px-4 py-2 font-bold text-on-accent hover:opacity-90"
-                >
-                  Check answer
-                </button>
+                {(!helpOpen || blanksReady) && (
+                  <button
+                    type="button"
+                    onClick={helpOpen ? checkSkeleton : checkFree}
+                    className="rounded-lg bg-accent-ink px-4 py-2 font-bold text-on-accent hover:opacity-90"
+                  >
+                    Check answer
+                  </button>
+                )}
                 {!helpOpen && (
                   <button type="button" onClick={openHelp} className="font-bold text-accent-ink underline-offset-4 hover:underline">
                     Help

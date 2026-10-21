@@ -69,6 +69,27 @@ export interface Skeleton {
   slot_mistakes: (CommonWrong & { slot: string })[]
 }
 
+/** One numbered "why" step of Help, written with letters (n, k); text marks math with $…$. */
+export interface HelpStep {
+  kind: StepKind
+  title: string
+  text: string
+  latex?: string
+}
+
+/** The small-case check at the end of Help, computed by the pipeline for the smallest numbers. */
+export interface HelpCheck {
+  key: string
+  vars: Record<string, string>
+  /** The skeleton with those numbers in the blanks. */
+  filled: string
+  /** Each part worked out, e.g. "216 - 125" or a Σ's terms "6 - 6 + 3 - 1". */
+  worked: string
+  answer: StoredValue
+  /** The outcomes that count, when there are at most 8. */
+  outcomes?: string[]
+}
+
 export interface SolutionStep {
   kind: StepKind
   title: string
@@ -137,6 +158,8 @@ export interface Problem {
     common_wrong: CommonWrong[]
     skeleton: Skeleton
   }
+  help_steps: HelpStep[]
+  help_check: HelpCheck
   solution: SolutionStep[]
   /** How one outcome is drawn; `legend` explains the pieces, e.g. "★ = a candy". */
   visual: { type: VisualType; legend?: string }
