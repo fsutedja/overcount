@@ -1,23 +1,31 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Header } from './components/Header'
 import { PracticePage } from './pages/PracticePage'
-import { PreviewRoute } from './pages/PreviewRoute'
-import { ProblemRoute } from './pages/ProblemRoute'
-import { VisualsGallery } from './pages/VisualsGallery'
+
+// Problem pages need the math engine and the math input (most of the bundle), so they load on
+// demand; the practice and method pages start without them.
+const ProblemRoute = lazy(() => import('./pages/ProblemRoute').then((m) => ({ default: m.ProblemRoute })))
+const PreviewRoute = lazy(() => import('./pages/PreviewRoute').then((m) => ({ default: m.PreviewRoute })))
+const VisualsGallery = lazy(() => import('./pages/VisualsGallery').then((m) => ({ default: m.VisualsGallery })))
+
+const loading = <p className="mx-auto max-w-5xl px-4 py-8 text-ink-muted">Loading…</p>
 
 export default function App() {
   return (
     <BrowserRouter>
       <Header />
       <main>
-        <Routes>
-          <Route path="/" element={<ProblemRoute />} />
-          <Route path="/problem/:id" element={<ProblemRoute />} />
-          <Route path="/practice" element={<PracticePage />} />
-          {import.meta.env.DEV && <Route path="/dev/visuals" element={<VisualsGallery />} />}
-          {import.meta.env.DEV && <Route path="/dev/preview/:familyId" element={<PreviewRoute />} />}
-          <Route path="*" element={<p className="mx-auto max-w-5xl px-4 py-8 text-ink-muted">Page not found.</p>} />
-        </Routes>
+        <Suspense fallback={loading}>
+          <Routes>
+            <Route path="/" element={<ProblemRoute />} />
+            <Route path="/problem/:id" element={<ProblemRoute />} />
+            <Route path="/practice" element={<PracticePage />} />
+            {import.meta.env.DEV && <Route path="/dev/visuals" element={<VisualsGallery />} />}
+            {import.meta.env.DEV && <Route path="/dev/preview/:familyId" element={<PreviewRoute />} />}
+            <Route path="*" element={<p className="mx-auto max-w-5xl px-4 py-8 text-ink-muted">Page not found.</p>} />
+          </Routes>
+        </Suspense>
       </main>
     </BrowserRouter>
   )

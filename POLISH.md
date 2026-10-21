@@ -4,8 +4,9 @@ Small "fix later" ideas, so they don't interrupt the current milestone. Pick the
 milestone touches the same area, or in milestone 12 (polish and deploy).
 
 ## Web
-- [ ] **Bundle size:** the JS bundle is about 1.6 MB gzipped, mostly the Compute Engine.
-  Lazy-load it (and MathLive) so the first page paints fast. Do this before the deploy.
+- [x] **Bundle size:** problem pages (Compute Engine + MathLive) now load on demand; the first
+  load is ~165 KB gzipped instead of ~1.7 MB. The problem-page chunk is still ~1.55 MB gzipped;
+  splitting the Compute Engine further is possible later.
 - [ ] **Check `*` → × by hand:** typing `*` in the answer box should insert a × sign. The
   browser tool can't send a real `*` keypress, so this hasn't been verified on a keyboard.
 - [ ] **Bank size:** with 5 example pairs per number set, committee-mixed.json is ~360 KB
