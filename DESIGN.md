@@ -209,6 +209,21 @@ complements.
 - **Considered:** A · Quiet text, B · Chips.
 - **Mockup:** [design/mockups/d5-attempts.html](design/mockups/d5-attempts.html)
 
+## D6 · Method lessons ("How it works")
+
+**Decided: C · Tabs, plus a method pill on problems.**
+
+- The method page has two tabs, **Practice** and **Learn**. It always opens on **Practice**;
+  Learn is opened by hand. The tab uses the existing underline style (accent-ink, 3px).
+- A lesson has: what the method is, how it works, formulas (rendered math, each with when it
+  applies), one worked mini example, and a common trap.
+- Problem pages show a small method pill (e.g. "Stars & bars ⓘ") that opens the same lesson
+  in a side panel (a bottom sheet on phones) without leaving the problem.
+- **Why:** the lesson is one tap away at the moment a learner is stuck; the pill teaches method
+  names; Practice-first keeps returning learners one click from problems.
+- **Considered:** A · Lesson card above the list, B · Lesson beside the list.
+- **Mockup:** [design/mockups/d6-method-explainer.html](design/mockups/d6-method-explainer.html)
+
 ## D3 · Home and progress
 
 Pending (before milestone 9).
