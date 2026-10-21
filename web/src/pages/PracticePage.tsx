@@ -71,11 +71,10 @@ function MethodList({ index, solved }: { index: BankIndex; solved: Set<string> }
     <>
       {/* The header already shows which page this is; the heading is kept for screen readers. */}
       <h1 className="sr-only">Practice by method</h1>
-      <p className="text-ink-muted">Pick a method to practise.</p>
       {index.roadmap.map((node) => {
         const nodeProblems = index.problems.filter((p) => node.topics.includes(p.tags.topics[0]))
         return (
-          <section key={node.id} className="mt-8" aria-labelledby={`node-${node.id}`}>
+          <section key={node.id} className="mt-8 first-of-type:mt-0" aria-labelledby={`node-${node.id}`}>
             <h2 id={`node-${node.id}`} className="font-bold">
               {node.title}
             </h2>
