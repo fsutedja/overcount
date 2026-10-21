@@ -26,7 +26,11 @@ def _derangements(n: int) -> int:
 
 
 def _no_two_adjacent(n: int, k: int) -> int:
-    return sum(1 for spots in combinations(range(n), k) if all(b - a > 1 for a, b in zip(spots, spots[1:], strict=False)))
+    return sum(
+        1
+        for spots in combinations(range(n), k)
+        if all(b - a > 1 for a, b in zip(spots, spots[1:], strict=False))
+    )
 
 
 def _rows_apart(n: int, k: int) -> int:
