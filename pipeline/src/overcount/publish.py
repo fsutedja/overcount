@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from .examples import compute_examples
 from .expr import display_text, parse, to_group_latex, to_latex
 from .instances import build_instances
 from .roadmap import load_roadmap, roadmap_json
@@ -40,7 +41,19 @@ def mistake_tags(problem: Problem) -> list[str]:
     return sorted(tags)
 
 
-def problem_json(problem: Problem, family_id: str) -> Json:
+def _instances_json(problem: Problem, checker: Path) -> list[Json]:
+    """Every instance, each with its ✅/❌ example computed by the checker."""
+    instances = build_instances(problem)
+    examples = compute_examples(problem, instances, checker, membership=False)
+    out = []
+    for example in examples:
+        if example.errors:
+            raise ValueError(f"{problem.id} ({example.instance.key}): {example.errors[0]}; run verify")
+        out.append(example.instance.as_json() | {"example": example.data})
+    return out
+
+
+def problem_json(problem: Problem, family_id: str, checker: Path) -> Json:
     skeleton = problem.answer.skeleton
     parts: list[Json] = [
         {
@@ -87,7 +100,9 @@ def problem_json(problem: Problem, family_id: str) -> Json:
             }
             for step in problem.solution
         ],
-        "instances": [instance.as_json() for instance in build_instances(problem)],
+        "example": {"yes_reason": problem.example.yes_reason, "no_reason": problem.example.no_reason},
+        "visual": {"type": problem.visual.type},
+        "instances": _instances_json(problem, checker),
     }
 
 
@@ -133,7 +148,7 @@ def build_bank(content_dir: Path) -> Bank:
             if problem.id in seen_ids:
                 raise ValueError(f"problem id {problem.id!r} is used more than once in the bank")
             seen_ids.add(problem.id)
-            data = problem_json(problem, family.family_id)
+            data = problem_json(problem, family.family_id, path.parent / "checker.py")
             problems.append(data)
             index.append(index_entry(data, problem))
         # Family files hold ~100 instances per problem and are only read by the app: keep them compact.

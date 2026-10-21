@@ -1,27 +1,45 @@
-"""Brute-force checkers for the dice-at-least-one-six family."""
+"""Checkers for the dice-at-least-one-six family. An outcome is the list of n rolls, in order."""
 
 from itertools import product
 
 
-def solve_root(n):
-    count = 0
-    for roll in product(range(1, 7), repeat=n):
-        if 6 in roll:
-            count += 1
-    return count
+def outcomes(n):
+    return product(range(1, 7), repeat=n)
 
 
-def solve_two_or_more(n):
-    count = 0
-    for roll in product(range(1, 7), repeat=n):
-        if roll.count(6) >= 2:
-            count += 1
-    return count
+def _filler(n):
+    # Rolls without a 6, e.g. 1, 2, 3, 4, 5, 1, …
+    return [i % 5 + 1 for i in range(n)]
 
 
-def solve_no_ones(n):
-    count = 0
-    for roll in product(range(1, 7), repeat=n):
-        if 1 not in roll and 6 in roll:
-            count += 1
-    return count
+def counts_root(roll, n):
+    return 6 in roll
+
+
+def example_root(n):
+    yes = _filler(n)
+    yes[1] = 6
+    return {"yes": yes, "no": _filler(n), "highlight": [1]}
+
+
+def counts_two_or_more(roll, n):
+    return list(roll).count(6) >= 2
+
+
+def example_two_or_more(n):
+    yes, no = _filler(n), _filler(n)
+    yes[0] = yes[1] = 6
+    no[0] = 6
+    return {"yes": yes, "no": no, "highlight": [0, 1]}
+
+
+def counts_no_ones(roll, n):
+    return 1 not in roll and 6 in roll
+
+
+def example_no_ones(n):
+    yes = [i % 4 + 2 for i in range(n)]
+    yes[0] = 6
+    no = list(yes)
+    no[1] = 1
+    return {"yes": yes, "no": no, "highlight": [0]}

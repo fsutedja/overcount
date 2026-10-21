@@ -135,7 +135,18 @@
           "explanation": "Every team has both juniors and seniors, and the two choices don't affect each other, so multiply (the product rule)."
         }
       ],
-      "checker": "solve_root"
+      "example": {
+        "yes_reason": "{{j}} juniors and {{s}} seniors",
+        "no_reason": "one junior too many"
+      },
+      "visual": {
+        "type": "subset"
+      },
+      "checker": {
+        "outcomes": "outcomes_root",
+        "counts": "counts_root",
+        "example": "example_root"
+      }
     },
     {
       "id": "committee-captain",
@@ -280,7 +291,18 @@
           "explanation": "All three choices happen together, so multiply."
         }
       ],
-      "checker": "solve_captain"
+      "example": {
+        "yes_reason": "a junior is captain",
+        "no_reason": "a senior can't be captain"
+      },
+      "visual": {
+        "type": "sequence"
+      },
+      "checker": {
+        "outcomes": "outcomes_captain",
+        "counts": "counts_captain",
+        "example": "example_captain"
+      }
     }
   ]
 }

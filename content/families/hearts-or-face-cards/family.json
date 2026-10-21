@@ -130,8 +130,19 @@
           "explanation": "Add the two counts and subtract the overlap that was counted twice."
         }
       ],
-      "checker": "solve_root",
-      "deck": "standard"
+      "deck": "standard",
+      "example": {
+        "yes_reason": "all face cards",
+        "no_reason": "7♠ is neither a heart nor a face card"
+      },
+      "visual": {
+        "type": "cards"
+      },
+      "checker": {
+        "outcomes": "outcomes",
+        "counts": "counts_root",
+        "example": "example_root"
+      }
     },
     {
       "id": "hearts-or-face-cards-red",
@@ -264,8 +275,19 @@
           "explanation": "Add the counts for red hands and face card hands, then subtract the red face card hands."
         }
       ],
-      "checker": "solve_red",
-      "deck": "standard"
+      "deck": "standard",
+      "example": {
+        "yes_reason": "all red cards",
+        "no_reason": "7♠ is black and not a face card"
+      },
+      "visual": {
+        "type": "cards"
+      },
+      "checker": {
+        "outcomes": "outcomes",
+        "counts": "counts_red",
+        "example": "example_red"
+      }
     },
     {
       "id": "hearts-or-face-cards-exclusive",
@@ -387,8 +409,19 @@
           "explanation": "Subtracting C(3,{{k}}) once reduces their count from 2 to 1; subtracting it again removes them entirely."
         }
       ],
-      "checker": "solve_exclusive",
-      "deck": "standard"
+      "deck": "standard",
+      "example": {
+        "yes_reason": "all hearts, not all face cards",
+        "no_reason": "all hearts AND all face cards: both"
+      },
+      "visual": {
+        "type": "cards"
+      },
+      "checker": {
+        "outcomes": "outcomes",
+        "counts": "counts_exclusive",
+        "example": "example_exclusive"
+      }
     }
   ]
 }

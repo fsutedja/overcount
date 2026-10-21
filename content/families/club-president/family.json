@@ -102,7 +102,18 @@
           "explanation": "You choose a president and an advisor, so multiply."
         }
       ],
-      "checker": "solve_root"
+      "example": {
+        "yes_reason": "a student president, a teacher advisor",
+        "no_reason": "a teacher can't be president"
+      },
+      "visual": {
+        "type": "sequence"
+      },
+      "checker": {
+        "outcomes": "outcomes_root",
+        "counts": "counts_root",
+        "example": "example_root"
+      }
     },
     {
       "id": "club-president-optional-advisor",
@@ -211,7 +222,18 @@
           "explanation": "Both choices are made together, so multiply."
         }
       ],
-      "checker": "solve_optional_advisor"
+      "example": {
+        "yes_reason": "the advisor seat may stay empty",
+        "no_reason": "a teacher can't be president"
+      },
+      "visual": {
+        "type": "sequence"
+      },
+      "checker": {
+        "outcomes": "outcomes_optional_advisor",
+        "counts": "counts_optional_advisor",
+        "example": "example_optional_advisor"
+      }
     }
   ]
 }

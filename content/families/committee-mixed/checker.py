@@ -1,21 +1,44 @@
-"""Brute-force checkers for the committee-mixed family: enumerate every team and count."""
+"""Checkers for the committee-mixed family. Juniors are J1, J2, …; seniors are S1, S2, …"""
 
 from itertools import combinations
 
 
-def _teams(J, S, j, s):
-    people = [("junior", i) for i in range(J)] + [("senior", i) for i in range(S)]
-    for team in combinations(people, j + s):
-        if sum(1 for kind, _ in team if kind == "junior") == j:
-            yield team
+def _people(J, S):
+    return [f"J{i}" for i in range(1, J + 1)] + [f"S{i}" for i in range(1, S + 1)]
 
 
-def solve_root(J, S, j, s):
-    return sum(1 for _ in _teams(J, S, j, s))
+def _juniors(team):
+    return sum(1 for person in team if person[0] == "J")
 
 
-def solve_captain(J, S, j, s):
-    count = 0
-    for team in _teams(J, S, j, s):
-        count += sum(1 for kind, _ in team if kind == "junior")
-    return count
+def outcomes_root(J, S, j, s):
+    # Any j + s people; only teams with exactly j juniors count.
+    return combinations(_people(J, S), j + s)
+
+
+def counts_root(team, J, S, j, s):
+    return _juniors(team) == j
+
+
+def example_root(J, S, j, s):
+    yes = [f"J{i}" for i in range(1, j + 1)] + [f"S{i}" for i in range(1, s + 1)]
+    no = [f"J{i}" for i in range(1, j + 2)] + [f"S{i}" for i in range(1, s)]
+    return {"yes": yes, "no": no, "pool": _people(J, S)}
+
+
+def outcomes_captain(J, S, j, s):
+    # A team written captain first, then the other members in order.
+    for team in combinations(_people(J, S), j + s):
+        for captain in team:
+            yield [captain] + [p for p in team if p != captain]
+
+
+def counts_captain(order, J, S, j, s):
+    return _juniors(order) == j and order[0][0] == "J"
+
+
+def example_captain(J, S, j, s):
+    team = [f"J{i}" for i in range(1, j + 1)] + [f"S{i}" for i in range(1, s + 1)]
+    senior_first = ["S1"] + [p for p in team if p != "S1"]
+    captions = ["captain"] + ["member"] * (len(team) - 1)
+    return {"yes": team, "no": senior_first, "highlight": [0], "captions": captions}

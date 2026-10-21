@@ -105,7 +105,7 @@ def test_checker_gate_catches_a_wrong_answer(tmp_path: Path) -> None:
 
 def test_checker_gate_catches_an_unsafe_checker(tmp_path: Path) -> None:
     folder = copy_family(tmp_path)
-    (folder / "checker.py").write_text("import os\n\ndef solve_root(J, S, j, s):\n    return 0\n")
+    (folder / "checker.py").write_text("import os\n\ndef counts_root(team, J, S, j, s):\n    return True\n")
     report = verify_family(folder)
     assert any("not allowed" in f.message for f in report.failures)
 
@@ -121,6 +121,49 @@ def test_missing_checker_file_fails(tmp_path: Path) -> None:
     folder = copy_family(tmp_path)
     (folder / "checker.py").unlink()
     assert {f.gate for f in verify_family(folder).failures} == {"checker"}
+
+
+def _break_checker(folder: Path, old: str, new: str) -> None:
+    path = folder / "checker.py"
+    source = path.read_text()
+    assert old in source
+    path.write_text(source.replace(old, new))
+
+
+@pytest.mark.parametrize(
+    ("old", "new", "message"),
+    [
+        # ✅ outcome that doesn't count: one junior swapped for a senior.
+        (
+            'yes = [f"J{i}" for i in range(1, j + 1)] + [f"S{i}" for i in range(1, s + 1)]\n    no',
+            'yes = [f"J{i}" for i in range(1, j)] + [f"S{i}" for i in range(1, s + 2)]\n    no',
+            "doesn't pass",
+        ),
+        # ❌ outcome that does count: the same team as ✅.
+        ('return {"yes": yes, "no": no, "pool"', 'return {"yes": yes, "no": yes, "pool"', "so it counts"),
+        # Not a real outcome for this instance: a person who isn't in the club.
+        (
+            'no = [f"J{i}" for i in range(1, j + 2)]',
+            'no = ["J99"] + [f"J{i}" for i in range(1, j + 1)]',
+            "pool",
+        ),
+    ],
+)
+def test_example_gate_catches_a_wrong_example(tmp_path: Path, old: str, new: str, message: str) -> None:
+    folder = copy_family(tmp_path)
+    _break_checker(folder, old, new)
+    failures = verify_family(folder).failures
+    assert {f.gate for f in failures} == {"example"}
+    assert any(message in f.message for f in failures), failures
+
+
+def test_example_gate_catches_an_outcome_of_the_wrong_size(tmp_path: Path) -> None:
+    # A fixed 4-roll example on versions with 3–7 rolls.
+    folder = copy_family(tmp_path, "dice-at-least-one-six")
+    _break_checker(folder, "yes = _filler(n)\n    yes[1] = 6", "yes = [1, 6, 1, 1]")
+    failures = verify_family(folder).failures
+    assert any("is not one of outcomes" in f.message for f in failures), failures
+    assert all(f.instance_key != "n=4" for f in failures)
 
 
 DICE: dict[str, Any] = {
@@ -155,17 +198,26 @@ DICE: dict[str, Any] = {
                     "explanation": "At least one six is everything except no sixes in {{n}} rolls.",
                 }
             ],
+            "example": {"yes_reason": "it has a 6", "no_reason": "no 6 at all"},
+            "visual": {"type": "dice"},
+            "checker": {"counts": "counts", "example": "example"},
             "simulator": "simulate",
         }
     ],
 }
 
 
+DICE_EXAMPLE = (
+    "def counts(roll, n):\n    return 6 in roll\n\n"
+    "def example(n):\n    return {'yes': [6] + [1] * (n - 1), 'no': [1] * n, 'highlight': [0]}\n\n"
+)
+
+
 def write_dice(tmp_path: Path, simulator: str) -> Path:
     folder = tmp_path / "dice-six"
     folder.mkdir()
     (folder / "family.json").write_text(json.dumps(DICE))
-    (folder / "checker.py").write_text(simulator)
+    (folder / "checker.py").write_text(DICE_EXAMPLE + simulator)
     return folder
 
 

@@ -11,7 +11,7 @@
         "inspired_by": null
       },
       "title": "At least one six",
-      "statement": "A standard 6-sided die is rolled {{n}} times in order. How many roll sequences contain at least one 6?",
+      "statement": "Roll a 6-sided die {{n}} times and write down the results in order as a list, like the example below. Order matters: 6, 1, … and 1, 6, … are different lists. How many different lists have at least one 6?",
       "variables": {
         "n": {
           "min": 3,
@@ -33,7 +33,7 @@
         ]
       },
       "answer": {
-        "prompt": "Number of roll sequences with at least one 6",
+        "prompt": "Number of lists with at least one 6",
         "expr": "6^n - 5^n",
         "type": "count",
         "common_wrong": [
@@ -107,7 +107,18 @@
           "explanation": "Subtract the sequences with zero sixes from the total number of sequences to find those with at least one 6."
         }
       ],
-      "checker": "solve_root"
+      "example": {
+        "yes_reason": "it has a 6",
+        "no_reason": "no 6 at all"
+      },
+      "visual": {
+        "type": "dice"
+      },
+      "checker": {
+        "outcomes": "outcomes",
+        "counts": "counts_root",
+        "example": "example_root"
+      }
     },
     {
       "id": "dice-at-least-one-six-two-or-more",
@@ -121,7 +132,7 @@
         "inspired_by": null
       },
       "title": "At least two sixes",
-      "statement": "A standard 6-sided die is rolled {{n}} times in order. How many roll sequences contain at least two sixes?",
+      "statement": "Roll a 6-sided die {{n}} times and write down the results in order as a list, like the example below. Order matters: 6, 1, … and 1, 6, … are different lists. How many different lists have at least two 6s?",
       "variables": {
         "n": {
           "min": 3,
@@ -143,7 +154,7 @@
         ]
       },
       "answer": {
-        "prompt": "Number of roll sequences with at least two sixes",
+        "prompt": "Number of lists with at least two 6s",
         "expr": "6^n - 5^n - n*5^(n-1)",
         "type": "count",
         "common_wrong": [
@@ -231,7 +242,18 @@
           "explanation": "Subtract both unwanted cases from the total to count sequences with at least two sixes."
         }
       ],
-      "checker": "solve_two_or_more"
+      "example": {
+        "yes_reason": "two 6s",
+        "no_reason": "only one 6"
+      },
+      "visual": {
+        "type": "dice"
+      },
+      "checker": {
+        "outcomes": "outcomes",
+        "counts": "counts_two_or_more",
+        "example": "example_two_or_more"
+      }
     },
     {
       "id": "dice-at-least-one-six-no-ones",
@@ -245,7 +267,7 @@
         "inspired_by": null
       },
       "title": "At least one six without ones",
-      "statement": "A standard 6-sided die is rolled {{n}} times in order. How many roll sequences contain no 1s, but at least one 6?",
+      "statement": "Roll a 6-sided die {{n}} times and write down the results in order as a list, like the example below. Order matters: 6, 1, … and 1, 6, … are different lists. How many different lists have no 1s but at least one 6?",
       "variables": {
         "n": {
           "min": 3,
@@ -267,7 +289,7 @@
         ]
       },
       "answer": {
-        "prompt": "Number of roll sequences with no 1s and at least one 6",
+        "prompt": "Number of lists with no 1s but at least one 6",
         "expr": "5^n - 4^n",
         "type": "count",
         "common_wrong": [
@@ -341,7 +363,18 @@
           "explanation": "Subtracting sequences with neither 1 nor 6 from all sequences without 1 leaves those that have at least one 6."
         }
       ],
-      "checker": "solve_no_ones"
+      "example": {
+        "yes_reason": "a 6 and no 1s",
+        "no_reason": "it has a 1"
+      },
+      "visual": {
+        "type": "dice"
+      },
+      "checker": {
+        "outcomes": "outcomes",
+        "counts": "counts_no_ones",
+        "example": "example_no_ones"
+      }
     }
   ]
 }

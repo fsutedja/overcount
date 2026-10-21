@@ -83,7 +83,18 @@
           "explanation": "Rotating everyone one seat gives the same seating, and there are {{n}} rotations, so each seating was counted {{n}} times."
         }
       ],
-      "checker": "solve_root"
+      "example": {
+        "yes_reason": "one seating, read clockwise from A",
+        "no_reason": "same seating as the ✅ one, turned"
+      },
+      "visual": {
+        "type": "circle"
+      },
+      "checker": {
+        "outcomes": "outcomes",
+        "counts": "counts_root",
+        "example": "example_root"
+      }
     },
     {
       "id": "round-table-mirror",
@@ -180,7 +191,18 @@
           "explanation": "Each bracelet appears once for each of its {{n}} rotations, on each of its 2 sides, so divide by 2 × {{n}}."
         }
       ],
-      "checker": "solve_mirror"
+      "example": {
+        "yes_reason": "one bracelet, read clockwise from A",
+        "no_reason": "the ✅ bracelet flipped over"
+      },
+      "visual": {
+        "type": "circle"
+      },
+      "checker": {
+        "outcomes": "outcomes",
+        "counts": "counts_mirror",
+        "example": "example_mirror"
+      }
     }
   ]
 }

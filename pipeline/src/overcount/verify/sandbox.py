@@ -80,7 +80,8 @@ resource.setrlimit(resource.RLIMIT_FSIZE, (0, 0))
 request = json.load(sys.stdin)
 namespace = {"__name__": "checker"}
 exec(compile(request["source"], "checker.py", "exec"), namespace)
-function = namespace[request["function"]]
+functions = {role: namespace[name] for role, name in request["functions"].items()}
+unordered = request.get("unordered", False)
 
 def decode(value):
     return Fraction(value) if isinstance(value, str) else value
@@ -92,12 +93,28 @@ def encode(value):
         return value.numerator if value.denominator == 1 else str(value)
     return value
 
-results = []
-for call in request["calls"]:
-    kwargs = {name: decode(v) for name, v in call["kwargs"].items()}
+def plain(value):
+    # Outcomes as JSON: tuples become lists, and unordered outcomes are sorted to compare.
+    if isinstance(value, (list, tuple)):
+        items = [plain(v) for v in value]
+        return sorted(items, key=repr) if unordered else items
+    if isinstance(value, Fraction):
+        return str(value)
+    return value
+
+def outcome_json(value):
+    return [outcome_json(v) for v in value] if isinstance(value, (list, tuple)) else value
+
+def counts(outcome, kwargs):
+    result = functions["counts"](outcome, **kwargs)
+    if not isinstance(result, bool):
+        raise TypeError(f"counts_* returned {type(result).__name__}, expected True or False")
+    return result
+
+def run_value(kwargs, call):
+    function = functions["value"]
     if "trials" not in call:
-        results.append(encode(function(**kwargs)))
-        continue
+        return encode(function(**kwargs))
     # Simulation: run many trials here and return only their mean and mean square.
     import random
     rng = random.Random(call["seed"])
@@ -107,7 +124,40 @@ for call in request["calls"]:
         total += outcome
         total_sq += outcome * outcome
     n = call["trials"]
-    results.append({"mean": total / n, "mean_sq": total_sq / n})
+    return {"mean": total / n, "mean_sq": total_sq / n}
+
+def run_count(kwargs, call):
+    good = total = 0
+    for outcome in functions["outcomes"](**kwargs):
+        total += 1
+        good += counts(outcome, kwargs)
+    return encode(Fraction(good, total) if request.get("ratio") else good)
+
+def run_example(kwargs, call):
+    example = functions["example"](**kwargs)
+    if not isinstance(example, dict) or "yes" not in example or "no" not in example:
+        raise TypeError('example_* must return a dict with "yes" and "no"')
+    report = {"example": {k: outcome_json(v) for k, v in example.items()}}
+    report["yes_counts"] = counts(example["yes"], kwargs)
+    report["no_counts"] = counts(example["no"], kwargs)
+    if "outcomes" in functions and request.get("membership"):
+        wanted = {"yes": plain(example["yes"]), "no": plain(example["no"])}
+        found = {"yes": False, "no": False}
+        for outcome in functions["outcomes"](**kwargs):
+            normal = plain(outcome)
+            for side, target in wanted.items():
+                if not found[side] and normal == target:
+                    found[side] = True
+            if all(found.values()):
+                break
+        report["yes_is_outcome"], report["no_is_outcome"] = found["yes"], found["no"]
+    return report
+
+run = {"value": run_value, "count": run_count, "example": run_example}[request["mode"]]
+results = []
+for call in request["calls"]:
+    kwargs = {name: decode(v) for name, v in call["kwargs"].items()}
+    results.append(run(kwargs, call))
 json.dump(results, sys.stdout)
 """
 
@@ -131,11 +181,39 @@ Result = int | float | str | dict[str, float]
 
 def run_checker(checker_path: Path, function: str, calls: list[Call]) -> list[Result]:
     """Runs `function` from checker.py once per call in an isolated process and returns its results."""
+    results: list[Result] = _run(checker_path, {"mode": "value", "functions": {"value": function}}, calls)
+    return results
+
+
+def run_count(checker_path: Path, outcomes: str, counts: str, calls: list[Call], ratio: bool) -> list[Result]:
+    """Counts the outcomes that pass `counts` (as a fraction of all outcomes when `ratio`)."""
+    request = {"mode": "count", "functions": {"outcomes": outcomes, "counts": counts}, "ratio": ratio}
+    results: list[Result] = _run(checker_path, request, calls)
+    return results
+
+
+def run_examples(
+    checker_path: Path,
+    functions: dict[str, str],
+    calls: list[Call],
+    *,
+    unordered: bool,
+    membership: bool,
+) -> list[dict[str, Any]]:
+    """Calls example_* per call and reports whether its yes/no outcomes count (and exist, when
+    `membership` and an outcomes function are given)."""
+    request = {"mode": "example", "functions": functions, "unordered": unordered, "membership": membership}
+    results: list[dict[str, Any]] = _run(checker_path, request, calls)
+    return results
+
+
+def _run(checker_path: Path, request_fields: dict[str, Any], calls: list[Call]) -> Any:
     source = checker_path.read_text()
     problems = check_source(source)
     if problems:
         raise UnsafeCode("; ".join(problems))
-    request = json.dumps({"source": source, "function": function, "calls": [c.as_json() for c in calls]})
+    function = ", ".join(request_fields["functions"].values())
+    request = json.dumps({"source": source, **request_fields, "calls": [c.as_json() for c in calls]})
     try:
         completed = subprocess.run(
             [sys.executable, "-I", "-c", _RUNNER, str(CPU_SECONDS), str(MEMORY_BYTES)],
@@ -151,5 +229,4 @@ def run_checker(checker_path: Path, function: str, calls: list[Call]) -> list[Re
     if completed.returncode != 0:
         detail = completed.stderr.strip().splitlines()[-1:] or [f"exit code {completed.returncode}"]
         raise SandboxError(f"{function} failed: {detail[0]}\n{completed.stderr.strip()}")
-    results: list[Result] = json.loads(completed.stdout)
-    return results
+    return json.loads(completed.stdout)

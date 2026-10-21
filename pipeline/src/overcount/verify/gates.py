@@ -1,9 +1,11 @@
 """The MVP verification gates (PLAN.md §3). A family passes only if every problem passes all of them.
 
 1. schema      the family validates and every problem yields enough valid instances
-2. checker     the brute-force checker agrees with the answer on the default instance, the
-               range corners, and random instances
-3. simulation  Monte Carlo estimates land within a 99.9% interval of the exact answer
+2. checker     counting the checker's outcomes that pass counts_* agrees with the answer on the
+               default instance, the range corners, and random instances
+3. example     on the same instances, the ✅ outcome counts, the ❌ one doesn't, both are real
+               outcomes, and both fit the visual type
+4. simulation  Monte Carlo estimates land within a 99.9% interval of the exact answer
 """
 
 import itertools
@@ -16,10 +18,11 @@ from pathlib import Path
 import sympy as sp
 from pydantic import ValidationError
 
+from ..examples import compute_examples
 from ..expr import evaluate, parse
 from ..instances import Instance, InstanceError, build_instance, build_instances
 from ..schema import Family, IntRange, Problem
-from .sandbox import Call, Result, SandboxError, UnsafeCode, run_checker
+from .sandbox import Call, Result, SandboxError, UnsafeCode, run_checker, run_count
 
 #: Fewer instances than this and "New numbers" has too little to offer (the app hides it then).
 MIN_INSTANCES = 5
@@ -94,11 +97,12 @@ def _checker_targets(problem: Problem, instances: list[Instance]) -> list[Instan
     return targets
 
 
-def _gate_checker(problem: Problem, instances: list[Instance], checker: Path, report: FamilyReport) -> None:
-    assert problem.checker is not None
-    targets = _checker_targets(problem, instances)
+def _gate_checker(problem: Problem, targets: list[Instance], checker: Path, report: FamilyReport) -> None:
+    fns = problem.checker
+    assert fns.outcomes is not None
+    ratio = problem.answer.type == "probability"
     try:
-        results = run_checker(checker, problem.checker, [Call(_kwargs(i)) for i in targets])
+        results = run_count(checker, fns.outcomes, fns.counts, [Call(_kwargs(i)) for i in targets], ratio)
     except (UnsafeCode, SandboxError) as error:
         report.failures.append(Failure("checker", problem.id, str(error).splitlines()[0], detail=str(error)))
         return
@@ -109,11 +113,22 @@ def _gate_checker(problem: Problem, instances: list[Instance], checker: Path, re
                 Failure(
                     "checker",
                     problem.id,
-                    f"brute force gives {result}, the answer expression gives {expected}",
+                    f"counting outcomes gives {result}, the answer expression gives {expected}",
                     instance.key,
                 )
             )
     report.checked.setdefault(problem.id, {})["checker"] = len(targets)
+
+
+def _gate_example(problem: Problem, targets: list[Instance], checker: Path, report: FamilyReport) -> None:
+    try:
+        examples = compute_examples(problem, targets, checker, membership=True)
+    except (UnsafeCode, SandboxError) as error:
+        report.failures.append(Failure("example", problem.id, str(error).splitlines()[0], detail=str(error)))
+        return
+    for example in examples:
+        report.failures += [Failure("example", problem.id, e, example.instance.key) for e in example.errors]
+    report.checked.setdefault(problem.id, {})["example"] = len(targets)
 
 
 def _gate_simulation(
@@ -192,8 +207,10 @@ def verify_family(folder: Path) -> FamilyReport:
         if not checker.exists():
             report.failures.append(Failure("checker", problem.id, "checker.py is missing"))
             continue
-        if problem.checker:
-            _gate_checker(problem, instances, checker, report)
+        targets = _checker_targets(problem, instances)
+        if problem.simulator is None:
+            _gate_checker(problem, targets, checker, report)
+        _gate_example(problem, targets, checker, report)
         if problem.simulator:
             _gate_simulation(problem, instances, checker, report)
     return report

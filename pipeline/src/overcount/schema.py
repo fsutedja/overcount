@@ -11,6 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from .expr import parse
 from .taxonomy import Context, Difficulty, Method, MistakeTag, StepKind, Topic
+from .visual import VisualType
 
 PLACEHOLDER = re.compile(r"\{\{(\w+)\}\}")
 SLOT_MARKER = re.compile(r"\[(\w+)\]")
@@ -139,6 +140,35 @@ class Tags(Model):
     methods: list[Method] = Field(min_length=1)
 
 
+FunctionName = Annotated[str, Field(pattern=r"^[a-z_][a-z0-9_]*$")]
+
+
+class Checker(Model):
+    """Function names in the family's checker.py (PLAN.md §3, checker convention).
+
+    - outcomes(**vars): every candidate outcome a beginner might write down.
+    - counts(outcome, **vars): True if the outcome counts.
+    - example(**vars): {"yes": outcome, "no": outcome, "highlight"?, "pool"?, "captions"?}.
+
+    The answer is checked by counting candidates that pass `counts` (a fraction of all of them
+    for probabilities). With unequal chances, leave `outcomes` out and add a simulator instead.
+    """
+
+    outcomes: FunctionName | None = None
+    counts: FunctionName
+    example: FunctionName
+
+
+class Visual(Model):
+    type: VisualType
+
+
+class Example(Model):
+    #: Why the yes outcome counts / the no outcome doesn't, e.g. "two 6s", "only one 6".
+    yes_reason: Annotated[str, Field(min_length=1, max_length=60)]
+    no_reason: Annotated[str, Field(min_length=1, max_length=60)]
+
+
 class Origin(Model):
     kind: Literal["authored", "generated"]
     generator: str | None = None
@@ -163,9 +193,13 @@ class Problem(Model):
     tags: Tags
     answer: Answer
     solution: list[SolutionStep] = Field(min_length=1)
-    #: Function names in the family's checker.py. A problem needs at least one way to be verified.
-    checker: str | None = None
-    simulator: str | None = None
+    #: What one outcome looks like: a ✅ and a ❌ outcome (from the checker) with reasons, drawn
+    #: as a small diagram of this type.
+    example: Example
+    visual: Visual
+    checker: Checker
+    #: For answers the outcome count can't give (unequal chances, expectations).
+    simulator: FunctionName | None = None
     #: Card problems only. "standard" = the usual 52-card deck (13 ranks, 4 suits); "custom" = a
     #: deck the statement describes, allowed only for hard problems (PLAN.md, card problems).
     deck: Literal["standard", "custom"] | None = None
@@ -178,6 +212,7 @@ class Problem(Model):
         texts = [self.statement, self.answer.prompt]
         texts += [m.feedback for m in self.answer.common_wrong + list(self.answer.skeleton.slot_mistakes)]
         texts += [step.title for step in self.solution] + [step.explanation for step in self.solution]
+        texts += [self.example.yes_reason, self.example.no_reason]
         unknown = {name for text in texts for name in PLACEHOLDER.findall(text)} - set(self.variables)
         if unknown:
             raise ValueError(f"text uses unknown placeholders {sorted(unknown)}")
@@ -187,8 +222,10 @@ class Problem(Model):
         ]
         if malformed:
             raise ValueError(f"malformed placeholder (use {{{{x}}}} exactly) in: {malformed[0]!r}")
-        if self.checker is None and self.simulator is None:
-            raise ValueError("a problem needs a checker or a simulator so it can be verified")
+        if self.simulator is None and self.checker.outcomes is None:
+            raise ValueError("checker.outcomes is needed to verify the answer (or add a simulator)")
+        if self.simulator is None and self.answer.type == "expectation":
+            raise ValueError("expectations can't be counted from outcomes; add a simulator")
         if (self.variant_of is None) != (self.twist is None):
             raise ValueError("variants need both variant_of and twist; root problems need neither")
         expressions = [
