@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D16c pan contrast</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Pixelify+Sans&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1f1d1a;--card:#2a2723;--border:#3a362f;--ink:#eee7da;--ink-muted:#b3aa9b;--accent-ink:#7cc1b7;--deco:#d99474}
+*{box-sizing:border-box}
+body{margin:0;background:#f4efe6;color:#2b2823;font-family:'Atkinson Hyperlegible',sans-serif;padding:24px 16px 60px;line-height:1.45}
+.wrap{max-width:900px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}.sub{color:#675f53;margin:0 0 20px}
+.opt{margin-bottom:28px}.opt>h2{margin:0 0 2px;font-size:18px}.why{color:#675f53;font-size:14px;margin:0 0 10px}
+.frame{border:1px solid #e4d9c6;border-radius:14px;overflow:hidden;background:var(--bg)}
+.hdr{display:flex;align-items:center;gap:28px;padding:20px}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Pixelify Sans';font-size:22px;line-height:1}
+.lo{color:var(--accent-ink)}.lc{color:var(--deco)}
+.mark{height:28px;image-rendering:pixelated;display:block}
+.nav{display:flex;gap:22px;font-size:14px;font-weight:700;color:var(--ink-muted)}.nav .on{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent-ink);text-decoration-thickness:2px;text-underline-offset:4px}
+.stripe{height:8px}
+.page{padding:16px 20px 20px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.lbl{font-weight:700;font-size:14px;margin:0 0 6px;color:var(--ink)}
+.ph{background:var(--card);border:1px solid var(--border);border-radius:12px;height:60px}
+/* K: plate behind the icon */
+.plate{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:#e9dfcf;box-shadow:inset 0 0 0 3px #d6c8b1}
+/* L: pixel outline around the icon (icon itself unchanged) */
+.outline{filter:drop-shadow(1px 0 0 #c9bba3) drop-shadow(-1px 0 0 #c9bba3) drop-shadow(0 1px 0 #c9bba3) drop-shadow(0 -1px 0 #c9bba3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>D16c · Making the pan visible on the brown header (dark mode)</h1>
+<p class="sub">The brown awning stays. The pan is drawn in very dark greys (#2B2823 to #5A544B), almost the same darkness as the band (#3B2C24). The icon itself is not changed in any option.</p>
+<div id="opts"></div>
+</div>
+<script>
+const img = (cls = '') => `<img class="mark ${cls}" src="logo-mark.svg" alt="">`;
+const OPTS = [
+  ['Now (for reference)', 'The pan blends into the band.', '#3b2c24', 'repeating-linear-gradient(90deg,#d99474 0 18px,#2a2723 18px 36px)', img()],
+  ['J · Lighter brown band', 'The same brown, lifted to a lighter, warmer tone (#5e4434) so the dark pan stands out against it. Stripes unchanged. Simplest: one colour changes.', '#5e4434', 'repeating-linear-gradient(90deg,#d99474 0 18px,#2a2723 18px 36px)', img()],
+  ['K · Plate behind the icon', 'A small cream plate (a circle with a slightly darker rim) sits behind the pan, so it’s served on a plate. Brown stays exactly as now; adds one small shape next to the wordmark.', '#3b2c24', 'repeating-linear-gradient(90deg,#d99474 0 18px,#2a2723 18px 36px)', `<span class="plate">${img()}</span>`],
+  ['L · Pixel outline', 'A 1px light outline traced around the icon’s shape, like a sticker edge, added in code only in dark mode. Brown stays exactly as now; the icon file is untouched.', '#3b2c24', 'repeating-linear-gradient(90deg,#d99474 0 18px,#2a2723 18px 36px)', img('outline')],
+];
+document.getElementById('opts').innerHTML = OPTS.map(([name, why, band, stripe, mark]) => `<section class="opt"><h2>${name}</h2><p class="why">${why}</p>
+  <div class="frame"><div class="hdr" style="background:${band}"><span class="logo">${mark}<span><span class="lo">over</span><span class="lc">count</span></span></span><nav class="nav"><span>Roadmap</span><span class="on">Practice</span><span>Progress</span></nav></div><div class="stripe" style="background:${stripe}"></div>
+  <div class="page"><div><p class="lbl">Problem</p><div class="ph"></div></div><div><p class="lbl">Your answer</p><div class="ph"></div></div></div></div></section>`).join('');
+</script>
+</body>
+</html>

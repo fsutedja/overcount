@@ -79,3 +79,10 @@
     }
   }
 }
+
+/* D16 · In dark mode a 1px light outline (a colour from the icon itself) keeps the dark pan
+   visible on the brown header. The icon file is unchanged. */
+[data-theme='dark'] .logo-mark {
+  filter: drop-shadow(1px 0 0 #c9bba3) drop-shadow(-1px 0 0 #c9bba3) drop-shadow(0 1px 0 #c9bba3)
+    drop-shadow(0 -1px 0 #c9bba3);
+}

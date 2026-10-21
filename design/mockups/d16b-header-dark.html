@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D16b dark header</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Pixelify+Sans&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1f1d1a;--card:#2a2723;--border:#3a362f;--ink:#eee7da;--ink-muted:#b3aa9b;--accent:#5fa69c;--accent-ink:#7cc1b7;--accent-soft:#23332f;--deco:#d99474;--deco-soft:#3b2c24}
+*{box-sizing:border-box}
+body{margin:0;background:#f4efe6;color:#2b2823;font-family:'Atkinson Hyperlegible',sans-serif;padding:24px 16px 60px;line-height:1.45}
+.wrap{max-width:900px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}.sub{color:#675f53;margin:0 0 20px}
+.opt{margin-bottom:28px}.opt>h2{margin:0 0 2px;font-size:18px}.why{color:#675f53;font-size:14px;margin:0 0 10px}
+.frame{border:1px solid #e4d9c6;border-radius:14px;overflow:hidden;background:var(--bg)}
+.hdr{display:flex;align-items:center;gap:28px;padding:20px}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Pixelify Sans';font-size:22px;line-height:1}
+.lo{color:var(--accent-ink)}.lc{color:var(--deco)}
+.logo img{height:26px;image-rendering:pixelated}
+.nav{display:flex;gap:22px;font-size:14px;font-weight:700;color:var(--ink-muted)}.nav .on{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent-ink);text-decoration-thickness:2px;text-underline-offset:4px}
+.stripe{height:8px}
+.page{padding:16px 20px 20px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.lbl{font-weight:700;font-size:14px;margin:0 0 6px;color:var(--ink)}
+.ph{background:var(--card);border:1px solid var(--border);border-radius:12px;height:70px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>D16b · The awning header in dark mode</h1>
+<p class="sub">Light mode stays as it is. Today's dark header is a muddy brown (#3b2c24) with bright terracotta and dark stripes. Each option below changes only the dark version, and keeps the band neutral so the logo's teal and terracotta stand out.</p>
+<div id="opts"></div>
+</div>
+<script>
+const OPTS = [
+  ['Now (for reference)', 'Brown band behind a terracotta "count": the two warm colours blur together.', '#3b2c24', 'repeating-linear-gradient(90deg,#d99474 0 18px,#2a2723 18px 36px)', 8],
+  ['E · Tone-on-tone awning', 'A warm charcoal band (#2a2723, the card colour) with stripes in two close greys (#3d3832 / #2a2723). The awning is there as texture, not colour, so the logo is the only colour in the header.', '#2a2723', 'repeating-linear-gradient(90deg,#3d3832 0 18px,#2a2723 18px 36px)', 8],
+  ['F · Muted cream stripes', 'Same charcoal band; the stripes are a dim cream (#5a5348) on charcoal, like a faded canvas awning at night. A bit more visible than E, still no brand colour.', '#2a2723', 'repeating-linear-gradient(90deg,#5a5348 0 18px,#2a2723 18px 36px)', 8],
+  ['G · Page-coloured band, stripe edge only', 'The header matches the page (#1f1d1a); only the striped edge (dim cream on page colour) separates it. The most minimal; the header feels part of the page.', '#1f1d1a', 'repeating-linear-gradient(90deg,#4a443b 0 18px,#1f1d1a 18px 36px)', 8],
+  ['H · Lighter warm grey band, thin stripes', 'A lighter warm grey band (#34302a) so the header clearly stands out, with a thinner 5px edge of grey stripes. Separation from height and tone, not colour.', '#34302a', 'repeating-linear-gradient(90deg,#4d473f 0 14px,#34302a 14px 28px)', 5],
+  ['I · Charcoal band, ink-dark stripes', 'Charcoal band with stripes of near-black page colour, so the awning reads as shadows cut into the band. Subtle, slightly more graphic than E.', '#2a2723', 'repeating-linear-gradient(90deg,#1f1d1a 0 18px,#2a2723 18px 36px)', 8],
+];
+const logo = `<span class="logo"><img src="logo-mark.svg" alt=""><span><span class="lo">over</span><span class="lc">count</span></span></span>`;
+document.getElementById('opts').innerHTML = OPTS.map(([name, why, band, stripe, h]) => `<section class="opt"><h2>${name}</h2><p class="why">${why}</p>
+  <div class="frame"><div class="hdr" style="background:${band}">${logo}<nav class="nav"><span>Roadmap</span><span class="on">Practice</span><span>Progress</span></nav></div><div class="stripe" style="height:${h}px;background:${stripe}"></div>
+  <div class="page"><div><p class="lbl">Problem</p><div class="ph"></div></div><div><p class="lbl">Your answer</p><div class="ph"></div></div></div></div></section>`).join('');
+</script>
+</body>
+</html>

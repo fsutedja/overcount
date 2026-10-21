@@ -373,6 +373,11 @@ logo icon and colours are unchanged. Works in both themes from the existing toke
 - **Considered:** A · order ticket (cream with a scalloped edge), B · kitchen tiles (light teal
   with grout lines), D · counter top (dark with a terracotta edge).
 - **Mockup:** [design/mockups/d16-header.html](design/mockups/d16-header.html)
+- **Dark mode:** the brown band stays. Because the pan is drawn in dark greys, the logo icon gets
+  a 1px light outline (#C9BBA3, a colour from the icon) in dark mode only, like a sticker edge;
+  the icon file itself is unchanged. Considered: neutral bands (E–I), a lighter brown band (J),
+  a plate behind the icon (K). Mockups: [d16b-header-dark.html](design/mockups/d16b-header-dark.html),
+  [d16c-pan-contrast.html](design/mockups/d16c-pan-contrast.html)
 
 ## No emoji
 

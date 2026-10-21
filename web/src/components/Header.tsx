@@ -16,7 +16,7 @@ export function Header() {
     <header className="z-20 bg-deco-soft sm:sticky sm:top-0">
       <div className="mx-auto flex max-w-5xl items-center gap-10 px-4 py-5">
         <Link to="/" className="flex items-center gap-3" aria-label="Overcount home">
-          <img src={logoMark} alt="" className="h-7 w-auto [image-rendering:pixelated]" />
+          <img src={logoMark} alt="" className="logo-mark h-7 w-auto [image-rendering:pixelated]" />
           <span className="font-pixel text-2xl leading-none">
             <span className="text-accent-ink">over</span>
             <span className="text-deco">count</span>
