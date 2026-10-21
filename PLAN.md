@@ -1,6 +1,6 @@
 # Overcount: Combinatorics & Probability Practice Site, Design Plan
 
-## Status (2026-10-20)
+## Status (2026-10-21)
 
 **Done**
 
@@ -61,20 +61,29 @@
   answers don't count as new tries; "mastered" means solved within 2 tries; after 3 wrong
   tries the page suggests Help (never blocks).
 
+- **Lessons, Help and blanks** (2026-10-21):
+  - A lesson for each of the 19 methods (`content/methods.yaml`, every formula brute-force
+    tested). Method pages have Practice | Learn tabs (Practice first); problem cards have
+    Example | Method tabs (D6, D7).
+  - Help flow: free answer → "Fill in the blanks" opens the skeleton at once (empty boxes, wrong
+    ones shaded berry) → "Help" reveals numbered why-steps one at a time plus a small-numbers
+    check computed by the pipeline → "Show solution" shows the worked numbers only.
+  - Blanks inside a Σ may hold expressions in its index (n − k), graded by trying k = 0…5. The
+    pipeline checks every skeleton adds up to the answer.
+  - Attempt tracking with try dots (D5); mastered = right within 2 tries; Help nudge after 3
+    wrong tries.
+
 **Next**
-1. **Examples rollout:** more examples per problem with per-outcome reasons, "Show another
-   example", then the `family-v3` prompt with retry on bad replies. **3 sample problems are shown
-   for approval before anything is regenerated.**
-2. **Attempt tracking:** attempt counts, mastered/solved, the Help nudge (display options shown
-   first).
-3. **Pilot review:** 3 methods (stars-and-bars, derangements, symmetry-relative-order) plus the 3
-   family-v1 regenerations, all on `family-v3`. Approve or reject them on `staging/review.html`.
-4. **Generate the other 16 methods** (48 families) in background batches, each followed by a
-   review.
-5. **Milestones 7–9:** Daily page, heatmap and charts; progress saved with `ProgressStore`; the Home
-   roadmap. Design checkpoint D3 comes before milestone 9.
-6. **Follow-ups** are tracked in [POLISH.md](POLISH.md), for example lazy-loading the 1.6 MB
-   Compute Engine bundle before the deploy.
+1. **You try the new Help flow** (blanks first, Help on request, Show solution with numbers).
+2. **Regenerate 3 samples with `family-v3`** (marbles-in-jars, hat-check-no-match,
+   line-relative-order) only after your go-ahead; review each on `/dev/preview/<slug>`.
+   Nothing is sent to Gemini before that.
+3. **Generate the other methods** (~48 families) in daily batches within the free quota, each
+   reviewed before publishing.
+4. **Milestones 7–9:** daily problem, Progress page (heatmap, chart), the Home roadmap (design
+   checkpoint D3 first).
+5. **Follow-ups** are tracked in [POLISH.md](POLISH.md), e.g. lazy-loading the Compute Engine
+   bundle before the deploy.
 
 ## Roadmap: v1 and v2
 
