@@ -97,7 +97,7 @@ export function ProblemPage({ problem, instance, fromMethod = null, onNewNumbers
 
   return (
     <article className="mx-auto max-w-5xl px-4 py-6 md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] md:items-start md:gap-6 md:py-8">
-      <div className="md:sticky md:top-21">
+      <div className="md:sticky md:top-26">
         <h2 className="mb-3 font-bold">Problem</h2>
         <section className="overflow-hidden rounded-xl border border-border bg-card" aria-labelledby="problem-title">
           <div

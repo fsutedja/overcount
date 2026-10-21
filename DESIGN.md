@@ -367,7 +367,7 @@ phone's safe area. Desktop keeps the header links.
 
 ## D16 · Header background
 
-**Decided: C · Shop awning.** The header is soft terracotta (`--deco-soft`) with an 8px band of
+**Decided: C · Shop awning.** The header is soft terracotta (`--deco-soft`), 20px padding above and below, with an 8px band of
 terracotta and cream stripes (18px each) along its bottom edge, like a restaurant awning. The
 logo icon and colours are unchanged. Works in both themes from the existing tokens.
 - **Considered:** A · order ticket (cream with a scalloped edge), B · kitchen tiles (light teal

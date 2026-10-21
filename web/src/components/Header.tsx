@@ -14,7 +14,7 @@ export function Header() {
     // Pinned on tablets and up so the nav stays in reach; phones use the bottom tab bar instead.
     // Soft terracotta with a striped band below, like a shop awning (DESIGN.md, D16).
     <header className="z-20 bg-deco-soft sm:sticky sm:top-0">
-      <div className="mx-auto flex max-w-5xl items-center gap-10 px-4 py-3">
+      <div className="mx-auto flex max-w-5xl items-center gap-10 px-4 py-5">
         <Link to="/" className="flex items-center gap-3" aria-label="Overcount home">
           <img src={logoMark} alt="" className="h-7 w-auto [image-rendering:pixelated]" />
           <span className="font-pixel text-2xl leading-none">
