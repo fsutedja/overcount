@@ -295,3 +295,26 @@ def test_user_prompt_lists_methods_and_kept_variants() -> None:
     assert 'id "candy-bags-nonempty"' in text
     system = system_prompt(FAMILIES_DIR)
     assert '"derangements"' in system and "Sum(body, k, lo, hi)" in system and "<<" not in system
+
+
+def test_run_stops_when_gemini_stays_overloaded(tmp_path: Path) -> None:
+    overloaded = errors.ServerError(503, {"error": {"code": 503, "message": "high demand"}})
+    generator, client, _ = make_generator([overloaded] * 5)
+    log = GenerationLog(tmp_path / "log.jsonl")
+    result = run_generation(generator, generator.limiter, TARGETS, log, tmp_path, set())
+    assert len(client.models.calls) == 5  # the first target's retries only, not every target
+    assert result.stopped_reason is not None and "503" in result.stopped_reason
+    assert [t for t, _ in result.failed] == ["candy-bags"]
+
+
+def test_requests_are_counted_per_pacific_day(tmp_path: Path) -> None:
+    from datetime import UTC, datetime
+
+    log = tmp_path / "log.jsonl"
+    log.write_text(
+        '{"at": "2026-10-21T03:50:00+00:00", "requests": 2}\n'  # 20:50 on the 20th in California
+        '{"at": "2026-10-21T07:30:00+00:00", "requests": 3}\n'  # 00:30 on the 21st
+        '{"at": "2026-10-21T17:00:00+00:00", "requests": 4}\n'
+    )
+    assert GenerationLog(log).requests_today(datetime(2026, 10, 21, 18, 0, tzinfo=UTC)) == 7
+    assert GenerationLog(log).requests_today(datetime(2026, 10, 21, 5, 0, tzinfo=UTC)) == 2

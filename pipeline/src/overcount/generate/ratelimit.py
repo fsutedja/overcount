@@ -4,9 +4,18 @@ import json
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
+
+#: Gemini's free-tier daily quota resets at midnight Pacific time.
+QUOTA_TIMEZONE = ZoneInfo("America/Los_Angeles")
+
+
+def quota_day(moment: datetime) -> date:
+    """The quota day a moment belongs to (days start at midnight Pacific)."""
+    return moment.astimezone(QUOTA_TIMEZONE).date()
 
 
 class QuotaExhausted(RuntimeError):
@@ -33,13 +42,18 @@ class GenerationLog:
         with self.path.open("a") as handle:
             handle.write(json.dumps(record) + "\n")
 
-    def requests_today(self) -> int:
-        # Gemini's daily quota resets at midnight Pacific time, so counting by UTC date is only an
-        # approximation. If Gemini still reports the daily quota used up, the run stops cleanly anyway.
-        today = datetime.now(UTC).date().isoformat()
-        return sum(
-            int(e.get("requests", 0)) for e in self.entries() if str(e.get("at", "")).startswith(today)
-        )
+    def requests_today(self, now: datetime | None = None) -> int:
+        """Requests logged in the current quota day (which starts at midnight Pacific time)."""
+        today = quota_day(now or datetime.now(UTC))
+        total = 0
+        for entry in self.entries():
+            try:
+                at = datetime.fromisoformat(str(entry.get("at", "")))
+            except ValueError:
+                continue
+            if quota_day(at) == today:
+                total += int(entry.get("requests", 0))
+        return total
 
     def staged_targets(self) -> set[str]:
         return {e["target_id"] for e in self.entries() if e.get("status") == "staged"}

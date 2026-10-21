@@ -104,6 +104,11 @@ def run_generation(
                 log.append(**common, status="error", requests=limiter.made - before, detail=detail)
                 result.failed.append((target.id, detail))
                 draft = None
+                if error.code is not None and error.code >= 500:
+                    # Still failing after the generator's own retries: Gemini is overloaded or
+                    # down, so the next targets would only burn requests too. Stop the run.
+                    result.stopped_reason = f"Gemini is not responding properly ({detail}); try again later"
+                    stop = True
                 break
             problems = check(draft)
             if not problems:
