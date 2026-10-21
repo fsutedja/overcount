@@ -273,15 +273,16 @@ function ProblemList(props: {
                   className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3 hover:bg-card-sunken"
                 >
                   <span className="min-w-[12rem] flex-1">
-                    <span className="font-bold">{p.title}</span>
+                    {/* Try marks sit right after the title. */}
+                    <span className="inline-flex flex-wrap items-center gap-x-2.5">
+                      <span className="font-bold">{p.title}</span>
+                      <TryDots tries={problemProgress(attempts, p.id).tries} max={5} />
+                    </span>
                     {p.twist && <span className="block text-sm text-ink-muted">Variation: {p.twist}</span>}
                   </span>
                   <span className="flex shrink-0 gap-2 text-xs">
                     <Chip>{KIND_LABEL[p.kind]}</Chip>
                     <Difficulty level={p.difficulty} />
-                  </span>
-                  <span className="flex min-w-[4.5rem] shrink-0 justify-end">
-                    <TryDots tries={problemProgress(attempts, p.id).tries} max={5} />
                   </span>
                 </Link>
               </li>
