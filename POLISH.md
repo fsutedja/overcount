@@ -16,6 +16,17 @@ milestone touches the same area, or in milestone 12 (polish and deploy).
   grow to fit their hint, or cap hints at a short length in the prompt and schema.
 - [ ] **Header nav links** (Roadmap, Practice, Progress) are placeholders until milestones 7–9.
 
+- [ ] **Mobile nav:** the header links are hidden below 640px, so phones can't reach /practice
+  yet. Add a compact menu.
+- [ ] **Σ in the Help skeleton:** sums show as plain text "Σ(k=0..[a]) …". Render them as real
+  math with boxes in the limits.
+- [ ] **Deploy routing:** add a Vercel rewrite to index.html so /practice and /problem/:id work on
+  reload.
+
+## Content
+- [ ] **Stirling and identical boxes:** balls-into-boxes skips distinct or identical balls into
+  *identical* boxes (Stirling numbers, partitions). Add when the grammar supports them.
+
 ## CI
 - [ ] **Node 20 actions:** `actions/checkout@v4`, `actions/setup-node@v4`, `astral-sh/setup-uv@v6`
   and `gitleaks/gitleaks-action@v2` target the retiring Node 20 (GitHub runs them on Node 24 for
