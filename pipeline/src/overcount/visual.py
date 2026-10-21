@@ -91,9 +91,20 @@ def example_errors(kind: str, example: Any) -> list[str]:
         errors.append(f"highlight must be positions 0..{len(yes) - 1} in the yes outcome, got {highlight!r}")
     if kind == "subset":
         pool = example.get("pool")
-        if not isinstance(pool, list) or not all(_is_label(v) for v in pool) or len(pool) > MAX_POOL:
-            errors.append(f"a subset example needs a pool: up to {MAX_POOL} short labels to choose from")
-        elif not set(yes) | set(example["no"]) <= set(pool):
+        # A pool is a list of labels, or named groups ({"juniors": [...], "seniors": [...]}),
+        # drawn as separate rows so different kinds of people don't look interchangeable.
+        groups = pool if isinstance(pool, dict) else {"": pool}
+        items = [v for g in groups.values() if isinstance(g, list) for v in g]
+        if (
+            not all(isinstance(g, list) and g for g in groups.values())
+            or not all(_is_label(v) for v in items)
+            or not all(isinstance(name, str) and len(name) <= MAX_CAPTION for name in groups)
+            or len(items) > MAX_POOL
+        ):
+            errors.append(
+                f"a subset example needs a pool: up to {MAX_POOL} short labels, or named groups of them"
+            )
+        elif not set(yes) | set(example["no"]) <= set(items):
             errors.append("subset outcomes must be chosen from the pool")
     elif "pool" in example:
         errors.append("pool is only for subset visuals")

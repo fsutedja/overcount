@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import type { BankIndex, Family } from '../types/problem'
 import { skeletonLatex } from './answer'
 import { gradeLatex, matchesLatex } from './grade'
+import { outcomeText } from './outcome'
 import { fillTemplate } from './template'
 
 /**
@@ -75,6 +76,28 @@ describe('bank tags', () => {
     for (const summary of index.problems) {
       expect(summary.tags.methods.length, summary.id).toBeGreaterThan(0)
       expect(summary.kind, summary.id).toBeDefined()
+    }
+  })
+})
+
+describe('bank examples', () => {
+  it('gives every instance an example whose text matches the web text form', () => {
+    for (const problem of problems) {
+      for (const instance of problem.instances) {
+        const { yes, no } = instance.example
+        expect(outcomeText(problem.visual.type, yes.outcome)).toBe(yes.text)
+        expect(outcomeText(problem.visual.type, no.outcome)).toBe(no.text)
+        expect(yes.text).not.toBe(no.text)
+      }
+    }
+  })
+
+  it('fills every placeholder in the example reasons', () => {
+    for (const problem of problems) {
+      const instance = problem.instances[0]
+      for (const reason of [problem.example.yes_reason, problem.example.no_reason]) {
+        expect(fillTemplate(reason, instance.vars)).not.toMatch(/\{\{/)
+      }
     }
   })
 })

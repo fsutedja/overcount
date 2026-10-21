@@ -73,12 +73,41 @@ export interface SolutionStep {
   explanation: string
 }
 
+/** Diagram types for "one outcome" (pipeline/src/overcount/visual.py). */
+export type VisualType =
+  | 'dice'
+  | 'coins'
+  | 'sequence'
+  | 'circle'
+  | 'subset'
+  | 'boxes'
+  | 'stars-bars'
+  | 'cards'
+  | 'path'
+  | 'matching'
+
+/** An outcome as plain data: die faces, labels, counts, cards like "KH", path steps "R"/"U". */
+export type Outcome = (number | string)[]
+
+/** One instance's ✅/❌ example, computed and checked by the pipeline. */
+export interface InstanceExample {
+  yes: { outcome: Outcome; text: string }
+  no: { outcome: Outcome; text: string }
+  /** Positions in the yes outcome to highlight (e.g. the 6s). */
+  highlight: number[]
+  /** Subset visuals: everything that could be chosen, either one list or named groups. */
+  pool?: string[] | Record<string, string[]>
+  /** One short label per piece of the yes outcome, e.g. "president". */
+  captions?: string[]
+}
+
 /** One concrete set of numbers for a template, with every answer precomputed by the pipeline. */
 export interface Instance {
   key: string
   vars: Record<string, string>
   /** "answer" plus "slot.<id>" for each skeleton slot. */
   values: { answer: StoredValue } & Record<string, StoredValue>
+  example: InstanceExample
 }
 
 export interface Problem {
@@ -99,6 +128,9 @@ export interface Problem {
     skeleton: Skeleton
   }
   solution: SolutionStep[]
+  /** Why the ✅ outcome counts and the ❌ one doesn't; may contain {{var}}. */
+  example: { yes_reason: string; no_reason: string }
+  visual: { type: VisualType }
   instances: Instance[]
 }
 

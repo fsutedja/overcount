@@ -4,6 +4,7 @@ import { gradeFreeAnswer, gradeSkeleton, skeletonLatex, type AnswerResult, type 
 import { createAttempt, recordAttempt, type HelpLevel } from '../lib/attempts'
 import { formatValue } from '../lib/grade'
 import { fillTemplate } from '../lib/template'
+import { ExampleBlock } from './ExampleBlock'
 import { HelpSkeleton } from './HelpSkeleton'
 import { MathInput } from './MathInput'
 import { SolutionSteps } from './SolutionSteps'
@@ -90,6 +91,7 @@ export function ProblemPage({ problem, instance }: ProblemPageProps) {
               {problem.title}
             </h1>
             <p className="mt-2 text-lg leading-relaxed">{fillTemplate(problem.statement, instance.vars)}</p>
+            <ExampleBlock problem={problem} instance={instance} />
           </div>
         </section>
       </div>

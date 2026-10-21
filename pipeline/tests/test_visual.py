@@ -46,6 +46,9 @@ def test_example_errors() -> None:
     assert example_errors("dice", {"yes": [6]})
     assert any("positions" in e for e in example_errors("dice", {"yes": [6], "no": [1], "highlight": [3]}))
     assert any("pool" in e for e in example_errors("subset", {"yes": ["A"], "no": ["B"]}))
+    grouped = {"yes": ["J1", "S1"], "no": ["J1", "J2"], "pool": {"juniors": ["J1", "J2"], "seniors": ["S1"]}}
+    assert example_errors("subset", grouped) == []
+    assert example_errors("subset", grouped | {"no": ["J9"]})
     assert any("captions" in e for e in example_errors("dice", {"yes": [6], "no": [1], "captions": []}))
 
 

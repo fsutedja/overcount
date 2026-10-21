@@ -23,7 +23,8 @@ def counts_root(team, J, S, j, s):
 def example_root(J, S, j, s):
     yes = [f"J{i}" for i in range(1, j + 1)] + [f"S{i}" for i in range(1, s + 1)]
     no = [f"J{i}" for i in range(1, j + 2)] + [f"S{i}" for i in range(1, s)]
-    return {"yes": yes, "no": no, "pool": _people(J, S)}
+    pool = {"juniors": [f"J{i}" for i in range(1, J + 1)], "seniors": [f"S{i}" for i in range(1, S + 1)]}
+    return {"yes": yes, "no": no, "pool": pool}
 
 
 def outcomes_captain(J, S, j, s):
