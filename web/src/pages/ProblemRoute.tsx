@@ -27,5 +27,12 @@ export function ProblemRoute() {
 
   if (loaded?.id !== problemId) return <p className="mx-auto max-w-5xl px-4 py-8 text-ink-muted">Loading…</p>
   if (loaded.error || !loaded.problem) return <p className="mx-auto max-w-5xl px-4 py-8 text-ink-muted">{loaded.error}</p>
-  return <ProblemPage key={loaded.problem.id} problem={loaded.problem} instance={loaded.problem.instances[0]} />
+  return (
+    <ProblemPage
+      key={loaded.problem.id}
+      problem={loaded.problem}
+      instance={loaded.problem.instances[0]}
+      fromMethod={params.get('method')}
+    />
+  )
 }

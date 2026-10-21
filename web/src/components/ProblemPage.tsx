@@ -8,6 +8,7 @@ import { fillTemplate } from '../lib/template'
 import { ExampleBlock } from './ExampleBlock'
 import { HelpSkeleton } from './HelpSkeleton'
 import { MathInput } from './MathInput'
+import { MethodPills } from './MethodPills'
 import { SolutionSteps } from './SolutionSteps'
 import { Tex } from './Tex'
 import { TryDots } from './TryDots'
@@ -15,6 +16,8 @@ import { TryDots } from './TryDots'
 interface ProblemPageProps {
   problem: Problem
   instance: Instance
+  /** Set when opened from that method's Practice tab: the method pill shows at once. */
+  fromMethod?: string | null
 }
 
 /**
@@ -22,7 +25,7 @@ interface ProblemPageProps {
  * right the learner answers freely, can open Help for a one-line skeleton, and can finally see
  * the worked solution.
  */
-export function ProblemPage({ problem, instance }: ProblemPageProps) {
+export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPageProps) {
   const [freeLatex, setFreeLatex] = useState('')
   const [freeResult, setFreeResult] = useState<AnswerResult | null>(null)
   const [helpOpen, setHelpOpen] = useState(false)
@@ -37,6 +40,10 @@ export function ProblemPage({ problem, instance }: ProblemPageProps) {
   const solved = solvedLatex !== null
   /** Tries on this problem so far (across visits and number sets), for the dots and Help nudge. */
   const [progress, setProgress] = useState(() => problemProgress(recordedAttempts(), problem.id))
+  // Naming the method can give the problem away, so outside method practice the pill appears
+  // only once the learner has tried (DESIGN.md, D6).
+  const showMethods =
+    (fromMethod !== null && problem.tags.methods.includes(fromMethod)) || progress.tries.some((right) => !right) || solved
   const nudgeHelp = !solved && !helpOpen && progress.status === 'tried' && progress.wrong >= NUDGE_AFTER_WRONG
 
   const record = (result: AnswerResult, answer: string) => {
@@ -98,6 +105,11 @@ export function ProblemPage({ problem, instance }: ProblemPageProps) {
               {problem.title}
             </h1>
             <p className="mt-2 text-lg leading-relaxed">{fillTemplate(problem.statement, instance.vars)}</p>
+            {showMethods && (
+              <MethodPills
+                methods={fromMethod ? [fromMethod, ...problem.tags.methods.filter((m) => m !== fromMethod)] : problem.tags.methods}
+              />
+            )}
             <ExampleBlock problem={problem} instance={instance} />
           </div>
         </section>
