@@ -18,6 +18,8 @@ interface ProblemPageProps {
   instance: Instance
   /** Set when opened from that method's Practice tab: the method pill shows at once. */
   fromMethod?: string | null
+  /** Switches to another number set of the same problem (the ↻ button, DESIGN.md D9). */
+  onNewNumbers?: () => void
 }
 
 /**
@@ -25,7 +27,7 @@ interface ProblemPageProps {
  * right the learner answers freely, can fill in the blanks of a one-line skeleton, ask for Help
  * (numbered why-steps, revealed one at a time), and finally see the worked solution.
  */
-export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPageProps) {
+export function ProblemPage({ problem, instance, fromMethod = null, onNewNumbers }: ProblemPageProps) {
   const [freeLatex, setFreeLatex] = useState('')
   const [freeResult, setFreeResult] = useState<AnswerResult | null>(null)
   /** The skeleton with blanks is open (instead of the free answer box). */
@@ -106,9 +108,22 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
               {problem.difficulty} · {problem.kind} ·{' '}
               {problem.tags.contexts.map((c) => c.split('-')[0]).join(', ')}
             </p>
-            <h1 id="problem-title" className="mt-1 text-xl font-bold">
-              {problem.title}
-            </h1>
+            <div className="mt-1 flex items-start justify-between gap-3">
+              <h1 id="problem-title" className="text-xl font-bold">
+                {problem.title}
+              </h1>
+              {onNewNumbers && (
+                <button
+                  type="button"
+                  onClick={onNewNumbers}
+                  title="New numbers"
+                  aria-label="New numbers"
+                  className="shrink-0 rounded-lg px-1.5 text-xl leading-7 font-bold text-accent-ink hover:bg-card-sunken"
+                >
+                  <span aria-hidden="true">↻</span>
+                </button>
+              )}
+            </div>
             <p className="mt-2 text-lg leading-relaxed">{fillTemplate(problem.statement, instance.vars)}</p>
             <ProblemCardTabs
               problem={problem}

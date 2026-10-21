@@ -268,6 +268,19 @@ complements.
 - **Mockup:** [design/mockups/d8-progress.html](design/mockups/d8-progress.html) (the chart and
   heatmap were changed after review as described above).
 
+## D9 · New numbers
+
+**Decided: A · next to the title, icon only.**
+
+- A "↻" button at the right of the problem title (accent-ink, no text; hover title and screen
+  reader label "New numbers"). It's there before and after solving.
+- It picks another checked number set of the same problem at random; the page starts fresh
+  (blanks, Help, solution reset), while try dots keep counting for the problem. The set is kept
+  in the address (`?n=`), so a reload shows the same numbers.
+- Hidden when a problem has fewer than 5 number sets.
+- **Considered:** B · buttons after solving (incl. "Try a variation"), C · both.
+- **Mockup:** [design/mockups/d9-new-numbers.html](design/mockups/d9-new-numbers.html)
+
 ## Help flow (answer panel)
 
 - The free answer box comes first. **Fill in the blanks** (accent-ink link, where Help used to be)
