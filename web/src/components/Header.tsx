@@ -6,7 +6,7 @@ import { ThemeToggle } from './ThemeToggle'
 const NAV_ITEMS: { label: string; to?: string }[] = [
   { label: 'Roadmap', to: '/' },
   { label: 'Practice', to: '/practice' },
-  { label: 'Progress' },
+  { label: 'Progress', to: '/progress' },
 ]
 
 export function Header() {
