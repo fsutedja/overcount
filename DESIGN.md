@@ -217,8 +217,8 @@ complements.
   Learn is opened by hand. The tab uses the existing underline style (accent-ink, 3px).
 - A lesson has: what the method is, how it works, formulas (rendered math, each with when it
   applies), one worked mini example, and a common trap.
-- Problem pages show a small method pill (e.g. "Stars & bars ⓘ") that opens the same lesson
-  in a side panel (a bottom sheet on phones) without leaving the problem.
+- On problem pages the lesson lives in a "Method" tab inside the problem card (see D7). The
+  side panel first built for this was dropped: it covered the answer box.
 - **Why:** the lesson is one tap away at the moment a learner is stuck; the pill teaches method
   names; Practice-first keeps returning learners one click from problems.
 - **Considered:** A · Lesson card above the list, B · Lesson beside the list.
@@ -230,6 +230,21 @@ complements.
   boxes**: no "?" and no hint text. The group labels underneath say what each part counts.
 - A wrong blank is outlined in `--wrong-ink` after checking; MathLive's own accent hue is set
   to the teal of `--accent`.
+
+## D7 · Method lesson on the problem page
+
+**Decided: B · Tabs inside the problem card.**
+
+- Under the statement: **Example** (always the default on every problem) and one **Method: …**
+  tab per method (at most 2). The Method tab shows the lesson in the same space; the answer box
+  is never covered or moved.
+- The ▾ button at the start of the tab row folds the whole area; that choice is remembered
+  across problems (it replaces the old "▾ Example" toggle). Clicking a tab unfolds it.
+- Spoiler rule: Method tabs appear at once on problems opened from that method's Practice tab,
+  elsewhere only after the first wrong try (or once solved).
+- Tabs use the same underline style as the method page tabs.
+- **Considered:** A · Lesson unfolds under a pill, C · Short cheat card under the answer box.
+- **Mockup:** [design/mockups/d7-lesson-in-page.html](design/mockups/d7-lesson-in-page.html)
 
 ## D3 · Home and progress
 

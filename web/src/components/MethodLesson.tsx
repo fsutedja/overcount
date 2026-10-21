@@ -5,7 +5,7 @@ import { RichText } from './RichText'
 import { Tex } from './Tex'
 
 /** A method's "How it works" lesson (DESIGN.md, D6): summary, how, formulas, example, trap. */
-export function MethodLesson({ method }: { method: string }) {
+export function MethodLesson({ method, compact = false }: { method: string; compact?: boolean }) {
   const [lesson, setLesson] = useState<Lesson | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -19,8 +19,8 @@ export function MethodLesson({ method }: { method: string }) {
   if (error) return <p className="text-ink-muted">{error}</p>
   if (!lesson) return <p className="text-ink-muted">Loading…</p>
   return (
-    <article className="space-y-4 leading-relaxed">
-      <p className="text-lg">
+    <article className={`space-y-4 leading-relaxed ${compact ? 'text-[0.95rem]' : ''}`}>
+      <p className={compact ? 'font-bold' : 'text-lg'}>
         <RichText text={lesson.summary} />
       </p>
       <section>
