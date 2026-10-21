@@ -256,9 +256,10 @@ complements.
   greyed out at either end) and "Step 2 of 4" underneath. ← and → keys work too. The last
   slide is the small-numbers check, stacked one "=" per line so it fits on phones. Slides use
   the D2 step cards.
-- **Show solution** (after one wrong try at the blanks) shows each step as math with this
-  problem's numbers and its value, e.g. C(8, 3) = 56; no explanation text, so it never repeats
-  Help.
+- **Show solution** (after one wrong try at the blanks) sits right under Help in the same answer
+  card, with the same ‹ › arrows, one step at a time: each step's math with this problem's
+  numbers and its value, e.g. C(8, 3) = 56, the last one marked "the answer". No explanation
+  text, so it never repeats Help.
 - The nudge after 3 wrong tries reads "← stuck? fill in the blanks".
 
 ## D3 · Home and progress

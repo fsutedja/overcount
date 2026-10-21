@@ -110,3 +110,10 @@ describe('blanks inside a Σ that hold an expression in the index', () => {
     expect(gradeLatex(latex, { type: 'rational', exact: '265' })).toEqual({ kind: 'correct' })
   })
 })
+
+describe('undefined parts', () => {
+  it('explains 0⁰ instead of complaining about letters', () => {
+    const result = gradeLatex('{9}^{{0}} - {0}^{{0}}', rational('1'))
+    expect(result).toEqual({ kind: 'invalid', message: expect.stringContaining('undefined') })
+  })
+})

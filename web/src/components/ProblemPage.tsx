@@ -228,6 +228,14 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
                 <HelpSteps steps={problem.help_steps} check={problem.help_check} />
               </div>
             )}
+            {solutionShown && (
+              <section aria-labelledby="solution-heading" className="mt-5 border-t border-border pt-4">
+                <h3 id="solution-heading" className="mb-3 font-bold">
+                  Solution
+                </h3>
+                <SolutionSteps steps={problem.solution} vars={instance.vars} />
+              </section>
+            )}
             {solved && !solutionShown && (
               <button
                 type="button"
@@ -240,14 +248,6 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
           </div>
         </section>
 
-        {solutionShown && (
-          <section aria-labelledby="solution-heading">
-            <h2 id="solution-heading" className="mb-3 font-bold">
-              Solution
-            </h2>
-            <SolutionSteps steps={problem.solution} vars={instance.vars} />
-          </section>
-        )}
       </div>
     </article>
   )

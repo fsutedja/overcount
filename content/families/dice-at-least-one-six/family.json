@@ -105,13 +105,13 @@
       "solution": [
         {
           "kind": "arrange",
-          "title": "Total number of sequences",
+          "title": "Total number of lists",
           "expr": "6^n",
           "explanation": "Each of the {{n}} rolls has 6 possible outcomes, giving 6^{{n}} total sequences."
         },
         {
           "kind": "complement",
-          "title": "Sequences with no sixes",
+          "title": "Lists with no sixes",
           "expr": "5^n",
           "explanation": "To get no sixes, each roll must be one of the other 5 faces (1 through 5), giving 5^{{n}} sequences."
         },
@@ -256,13 +256,13 @@
       "solution": [
         {
           "kind": "arrange",
-          "title": "Total sequences",
+          "title": "All lists",
           "expr": "6^n",
           "explanation": "There are 6 possible outcomes for each of the {{n}} rolls."
         },
         {
           "kind": "complement",
-          "title": "Count unwanted sequences",
+          "title": "Count the lists that fail",
           "expr": "5^n + n*5^(n-1)",
           "explanation": "There are 5^{{n}} sequences with zero sixes, and {{n}} × 5^({{n}}-1) sequences with exactly one 6."
         },
@@ -385,19 +385,19 @@
       "solution": [
         {
           "kind": "arrange",
-          "title": "Sequences with no ones",
+          "title": "Lists with no ones",
           "expr": "5^n",
           "explanation": "If no 1 is rolled, each die must show one of 5 values (2, 3, 4, 5, or 6), giving 5^{{n}} total sequences."
         },
         {
           "kind": "complement",
-          "title": "Sequences with neither one nor six",
+          "title": "Lists with neither one nor six",
           "expr": "4^n",
           "explanation": "Among sequences with no 1s, those that also lack a 6 can only use 4 values (2, 3, 4, or 5), giving 4^{{n}} sequences."
         },
         {
           "kind": "combine",
-          "title": "Subtract the unwanted sequences",
+          "title": "Subtract the the lists that fail",
           "expr": "5^n - 4^n",
           "explanation": "Subtracting sequences with neither 1 nor 6 from all sequences without 1 leaves those that have at least one 6."
         }

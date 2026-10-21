@@ -21,3 +21,6 @@
 {"at": "2026-10-21T03:51:24+00:00", "target_id": "marbles-in-jars", "status": "verified_pass", "gates": []}
 {"at": "2026-10-21T04:49:26+00:00", "target_id": "hat-check-no-match", "status": "verified_pass", "gates": []}
 {"at": "2026-10-21T04:49:26+00:00", "target_id": "marbles-in-jars", "status": "verified_pass", "gates": []}
+{"at": "2026-10-21T17:15:18+00:00", "target_id": "marbles-in-jars", "model": "gemini-3.8-flash", "prompt_version": "family-v3", "status": "error", "requests": 5, "detail": "API error 503: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later."}
+{"at": "2026-10-21T17:16:10+00:00", "target_id": "hat-check-no-match", "model": "gemini-3.8-flash", "prompt_version": "family-v3", "status": "error", "requests": 5, "detail": "API error 503: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later."}
+{"at": "2026-10-21T17:16:44+00:00", "target_id": "line-relative-order", "model": "gemini-3.8-flash", "prompt_version": "family-v3", "status": "error", "requests": 5, "detail": "API error 503: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later."}

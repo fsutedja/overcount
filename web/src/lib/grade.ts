@@ -96,6 +96,7 @@ function findProblem(node: MathJson, bound: ReadonlySet<string> = new Set()): st
     if (ALLOWED_SYMBOLS.has(node) || bound.has(node)) return null
     if (node === 'Nothing') return 'Enter an answer first.'
     if (node === 'ComplexInfinity') return "That divides by zero. Check the bottom of the fraction."
+    if (node === 'Indeterminate' || node === 'NaN') return 'Part of that is undefined, like 0⁰ or 0 ÷ 0. Check those numbers.'
     return 'Use numbers only, no letters like x.'
   }
   if (!Array.isArray(node)) return null
