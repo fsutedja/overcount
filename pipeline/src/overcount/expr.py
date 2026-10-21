@@ -1,7 +1,8 @@
 """The storage expression grammar: parse once, then evaluate with sympy or print as LaTeX.
 
 Grammar (PLAN.md §1): integers, variables (one letter, optionally a digit), `+ - * / ^`, unary
-minus, parentheses, `C(n, k)`, `P(n, k)`, postfix `n!`, the constant `e`, and `[slot]` markers
+minus, parentheses, `C(n, k)`, `P(n, k)`, postfix `n!`, the constant `e`, sums
+`Sum(body, k, lo, hi)` (Σ from k = lo to hi, with k bound inside the body), and `[slot]` markers
 in Help skeletons. Expressions are parsed with Python's `ast` and checked against a whitelist, so
 content is never `eval`'d. That matters because some of it is written by an LLM.
 """
@@ -16,7 +17,9 @@ import sympy as sp
 
 SLOT_PREFIX = "slot__"
 _SLOT = re.compile(r"\[(\w+)\]")
-_FUNCTIONS = {"C", "P", "fact"}
+_FUNCTIONS = {"C", "P", "fact", "Sum"}
+#: Largest number of terms a Σ may have, so content can't ask for an enormous sum.
+MAX_SUM_TERMS = 1001
 
 
 class ExprError(ValueError):
@@ -30,7 +33,21 @@ class Expr:
 
     @property
     def variables(self) -> set[str]:
-        return {n.id for n in ast.walk(self.tree) if isinstance(n, ast.Name) and _is_variable(n.id)}
+        """Free variable names; a Σ's index is bound inside its body, so it isn't one."""
+        return _free_names(self.tree, frozenset())
+
+    @property
+    def sum_indices(self) -> set[str]:
+        return {
+            index
+            for n in ast.walk(self.tree)
+            if isinstance(n, ast.Call)
+            and isinstance(n.func, ast.Name)
+            and n.func.id == "Sum"
+            and len(n.args) == 4
+            and isinstance(index_node := n.args[1], ast.Name)
+            for index in [index_node.id]
+        }
 
     @property
     def slots(self) -> set[str]:
@@ -47,6 +64,15 @@ def _is_slot(name: str) -> bool:
 
 def _is_variable(name: str) -> bool:
     return not _is_slot(name) and name not in _FUNCTIONS and name != "e"
+
+
+def _free_names(node: ast.AST, bound: frozenset[str]) -> set[str]:
+    match node:
+        case ast.Call(func=ast.Name(id="Sum"), args=[body, ast.Name(id=index), lo, hi]):
+            return _free_names(body, bound | {index}) | _free_names(lo, bound) | _free_names(hi, bound)
+        case ast.Name(id=name):
+            return {name} if _is_variable(name) and name not in bound else set()
+    return set().union(*(_free_names(child, bound) for child in ast.iter_child_nodes(node)))
 
 
 def _rewrite_factorials(text: str) -> str:
@@ -81,6 +107,13 @@ def _check(node: ast.AST) -> None:
             _check(node.right)
         case ast.UnaryOp(op=ast.USub()):
             _check(node.operand)
+        case ast.Call(func=ast.Name(id="Sum"), args=args, keywords=[]):
+            match args:
+                case [body, ast.Name(id=index), lo, hi] if re.fullmatch(r"[A-Za-z]", index):
+                    for part in (body, lo, hi):
+                        _check(part)
+                case _:
+                    raise ExprError("Sum takes (body, index letter, lower bound, upper bound)")
         case ast.Call(func=ast.Name(id=name), args=args, keywords=[]) if name in _FUNCTIONS:
             expected = 1 if name == "fact" else 2
             if len(args) != expected:
@@ -154,10 +187,20 @@ def parse_constraint(source: str) -> Constraint:
 def to_sympy(expr: Expr, values: Mapping[str, sp.Expr]) -> sp.Expr:
     """Builds the sympy expression; variables and slots missing from `values` stay symbolic."""
 
-    def build(node: ast.expr) -> sp.Expr:
+    def build(node: ast.expr, bound: frozenset[str] = frozenset()) -> sp.Expr:
         match node:
+            case ast.Call(func=ast.Name(id="Sum"), args=[body, ast.Name(id=index), lo, hi]):
+                low, high = build(lo, bound), build(hi, bound)
+                if low.is_number and high.is_number:
+                    if not (low.is_integer and high.is_integer):
+                        raise ExprError(f"Σ bounds must be whole numbers, got {low} and {high}")
+                    if high - low + 1 > MAX_SUM_TERMS:
+                        raise ExprError(f"Σ has too many terms ({high - low + 1})")
+                return sp.Sum(build(body, bound | {index}), (sp.Symbol(index), low, high))
+            case ast.Name(id=name) if name in bound:
+                return sp.Symbol(name)
             case ast.BinOp(left=left, op=op, right=right):
-                a, b = build(left), build(right)
+                a, b = build(left, bound), build(right, bound)
                 match op:
                     case ast.Add():
                         return a + b
@@ -170,13 +213,13 @@ def to_sympy(expr: Expr, values: Mapping[str, sp.Expr]) -> sp.Expr:
                     case _:
                         return a**b
             case ast.UnaryOp(operand=operand):
-                return -build(operand)
+                return -build(operand, bound)
             case ast.Call(func=ast.Name(id="C"), args=[n, k]):
-                return sp.binomial(build(n), build(k))
+                return sp.binomial(build(n, bound), build(k, bound))
             case ast.Call(func=ast.Name(id="P"), args=[n, k]):
-                return sp.ff(build(n), build(k))
+                return sp.ff(build(n, bound), build(k, bound))
             case ast.Call(func=ast.Name(id="fact"), args=[n]):
-                return sp.factorial(build(n))
+                return sp.factorial(build(n, bound))
             case ast.Name(id="e"):
                 return sp.E
             case ast.Name(id=name):
@@ -222,6 +265,9 @@ _ATOM = 9
 
 def _precedence(node: ast.expr) -> int:
     match node:
+        case ast.Call(func=ast.Name(id="Sum")):
+            # A Σ swallows everything to its right, so treat it like a sum when deciding brackets.
+            return 1
         case ast.BinOp(op=ast.Pow()):
             return 4
         case ast.BinOp(op=op):
@@ -237,12 +283,22 @@ def to_latex(expr: Expr, variables: Literal["placeholders", "names"] = "placehol
     """Prints LaTeX that follows the author's structure. Variables become ` {{J}} ` placeholders
     (filled in by the web app) and slots become `[a]` markers."""
 
+    bound: set[str] = set()
+
     def wrap(node: ast.expr, minimum: int) -> str:
         text = emit(node)
         return f"\\left({text}\\right)" if _precedence(node) < minimum else text
 
     def emit(node: ast.expr) -> str:
         match node:
+            case ast.Call(func=ast.Name(id="Sum"), args=[body, ast.Name(id=index), lo, hi]):
+                limits = f"\\sum_{{{index}={emit(lo)}}}^{{{emit(hi)}}}"
+                bound.add(index)
+                text = f"{limits} {wrap(body, 2)}"
+                bound.discard(index)
+                return text
+            case ast.Name(id=name) if name in bound:
+                return name
             case ast.BinOp(left=left, op=ast.Add(), right=right):
                 return f"{wrap(left, 1)} + {wrap(right, 1)}"
             case ast.BinOp(left=left, op=ast.Sub(), right=right):
@@ -281,7 +337,47 @@ def to_group_latex(expr: Expr) -> str:
     return f"\\left({latex}\\right)" if _precedence(expr.tree) < 2 else latex
 
 
+def to_plain(expr: Expr) -> str:
+    """Plain-text form with the same structure as `to_latex`, e.g. "Σ(k=0..[n]) (−1)^k / k!"."""
+
+    def wrap(node: ast.expr, minimum: int) -> str:
+        text = emit(node)
+        return f"({text})" if _precedence(node) < minimum else text
+
+    def emit(node: ast.expr) -> str:
+        match node:
+            case ast.Call(func=ast.Name(id="Sum"), args=[body, ast.Name(id=index), lo, hi]):
+                return f"Σ({index}={emit(lo)}..{emit(hi)}) {wrap(body, 2)}"
+            case ast.BinOp(left=left, op=ast.Add(), right=right):
+                return f"{wrap(left, 1)} + {wrap(right, 1)}"
+            case ast.BinOp(left=left, op=ast.Sub(), right=right):
+                return f"{wrap(left, 1)} − {wrap(right, 2)}"
+            case ast.BinOp(left=left, op=ast.Mult(), right=right):
+                return f"{wrap(left, 2)} × {wrap(right, 2)}"
+            case ast.BinOp(left=left, op=ast.Div(), right=right):
+                return f"{wrap(left, 2)} / {wrap(right, 3)}"
+            case ast.BinOp(left=left, op=ast.Pow(), right=right):
+                return f"{wrap(left, _ATOM)}^{wrap(right, _ATOM)}"
+            case ast.UnaryOp(operand=operand):
+                return f"−{wrap(operand, 3)}"
+            case ast.Call(func=ast.Name(id="fact"), args=[n]):
+                return f"{wrap(n, _ATOM)}!"
+            case ast.Call(func=ast.Name(id=name), args=args):
+                return f"{name}({', '.join(emit(a) for a in args)})"
+            case ast.Name(id=name) if _is_slot(name):
+                return f"[{name.removeprefix(SLOT_PREFIX)}]"
+            case ast.Name(id=name):
+                return name
+            case ast.Constant(value=value):
+                return str(value)
+        raise ExprError(f"unexpected node {ast.dump(node)[:60]}")
+
+    return emit(expr.tree)
+
+
 def display_text(source: str) -> str:
-    """Plain-text form for the Help skeleton, e.g. "C([a],[b])" → "C([a], [b])"."""
-    text = re.sub(r"\s*,\s*", ", ", source.strip())
-    return re.sub(r"\s*\*\s*", " × ", text)
+    """Plain-text form of a Help skeleton group. Sums and differences keep their brackets, like
+    `to_group_latex`: "([a]+[b])" → "([a] + [b])", "C([a],[b])" → "C([a], [b])"."""
+    expr = parse(source)
+    text = to_plain(expr)
+    return f"({text})" if _precedence(expr.tree) < 2 else text

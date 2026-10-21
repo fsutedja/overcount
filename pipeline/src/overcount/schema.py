@@ -9,6 +9,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from .expr import parse
 from .taxonomy import Context, Difficulty, Method, MistakeTag, StepKind, Topic
 
 PLACEHOLDER = re.compile(r"\{\{(\w+)\}\}")
@@ -189,6 +190,19 @@ class Problem(Model):
             raise ValueError("a problem needs a checker or a simulator so it can be verified")
         if (self.variant_of is None) != (self.twist is None):
             raise ValueError("variants need both variant_of and twist; root problems need neither")
+        expressions = [
+            self.answer.expr,
+            *(s.expr for s in self.solution),
+            *(m.expr for m in self.answer.common_wrong),
+        ]
+        expressions += [part.expr for part in self.answer.skeleton.parts if isinstance(part, SkeletonGroup)]
+        expressions += [slot.answer for slot in self.answer.skeleton.slots.values()]
+        for source in expressions:
+            clash = parse(source).sum_indices & set(self.variables)
+            if clash:
+                raise ValueError(
+                    f"Σ index {sorted(clash)} in {source!r} reuses a variable name; pick another letter"
+                )
         is_cards = "cards-poker" in self.tags.contexts
         if is_cards and self.deck is None:
             raise ValueError('card problems must set "deck" to "standard" or "custom"')

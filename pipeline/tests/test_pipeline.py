@@ -80,7 +80,7 @@ def test_bank_skeleton_groups_keep_brackets(tmp_path: Path) -> None:
     bank = build_bank(CONTENT)
     family = json.loads(bank.files["families/club-president.json"])
     group = family["problems"][0]["answer"]["skeleton"]["parts"][0]["group"]
-    assert group == {"label": "president", "display": "([a]+[b])", "latex": r"\left([a] + [b]\right)"}
+    assert group == {"label": "president", "display": "([a] + [b])", "latex": r"\left([a] + [b]\right)"}
 
 
 def card_problem(**changes: Any) -> dict[str, Any]:
@@ -107,4 +107,11 @@ def test_deck_is_only_for_card_problems() -> None:
     family = copy.deepcopy(golden("committee-mixed"))
     family["problems"][0]["deck"] = "standard"
     with pytest.raises(ValidationError, match="only for card problems"):
+        Family.model_validate(family)
+
+
+def test_sum_index_may_not_reuse_a_variable() -> None:
+    family = copy.deepcopy(golden("round-table"))
+    family["problems"][0]["answer"]["expr"] = "Sum(1, n, 1, n)"
+    with pytest.raises(ValidationError, match="reuses a variable"):
         Family.model_validate(family)

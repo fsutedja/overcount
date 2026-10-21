@@ -9,6 +9,7 @@ const SHORTCUTS = {
   choose: '\\binom{#?}{#?}',
   'C(': '\\binom{#?}{#?}',
   'P(': '\\operatorname{P}\\left(#?,#?\\right)',
+  sum: '\\sum_{#?=#?}^{#?}#?',
 }
 
 const COUNTING_KEYBOARD = {
@@ -21,6 +22,7 @@ const COUNTING_KEYBOARD = {
       { latex: '\\frac{#@}{#?}', label: 'a/b' },
       { latex: '#@^{#?}', label: 'xⁿ' },
       { latex: 'e', label: 'e' },
+      { latex: '\\sum_{#?=#?}^{#?}#@', label: 'Σ' },
     ],
     ['7', '8', '9', '\\times', '(', ')'],
     ['4', '5', '6', '+', '-', '[left]'],

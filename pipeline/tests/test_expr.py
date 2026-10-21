@@ -97,3 +97,38 @@ def test_group_latex_keeps_brackets_on_sums() -> None:
 
     assert to_group_latex(parse("([a]+[b])")) == r"\left([a] + [b]\right)"
     assert to_group_latex(parse("C([a],[b])")) == r"\binom{[a]}{[b]}"
+
+
+# --- Σ ----------------------------------------------------------------------------------------------
+
+PITMAN = "Sum((-1)^k/k!, k, 0, n)"
+
+
+def test_sum_evaluates_exactly() -> None:
+    assert evaluate(parse(PITMAN), {"n": sp.Integer(4)}) == sp.Rational(3, 8)
+    assert evaluate(parse(f"n!*{PITMAN}"), {"n": sp.Integer(4)}) == 9  # D(4), the derangements of 4
+    assert evaluate(parse("Sum(C(n,k), k, 0, n)"), {"n": sp.Integer(5)}) == 32
+
+
+def test_sum_index_is_bound_not_a_variable() -> None:
+    expr = parse(f"n!*{PITMAN}")
+    assert expr.variables == {"n"}
+
+
+def test_sum_latex_and_plain_text() -> None:
+    assert to_latex(parse(PITMAN)) == r"\sum_{k=0}^{ {{n}} } \frac{\left(-1\right)^{k}}{k!}"
+    assert display_text("Sum((-1)^k/k!, k, 0, [a])") == "(Σ(k=0..[a]) (−1)^k / k!)"
+    assert to_latex(parse("Sum(k, k, 1, [a])*2")) == r"\left(\sum_{k=1}^{[a]} k\right) \times 2"
+
+
+@pytest.mark.parametrize("source", ["Sum(k, k, 0)", "Sum(k, kk, 0, 3)", "Sum(k, 2, 0, 3)"])
+def test_sum_rejects_malformed_calls(source: str) -> None:
+    with pytest.raises(ExprError):
+        parse(source)
+
+
+def test_sum_rejects_too_many_terms_and_fractional_bounds() -> None:
+    with pytest.raises(ExprError, match="too many"):
+        evaluate(parse("Sum(k, k, 0, 5000)"), {})
+    with pytest.raises(ExprError, match="whole numbers"):
+        evaluate(parse("Sum(k, k, 0, 7/2)"), {})

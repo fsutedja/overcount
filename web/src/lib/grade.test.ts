@@ -65,3 +65,26 @@ describe('formatValue', () => {
     expect(formatValue({ type: 'real', approx: 0.18044704431548358 })).toBe('0.180447')
   })
 })
+
+describe('Σ answers', () => {
+  const noMatch = rational('3/8')
+  const pitman = '\\sum_{k=0}^{4}\\frac{(-1)^k}{k!}'
+
+  it('grades sums exactly, in any equivalent form', () => {
+    expect(gradeLatex(pitman, noMatch)).toEqual({ kind: 'correct' })
+    expect(gradeLatex('\\frac{9}{24}', noMatch)).toEqual({ kind: 'correct' })
+    expect(gradeLatex(`4!${pitman}`, rational('9'))).toEqual({ kind: 'correct' })
+    expect(gradeLatex('\\sum_{k=0}^{3}\\frac{(-1)^k}{k!}', noMatch)).toEqual({ kind: 'wrong' })
+  })
+
+  it('allows the index letter only inside its own sum', () => {
+    expect(gradeLatex('\\sum_{k=0}^{4}\\binom{4}{k}', rational('16'))).toEqual({ kind: 'correct' })
+    expect(gradeLatex('k+\\sum_{k=0}^{4}k', rational('10'))).toMatchObject({ kind: 'invalid' })
+    expect(gradeLatex('\\sum_{k=0}^{4}j', rational('0'))).toMatchObject({ kind: 'invalid' })
+  })
+
+  it('rejects sums with letters or huge ranges in the limits', () => {
+    expect(gradeLatex('\\sum_{k=0}^{n}k', rational('0'))).toMatchObject({ kind: 'invalid' })
+    expect(gradeLatex('\\sum_{k=0}^{5000}k', rational('0'))).toMatchObject({ kind: 'invalid' })
+  })
+})

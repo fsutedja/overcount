@@ -43,7 +43,10 @@ const ALLOWED_FUNCTIONS = new Set([
   'Binomial',
   'P',
   'Delimiter',
+  'Sum',
 ])
+/** Largest number of terms a Σ may have, matching the pipeline's MAX_SUM_TERMS. */
+const MAX_SUM_TERMS = 1001
 const ALLOWED_SYMBOLS = new Set(['ExponentialE'])
 
 type MathJson = number | string | { num: string } | MathJson[] | Record<string, unknown>
@@ -59,10 +62,30 @@ function literalNumber(node: MathJson): number | null {
 const isCountArgument = (value: number | null) =>
   value !== null && Number.isInteger(value) && value >= 0 && value <= MAX_ARGUMENT
 
+/** A count argument, or the index letter of an enclosing Σ (its limits are checked separately). */
+const isCountOrIndex = (arg: MathJson, bound: ReadonlySet<string>) =>
+  (typeof arg === 'string' && bound.has(arg)) || isCountArgument(literalNumber(arg))
+
+/** Checks a Σ: ["Sum", body, ["Limits", index, lo, hi]], then its body with the index allowed. */
+function findSumProblem(args: MathJson[], bound: ReadonlySet<string>): string | null {
+  const [body, limits] = args
+  if (!Array.isArray(limits) || limits[0] !== 'Limits' || typeof limits[1] !== 'string') {
+    return 'A Σ needs an index and limits, like k = 0 below and n above.'
+  }
+  const [, index, low, high] = limits as [string, string, MathJson, MathJson]
+  const from = literalNumber(low)
+  const to = literalNumber(high)
+  if (from === null || to === null || !Number.isInteger(from) || !Number.isInteger(to)) {
+    return 'The limits of a Σ must be whole numbers.'
+  }
+  if (to - from + 1 > MAX_SUM_TERMS) return 'That Σ has too many terms to check.'
+  return findProblem(body, new Set([...bound, index]))
+}
+
 /** Returns a learner-facing message if the expression uses something we don't grade, else null. */
-function findProblem(node: MathJson): string | null {
+function findProblem(node: MathJson, bound: ReadonlySet<string> = new Set()): string | null {
   if (typeof node === 'string') {
-    if (ALLOWED_SYMBOLS.has(node)) return null
+    if (ALLOWED_SYMBOLS.has(node) || bound.has(node)) return null
     if (node === 'Nothing') return 'Enter an answer first.'
     if (node === 'ComplexInfinity') return "That divides by zero. Check the bottom of the fraction."
     return 'Use numbers only, no letters like x.'
@@ -71,12 +94,13 @@ function findProblem(node: MathJson): string | null {
   const [head, ...args] = node
   if (head === 'Error') return "That expression isn't complete yet. Fill in every box."
   if (typeof head !== 'string' || !ALLOWED_FUNCTIONS.has(head)) {
-    return 'Use C(n, k), P(n, k), !, fractions, powers, and + − × ÷.'
+    return 'Use C(n, k), P(n, k), !, Σ, fractions, powers, and + − × ÷.'
   }
-  if (head === 'Factorial' && !isCountArgument(literalNumber(args[0]))) {
+  if (head === 'Sum') return findSumProblem(args, bound)
+  if (head === 'Factorial' && !isCountOrIndex(args[0], bound)) {
     return `n! needs a whole number from 0 to ${MAX_ARGUMENT}.`
   }
-  if ((head === 'Binomial' || head === 'P') && !args.every((a) => isCountArgument(literalNumber(a)))) {
+  if ((head === 'Binomial' || head === 'P') && !args.every((a) => isCountOrIndex(a, bound))) {
     return `${head === 'P' ? 'P' : 'C'}(n, k) needs whole numbers from 0 to ${MAX_ARGUMENT}.`
   }
   if (head === 'Power') {
@@ -84,7 +108,7 @@ function findProblem(node: MathJson): string | null {
     if (exponent !== null && Math.abs(exponent) > MAX_ARGUMENT) return 'That power is too large to check.'
   }
   for (const arg of args) {
-    const problem = findProblem(arg)
+    const problem = findProblem(arg, bound)
     if (problem) return problem
   }
   return null
