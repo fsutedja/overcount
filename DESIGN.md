@@ -257,7 +257,7 @@ complements.
 
 **Decided: C · Tabs, "Overview | Problems".**
 
-- **Overview:** headline numbers (solved, mastered, tries, day streak, best streak; labels in
+- **Overview:** headline numbers (solved, tries, day streak, best streak; "mastered" was dropped from this page; labels in
   Pixelify Sans, numbers in Atkinson), then the activity heatmap and the tries chart on the left
   and progress by roadmap stop on the right (stacked on phones).
 - **Activity heatmap, GitHub style:** the last 52 weeks, one column per week (Sunday on top),
