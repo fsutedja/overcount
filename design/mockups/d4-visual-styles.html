@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D4 visual styles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4efe6;--card:#fffbf3;--card-sunken:#f8f3ea;--border:#e4d9c6;--ink:#2b2823;--ink-muted:#675f53;--accent:#4f8f87;--accent-ink:#276660;--accent-soft:#e3eeec;--on-accent:#fffbf3;--deco:#c2734f;--correct-bg:#e1ecd8;--correct-ink:#35652f;--wrong-bg:#f3e0e7;--wrong-ink:#8e3352}
+:root[data-theme=dark]{--bg:#1f1d1a;--card:#2a2723;--card-sunken:#24221e;--border:#3a362f;--ink:#eee7da;--ink-muted:#b3aa9b;--accent:#5fa69c;--accent-ink:#7cc1b7;--accent-soft:#23332f;--on-accent:#1f1d1a;--deco:#d99474;--correct-bg:#2c3a28;--correct-ink:#a6cf99;--wrong-bg:#3e2730;--wrong-ink:#eba5bc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',sans-serif;padding:24px 16px 60px}
+.wrap{max-width:980px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--ink-muted);margin:0 0 20px}
+.opt{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:28px}
+.opt h2{margin:0 0 2px;font-size:18px}
+.opt .why{color:var(--ink-muted);font-size:14px;margin:0 0 16px}
+.problem{border:1px solid var(--border);border-radius:12px;padding:16px;background:var(--bg)}
+.problem p{margin:0 0 12px;line-height:1.5}
+.toggle{background:none;border:0;color:var(--accent-ink);font:inherit;font-weight:700;cursor:pointer;padding:4px 0;display:flex;gap:6px;align-items:center}
+.ex{display:grid;gap:6px;margin:10px 0 14px}
+.ex div{border-radius:8px;padding:6px 10px;font-size:15px}
+.ex .yes{background:var(--correct-bg);color:var(--correct-ink)}
+.ex .no{background:var(--wrong-bg);color:var(--wrong-ink)}
+.ex b{font-weight:700;margin-right:6px}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:16px}
+.cell{border:1px dashed var(--border);border-radius:10px;padding:10px;text-align:center}
+.cell .cap{font-size:13px;color:var(--ink-muted);margin-top:6px}
+svg{max-width:100%;height:auto;display:block;margin:0 auto}
+.tb{position:fixed;top:12px;right:12px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--ink);font:inherit;cursor:pointer}
+</style>
+</head>
+<body>
+<button class="tb" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">Light / dark</button>
+<div class="wrap">
+<h1>D4 · Example + visual styles</h1>
+<p class="sub">Three styles for the "one outcome" diagram. Each shows the dice problem as it would sit on the problem page, followed by the other diagram types in the same style. The ✅/❌ block and the toggle are the same in all three; tell me if you want those changed too.</p>
+<div id="opts"></div>
+</div>
+<script>
+const V = n => `var(--${n})`;
+const STYLES = {
+  A: { name: 'A · Tiles', why: 'Flat, rounded tiles on the card colour. Highlights get a teal fill. Quiet and closest to the current UI.',
+       fill: V('card'), stroke: V('border'), sw: 2, ink: V('ink'), hiFill: V('accent-soft'), hiStroke: V('accent'), hiInk: V('accent-ink'), shadow: false, r: 8 },
+  B: { name: 'B · Line drawing', why: 'Outlines only, like a neat whiteboard sketch. Highlights are a thicker teal line. Lightest on the page.',
+       fill: 'none', stroke: V('ink-muted'), sw: 1.5, ink: V('ink-muted'), hiFill: 'none', hiStroke: V('accent-ink'), hiInk: V('accent-ink'), shadow: false, r: 6, hiSw: 3 },
+  C: { name: 'C · Pantry pieces', why: 'Chunky outlined pieces with a small offset shadow, like counters on a kitchen board. Highlights are solid teal. The most playful (light Overcooked nod).',
+       fill: V('card'), stroke: V('ink'), sw: 2.5, ink: V('ink'), hiFill: V('accent'), hiStroke: V('ink'), hiInk: V('on-accent'), shadow: true, r: 9 },
+};
+function box(s, x, y, w, h, hi, r = s.r) {
+  let out = '';
+  if (s.shadow) out += `<rect x="${x+3}" y="${y+3}" width="${w}" height="${h}" rx="${r}" fill="${V('border')}"/>`;
+  out += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${hi ? s.hiFill : s.fill}" stroke="${hi ? s.hiStroke : s.stroke}" stroke-width="${hi && s.hiSw ? s.hiSw : s.sw}"/>`;
+  return out;
+}
+function circ(s, cx, cy, rad, hi, color) {
+  let out = '';
+  if (s.shadow) out += `<circle cx="${cx+2.5}" cy="${cy+2.5}" r="${rad}" fill="${V('border')}"/>`;
+  const fill = color ? (s.fill === 'none' ? 'none' : color) : (hi ? s.hiFill : s.fill);
+  const stroke = color && s.fill === 'none' ? color : (hi ? s.hiStroke : s.stroke);
+  out += `<circle cx="${cx}" cy="${cy}" r="${rad}" fill="${fill}" stroke="${stroke}" stroke-width="${(hi && s.hiSw) || (color && s.fill==='none' ? 2.5 : s.sw)}"/>`;
+  return out;
+}
+const PIPS = {1:[[.5,.5]],2:[[.27,.27],[.73,.73]],3:[[.27,.27],[.5,.5],[.73,.73]],4:[[.27,.27],[.73,.27],[.27,.73],[.73,.73]],5:[[.27,.27],[.73,.27],[.5,.5],[.27,.73],[.73,.73]],6:[[.27,.25],[.73,.25],[.27,.5],[.73,.5],[.27,.75],[.73,.75]]};
+function dice(s, vals, hiVal) {
+  const size = 48, gap = 12, w = vals.length * (size + gap);
+  let g = '';
+  vals.forEach((v, i) => {
+    const x = 4 + i * (size + gap), hi = v === hiVal;
+    g += box(s, x, 4, size, size, hi);
+    PIPS[v].forEach(([px, py]) => g += `<circle cx="${x + px*size}" cy="${4 + py*size}" r="4.2" fill="${hi ? s.hiInk : s.ink}"/>`);
+    g += `<text x="${x + size/2}" y="${size + 26}" text-anchor="middle" font-size="12" fill="${V('ink-muted')}">roll ${i+1}</text>`;
+  });
+  return `<svg viewBox="0 0 ${w} ${size + 34}" width="${w}">${g}</svg>`;
+}
+function beads(s) {
+  const n = 6, R = 52, cx = 70, cy = 70, colors = ['a','a','b','a','b','b'];
+  let g = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${V('border')}" stroke-width="2" stroke-dasharray="${s.fill==='none'?'4 4':'0'}"/>`;
+  colors.forEach((c, i) => {
+    const a = -Math.PI/2 + i * 2*Math.PI/n;
+    g += circ(s, cx + R*Math.cos(a), cy + R*Math.sin(a), 13, false, c === 'a' ? V('accent') : V('deco'));
+  });
+  return `<svg viewBox="0 0 140 140" width="140">${g}</svg>`;
+}
+function boxes(s) {
+  const content = [2, 0, 3];
+  let g = '';
+  content.forEach((k, i) => {
+    const x = 6 + i * 84;
+    if (s.shadow) g += `<path d="M${x+3} 23 v54 h70 v-54" fill="none" stroke="${V('border')}" stroke-width="${s.sw}"/>`;
+    g += `<path d="M${x} 20 v54 h70 v-54" fill="none" stroke="${s.stroke}" stroke-width="${s.sw + .5}" stroke-linejoin="round"/>`;
+    for (let j = 0; j < k; j++) g += circ(s, x + 16 + (j % 3) * 19, 62 - Math.floor(j/3) * 19, 8, true);
+    g += `<text x="${x + 35}" y="94" text-anchor="middle" font-size="12" fill="${V('ink-muted')}">box ${i+1}: ${k}</text>`;
+  });
+  return `<svg viewBox="0 0 262 100" width="262">${g}</svg>`;
+}
+function starsBars(s) {
+  const seq = ['*','*','|','*','|','*','*','*'];
+  let g = '', x = 8;
+  seq.forEach(t => {
+    if (t === '*') { g += circ(s, x + 12, 30, 11, true); x += 30; }
+    else { g += `<rect x="${x + 2}" y="8" width="${s.shadow ? 7 : 5}" height="44" rx="2" fill="${V('deco')}" ${s.shadow ? `stroke="${V('ink')}" stroke-width="2"` : ''}/>`; x += 18; }
+  });
+  g += `<text x="${x/2}" y="72" text-anchor="middle" font-size="12" fill="${V('ink-muted')}">2 | 1 | 3</text>`;
+  return `<svg viewBox="0 0 ${x + 8} 80" width="${x + 8}">${g}</svg>`;
+}
+function cards(s) {
+  const hand = [['A','♥',1],['K','♥',1],['7','♠',0],['7','♦',1],['2','♣',0]];
+  let g = '';
+  hand.forEach(([r, suit, red], i) => {
+    const x = 6 + i * 50, hi = suit === '♥';
+    g += box(s, x, 6, 42, 60, hi, 6);
+    const col = red ? (s.fill === 'none' || !hi ? V('wrong-ink') : s.hiInk) : (hi ? s.hiInk : s.ink);
+    g += `<text x="${x + 21}" y="32" text-anchor="middle" font-size="16" font-weight="700" fill="${col}">${r}</text>`;
+    g += `<text x="${x + 21}" y="54" text-anchor="middle" font-size="18" fill="${col}">${suit}</text>`;
+  });
+  return `<svg viewBox="0 0 258 74" width="258">${g}</svg>`;
+}
+const root = document.getElementById('opts');
+Object.entries(STYLES).forEach(([key, s]) => {
+  const el = document.createElement('section');
+  el.className = 'opt';
+  el.innerHTML = `
+    <h2>${s.name}</h2><p class="why">${s.why}</p>
+    <div class="problem">
+      <p>Roll a die 5 times and write down the results as a list, like 6, 6, 1, 3, 2. Order matters: 6, 1, … and 1, 6, … are different lists. How many different lists have <b>at least two 6s</b>?</p>
+      <button class="toggle" aria-expanded="true">▾ Example</button>
+      <div class="body">
+        ${dice(s, [6,6,1,3,2], 6)}
+        <div class="ex">
+          <div class="yes"><b>✅ 6, 6, 1, 3, 2</b>two 6s</div>
+          <div class="no"><b>❌ 6, 1, 3, 2, 5</b>only one 6</div>
+        </div>
+      </div>
+    </div>
+    <div class="gallery">
+      <div class="cell">${beads(s)}<div class="cap">Beads on a circle (rotations are the same)</div></div>
+      <div class="cell">${boxes(s)}<div class="cap">5 balls in 3 boxes</div></div>
+      <div class="cell">${starsBars(s)}<div class="cap">Stars & bars: ★★ | ★ | ★★★</div></div>
+      <div class="cell">${cards(s)}<div class="cap">A 5-card hand (hearts highlighted)</div></div>
+    </div>`;
+  const t = el.querySelector('.toggle'), b = el.querySelector('.body');
+  t.onclick = () => { const open = b.hidden; b.hidden = !open; t.setAttribute('aria-expanded', open); t.textContent = (open ? '▾' : '▸') + ' Example'; };
+  root.appendChild(el);
+});
+</script>
+</body>
+</html>

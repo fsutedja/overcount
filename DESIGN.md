@@ -170,6 +170,24 @@ Split into cases and inclusion–exclusion were added as step kinds during this 
 addition and subtraction each have a home: Σ for disjoint cases, ∪ for overlaps, and 1− for
 complements.
 
+## D4 · Example and visual ("one outcome" diagram)
+
+**Decided: C · Pantry pieces.**
+
+- Pieces are chunky, with a 2.5px `--ink` outline and a small offset shadow (3px, `--border`).
+  They sit on `--card`.
+- Highlighted pieces (the part that makes an outcome count, e.g. the 6s) are solid `--accent`,
+  with `--on-accent` marks.
+- Second colour for two-colour items (beads, bars in stars & bars) is `--deco`.
+- Labels under pieces ("roll 1", "box 2: 0") are small and `--ink-muted`.
+- The ✅/❌ example lines use the existing correct and wrong tokens.
+- The "▾ Example" toggle (accent-ink, bold) opens and closes the example and diagram together.
+  It is open by default, and the choice is remembered across problems.
+- **Why:** the most playful of the three, a light Overcooked nod (counters on a kitchen
+  board), while every piece is still plain math, not a game asset.
+- **Considered:** A · Tiles (flat, closest to the current UI), B · Line drawing (outlines only).
+- **Mockup:** [design/mockups/d4-visual-styles.html](design/mockups/d4-visual-styles.html)
+
 ## D3 · Home and progress
 
 Pending (before milestone 9).
