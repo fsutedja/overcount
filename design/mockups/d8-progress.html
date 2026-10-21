@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D8 progress options</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Pixelify+Sans:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4efe6;--card:#fffbf3;--card-sunken:#f8f3ea;--border:#e4d9c6;--ink:#2b2823;--ink-muted:#675f53;--accent:#4f8f87;--accent-ink:#276660;--accent-soft:#e3eeec;--on-accent:#fffbf3;--deco:#c2734f;--correct-ink:#35652f;--wrong-ink:#8e3352}
+:root[data-theme=dark]{--bg:#1f1d1a;--card:#2a2723;--card-sunken:#24221e;--border:#3a362f;--ink:#eee7da;--ink-muted:#b3aa9b;--accent:#5fa69c;--accent-ink:#7cc1b7;--accent-soft:#23332f;--on-accent:#1f1d1a;--deco:#d99474;--correct-ink:#a6cf99;--wrong-ink:#eba5bc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',sans-serif;padding:24px 16px 60px;line-height:1.45}
+.wrap{max-width:1080px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--ink-muted);margin:0 0 20px}
+.opt{border:2px dashed var(--border);border-radius:18px;padding:18px;margin-bottom:34px}
+.opt>h2{margin:0 0 2px;font-size:18px}.why{color:var(--ink-muted);font-size:14px;margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px}
+.card h3{margin:0 0 10px;font-size:16px}
+.muted{color:var(--ink-muted)}.small{font-size:13px}.pix{font-family:'Pixelify Sans',sans-serif}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}@media(max-width:760px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.tile b{display:block;font-size:26px;line-height:1.1}.tile span{font-size:13px;color:var(--ink-muted)}
+.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:3px}
+.heat i{width:13px;height:13px;border-radius:3px;background:var(--card-sunken);border:1px solid var(--border)}
+.heat i.l1{background:var(--accent-soft)}.heat i.l2{background:var(--accent);border-color:var(--accent)}.heat i.l3{background:var(--accent-ink);border-color:var(--accent-ink)}
+.legend{display:flex;gap:14px;font-size:13px;color:var(--ink-muted);align-items:center;margin-top:6px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:5px}
+.bar{height:6px;border-radius:99px;background:var(--border);overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+.stop{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:8px 0;border-top:1px solid var(--border)}.stop:first-of-type{border-top:0}
+.row{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--border)}.row:first-of-type{border-top:0}.row .t{flex:1}
+.dots{display:inline-flex;gap:3px}.dots i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.chipf{border:1px solid var(--border);border-radius:999px;padding:2px 10px;font-size:13px;font-weight:700;color:var(--ink-muted)}.chipf.on{background:var(--accent-soft);color:var(--accent-ink);border-color:var(--accent-ink)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:0 0 14px}.tab{padding:8px 12px;font-weight:700;color:var(--ink-muted)}.tab.on{color:var(--accent-ink);border-bottom:3px solid var(--accent-ink);margin-bottom:-1px}
+.g2{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}@media(max-width:820px){.g2{grid-template-columns:1fr}}
+svg text{font-family:'Atkinson Hyperlegible',sans-serif}
+.tb{position:fixed;top:12px;right:12px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--ink);font:inherit;cursor:pointer;z-index:3}
+</style>
+</head>
+<body>
+<button class="tb" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">Light / dark</button>
+<div class="wrap">
+<h1>D8 · Progress page</h1>
+<p class="sub">Same data in three layouts: headline numbers, a 26-week activity heatmap, tries per day for the last 30 days (solid = right, outlined = wrong, one colour so it works for colour-blind readers), progress per roadmap stop, and the list of problems with their try dots. Numbers are made up.</p>
+
+<template id="tiles"><div class="tiles">
+  <div class="card tile"><b>11</b><span class="pix">solved</span></div>
+  <div class="card tile"><b>7</b><span class="pix">mastered</span></div>
+  <div class="card tile"><b>26</b><span class="pix">tries</span></div>
+  <div class="card tile"><b>4</b><span class="pix">day streak</span></div>
+  <div class="card tile"><b>9</b><span class="pix">best streak</span></div>
+</div></template>
+<template id="heat"><div class="card"><h3>Activity</h3><div class="heat" data-heat></div>
+  <div class="legend">Less <span class="sw" style="background:var(--card-sunken);border:1px solid var(--border)"></span><span class="sw" style="background:var(--accent-soft)"></span><span class="sw" style="background:var(--accent)"></span><span class="sw" style="background:var(--accent-ink)"></span> More · problems solved per day</div></div></template>
+<template id="chart"><div class="card"><h3>Tries per day <span class="small muted" style="font-weight:400">· last 30 days</span></h3><div data-chart></div>
+  <div class="legend"><span><span class="sw" style="background:var(--accent)"></span>right</span><span><span class="sw" style="border:2px solid var(--accent)"></span>wrong</span></div></div></template>
+<template id="stops"><div class="card"><h3>By roadmap stop</h3><div data-stops></div></div></template>
+<template id="problems"><div class="card"><h3>Problems</h3>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px"><span class="chipf on">All</span><span class="chipf">Mastered</span><span class="chipf">Solved</span><span class="chipf">Tried</span><span class="chipf">Not started</span></div>
+  <div data-problems></div></div></template>
+
+<section class="opt">
+  <h2>A · One report, top to bottom</h2>
+  <p class="why">Headline numbers, then the heatmap and the chart, then progress by stop and the problem list. Everything on one scrolling page; the same order on phones.</p>
+  <div style="display:grid;gap:14px"><div data-use="tiles"></div><div data-use="heat"></div><div data-use="chart"></div><div class="g2"><div data-use="problems"></div><div data-use="stops"></div></div></div>
+</section>
+
+<section class="opt">
+  <h2>B · Two columns: activity left, progress right</h2>
+  <p class="why">Left: heatmap and chart (how much you practise). Right: headline numbers as a compact list and progress by stop (how far you've got). The problem list runs full width underneath.</p>
+  <div class="g2"><div style="display:grid;gap:14px;align-content:start"><div data-use="heat"></div><div data-use="chart"></div></div>
+  <div style="display:grid;gap:14px;align-content:start"><div class="card"><h3>Totals</h3><p style="margin:0;line-height:2"><b>11</b> <span class="pix muted">solved</span> · <b>7</b> <span class="pix muted">mastered</span> · <b>26</b> <span class="pix muted">tries</span><br><b>4</b> <span class="pix muted">day streak</span> · <b>9</b> <span class="pix muted">best streak</span></p></div><div data-use="stops"></div></div></div>
+  <div style="margin-top:14px" data-use="problems"></div>
+</section>
+
+<section class="opt">
+  <h2>C · Tabs: Overview | Problems</h2>
+  <p class="why">Overview shows the numbers, heatmap, chart and stops; the Problems tab is the filterable list with try dots. Shorter pages, one more click to reach the list.</p>
+  <div class="tabs"><span class="tab on">Overview</span><span class="tab">Problems (15)</span></div>
+  <div style="display:grid;gap:14px"><div data-use="tiles"></div><div class="g2"><div style="display:grid;gap:14px;align-content:start"><div data-use="heat"></div><div data-use="chart"></div></div><div data-use="stops"></div></div></div>
+</section>
+</div>
+<script>
+const STOPS = [['Counting basics',3,4,2],['Combinations',2,2,2],['Stars and bars',2,3,1],['Complement',2,3,1],['Inclusion–exclusion',2,3,1],['Probability basics',0,0,0],['Conditional probability',0,0,0],['Distributions',0,0,0]];
+const PROBS = [['Choosing a mixed team',[1]],['Team with a captain',[0,1]],['President and advisor',[1]],['At least one six',[0,0,0,1]],['At least two sixes',[0,0]],['Packing candy bags',[1]],['Round table',[0,1]],['Hearts or face cards',[]]];
+document.querySelectorAll('[data-use]').forEach(el => el.replaceWith(document.getElementById(el.dataset.use).content.cloneNode(true)));
+document.querySelectorAll('[data-heat]').forEach(h => h.innerHTML = Array.from({length: 182}, (_, i) => `<i class="${i > 150 ? ['l1','l2','','l3','l1','','l2'][i % 7] : (i % 11 === 0 ? 'l1' : '')}"></i>`).join(''));
+document.querySelectorAll('[data-stops]').forEach(s => s.innerHTML = STOPS.map(([t, d, n, m]) => `<div class="stop" style="${n ? '' : 'opacity:.55'}"><b style="font-size:15px">${t}</b><span class="small muted">${n ? `${d} / ${n} solved · ${m} mastered` : 'coming soon'}</span><div class="bar" style="grid-column:1/-1"><i style="width:${n ? 100 * d / n : 0}%"></i></div></div>`).join(''));
+const dot = r => `<i style="background:${r ? 'var(--correct-ink)' : 'var(--wrong-ink)'}"></i>`;
+document.querySelectorAll('[data-problems]').forEach(p => p.innerHTML = PROBS.map(([t, tries]) => {
+  const first = tries.indexOf(1); const status = !tries.length ? 'not started' : first === -1 ? 'tried' : first < 2 ? 'mastered' : 'solved';
+  return `<div class="row"><span class="t"><b style="font-size:15px">${t}</b></span><span class="small muted">${status}</span><span class="dots" style="min-width:60px;justify-content:flex-end">${tries.map(dot).join('')}</span></div>`; }).join(''));
+// Tries per day: stacked bars, right = solid, wrong = outlined (same hue), 2px gap.
+const days = Array.from({length: 30}, (_, i) => { const r = (i * 7) % 5 === 0 ? 0 : (i * 3) % 4; const w = (i * 5) % 3; return [i < 6 ? 0 : r, i < 6 ? 0 : w]; });
+document.querySelectorAll('[data-chart]').forEach(c => {
+  const W = 520, H = 160, pad = 26, bw = (W - pad) / 30 - 4, max = 6, sy = v => (H - 30) * v / max;
+  let g = '';
+  [0, 2, 4, 6].forEach(v => { const y = H - 20 - sy(v); g += `<line x1="${pad}" x2="${W}" y1="${y}" y2="${y}" stroke="var(--border)" stroke-width="1"/><text x="${pad - 6}" y="${y + 4}" text-anchor="end" font-size="11" fill="var(--ink-muted)">${v}</text>`; });
+  days.forEach(([r, w], i) => { const x = pad + 4 + i * (bw + 4), base = H - 20;
+    if (r) g += `<rect x="${x}" y="${base - sy(r)}" width="${bw}" height="${sy(r)}" rx="2" fill="var(--accent)"><title>${r} right, ${w} wrong</title></rect>`;
+    if (w) g += `<rect x="${x + 1}" y="${base - sy(r) - sy(w) + 1}" width="${bw - 2}" height="${sy(w) - 3}" rx="2" fill="none" stroke="var(--accent)" stroke-width="2"><title>${r} right, ${w} wrong</title></rect>`; });
+  g += `<text x="${pad}" y="${H - 4}" font-size="11" fill="var(--ink-muted)">30 days ago</text><text x="${W}" y="${H - 4}" text-anchor="end" font-size="11" fill="var(--ink-muted)">today</text>`;
+  c.innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:560px;display:block" role="img" aria-label="Tries per day, last 30 days">${g}</svg>`;
+});
+</script>
+</body>
+</html>
