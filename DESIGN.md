@@ -251,8 +251,11 @@ complements.
 
 - The free answer box comes first. **Fill in the blanks** (accent-ink link, where Help used to be)
   opens the skeleton at once, so you can type straight away.
-- With the blanks open, **Help** reveals the numbered why-steps one at a time under a thin rule
-  ("Help: why it works"), ending with the small-numbers check. Steps use the D2 step cards.
+- With the blanks open, **Help** shows the numbered why-steps under a thin rule ("Help: why it
+  works") **one at a time in the same place**, with round ‹ › arrow buttons (accent-ink outline;
+  greyed out at either end) and "Step 2 of 4" underneath. ← and → keys work too. The last
+  slide is the small-numbers check, stacked one "=" per line so it fits on phones. Slides use
+  the D2 step cards.
 - **Show solution** (after one wrong try at the blanks) shows each step as math with this
   problem's numbers and its value, e.g. C(8, 3) = 56; no explanation text, so it never repeats
   Help.

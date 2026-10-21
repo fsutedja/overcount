@@ -30,8 +30,8 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
   const [freeResult, setFreeResult] = useState<AnswerResult | null>(null)
   /** The skeleton with blanks is open (instead of the free answer box). */
   const [blanksOpen, setBlanksOpen] = useState(false)
-  /** Help steps shown so far (0 = Help not asked for yet). */
-  const [stepsShown, setStepsShown] = useState(0)
+  /** Help (the why-steps) has been asked for. */
+  const [helpShown, setHelpShown] = useState(false)
   const [slotValues, setSlotValues] = useState<Record<string, string>>({})
   const [skeletonResult, setSkeletonResult] = useState<SkeletonResult | null>(null)
   const [skeletonMisses, setSkeletonMisses] = useState(0)
@@ -85,7 +85,7 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
     setHelpLevel((level) => (level < 1 ? 1 : level))
   }
 
-  const openHelp = () => setStepsShown((n) => Math.max(n, 1))
+  const openHelp = () => setHelpShown(true)
 
   const showSolution = () => {
     setSolutionShown(true)
@@ -201,7 +201,7 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
                   </button>
                 )}
                 {nudgeBlanks && <span className="text-sm text-ink-muted">← stuck? fill in the blanks</span>}
-                {blanksOpen && stepsShown === 0 && (
+                {blanksOpen && !helpShown && (
                   <button type="button" onClick={openHelp} className="font-bold text-accent-ink underline-offset-4 hover:underline">
                     Help
                   </button>
@@ -222,15 +222,10 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
                 )}
               </div>
             )}
-            {!solved && blanksOpen && stepsShown > 0 && (
+            {!solved && blanksOpen && helpShown && (
               <div className="mt-5 border-t border-border pt-4">
                 <h3 className="mb-3 font-bold">Help: why it works</h3>
-                <HelpSteps
-                  steps={problem.help_steps}
-                  check={problem.help_check}
-                  revealed={stepsShown}
-                  onNext={() => setStepsShown((n) => n + 1)}
-                />
+                <HelpSteps steps={problem.help_steps} check={problem.help_check} />
               </div>
             )}
             {solved && !solutionShown && (
