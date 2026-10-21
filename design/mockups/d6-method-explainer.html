@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D6 method explainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<style>
+:root{--bg:#f4efe6;--card:#fffbf3;--card-sunken:#f8f3ea;--border:#e4d9c6;--ink:#2b2823;--ink-muted:#675f53;--accent:#4f8f87;--accent-ink:#276660;--accent-soft:#e3eeec;--on-accent:#fffbf3;--deco:#c2734f;--correct-bg:#e1ecd8;--correct-ink:#35652f;--wrong-bg:#f3e0e7;--wrong-ink:#8e3352}
+:root[data-theme=dark]{--bg:#1f1d1a;--card:#2a2723;--card-sunken:#24221e;--border:#3a362f;--ink:#eee7da;--ink-muted:#b3aa9b;--accent:#5fa69c;--accent-ink:#7cc1b7;--accent-soft:#23332f;--on-accent:#1f1d1a;--deco:#d99474;--correct-bg:#2c3a28;--correct-ink:#a6cf99;--wrong-bg:#3e2730;--wrong-ink:#eba5bc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',sans-serif;padding:24px 16px 60px;line-height:1.5}
+.wrap{max-width:1000px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--ink-muted);margin:0 0 20px}
+.opt{border:2px dashed var(--border);border-radius:18px;padding:18px;margin-bottom:32px}
+.opt>h2{margin:0 0 2px;font-size:18px}.why{color:var(--ink-muted);font-size:14px;margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px}
+.muted{color:var(--ink-muted)}.small{font-size:14px}
+.back{color:var(--accent-ink);font-weight:700;font-size:14px}
+h3{font-size:24px;margin:6px 0 2px}
+h4{margin:14px 0 6px;font-size:15px}
+.formula .katex-display{margin:0}.formula{display:flex;gap:14px;align-items:center;justify-content:space-between;border:1px solid var(--border);background:var(--card-sunken);border-radius:10px;padding:10px 14px;margin:8px 0}
+.formula .when{font-size:14px;color:var(--ink-muted);text-align:right}
+.ex{font-family:inherit;background:var(--accent-soft);color:var(--accent-ink);border-radius:8px;padding:8px 12px;font-weight:700}
+.rows{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:12px}
+.row{display:flex;gap:10px;align-items:center;padding:10px 12px;border-top:1px solid var(--border);background:var(--card)}
+.row:first-child{border-top:0}.row .t{flex:1;font-weight:700}
+.chip{font-size:12px;border:1px solid var(--border);border-radius:6px;padding:1px 6px;color:var(--ink-muted)}
+.toggle{color:var(--accent-ink);font-weight:700}
+.two{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}@media(max-width:760px){.two{grid-template-columns:1fr}}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--border);margin:10px 0 14px}
+.tab{padding:8px 12px;font-weight:700;color:var(--ink-muted)}.tab.on{color:var(--accent-ink);border-bottom:3px solid var(--accent-ink);margin-bottom:-1px}
+.pill{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--border);border-radius:999px;padding:3px 10px;font-size:13px;color:var(--accent-ink);font-weight:700;background:var(--card)}
+.drawer{border-left:4px solid var(--accent);background:var(--card);border-radius:0 14px 14px 0;padding:14px 16px}
+.tb{position:fixed;top:12px;right:12px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--ink);font:inherit;cursor:pointer;z-index:2}
+</style>
+</head>
+<body>
+<button class="tb" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">Light / dark</button>
+<div class="wrap">
+<h1>D6 · Method explainer ("How it works")</h1>
+<p class="sub">Same stars &amp; bars content in three layouts. The text and formulas are a draft for one method; all 19 get the same structure: what it is, how it works, formulas (when each applies), one worked mini example, and a common trap.</p>
+
+<template id="lesson">
+  <p><b>Stars &amp; bars</b> counts the ways to share <b>identical</b> things (cookies, marbles) among <b>distinct</b> groups (kids, jars).</p>
+  <h4>How it works</h4>
+  <p>Line the items up as stars, then drop in bars to cut the line into groups. With <span data-tex="k"></span> groups you need <span data-tex="k-1"></span> bars. Every way of placing the bars is exactly one way to share the items, so you're counting arrangements of stars and bars.</p>
+  <p class="ex">7 cookies, 3 kids: ★★★ | | ★★★★ means A gets 3, B gets 0, C gets 4.</p>
+  <h4>Formulas</h4>
+  <div class="formula"><span data-tex="\binom{n+k-1}{k-1}"></span><span class="when">groups may be empty</span></div>
+  <div class="formula"><span data-tex="\binom{n-1}{k-1}"></span><span class="when">every group gets at least 1</span></div>
+  <div class="formula"><span data-tex="\binom{n-m+k-1}{k-1}"></span><span class="when">minimums adding to <span data-tex="m"></span>: hand those out first</span></div>
+  <h4>Watch out</h4>
+  <p class="small muted">If the items are <b>different</b> (5 different books), each one picks its group on its own: <span data-tex="k^n"></span>, not stars &amp; bars.</p>
+</template>
+
+<template id="list">
+  <div class="rows">
+    <div class="row"><span class="t">Packing candy bags</span><span class="chip">Easy</span></div>
+    <div class="row"><span class="t">Marbles in jars</span><span class="chip">Easy</span></div>
+    <div class="row"><span class="t">Every bag gets some</span><span class="chip">Medium</span></div>
+    <div class="row"><span class="t">A gold bag with a minimum</span><span class="chip">Hard</span></div>
+  </div>
+</template>
+
+<section class="opt">
+  <h2>A · Lesson card above the list</h2>
+  <p class="why">The method page opens with a collapsible "How it works" card, then the problems. The card remembers if you closed it (like the Example toggle). Simple, reads top to bottom, same on phones.</p>
+  <div class="card">
+    <span class="back">← All methods</span>
+    <h3>Stars &amp; bars</h3>
+    <p class="muted">Identical items into distinct groups.</p>
+    <div class="card" style="background:var(--card-sunken);margin-top:12px"><p class="toggle">▾ How it works</p><div data-use="lesson"></div></div>
+    <h4 style="font-size:17px;margin-top:20px">Problems</h4>
+    <div data-use="list"></div>
+  </div>
+</section>
+
+<section class="opt">
+  <h2>B · Lesson beside the list</h2>
+  <p class="why">On wide screens the lesson sits on the left and stays in view while you pick a problem on the right; on phones it stacks above the list. Matches the two-pane problem page.</p>
+  <div class="card">
+    <span class="back">← All methods</span>
+    <h3>Stars &amp; bars</h3>
+    <div class="two" style="margin-top:12px">
+      <div class="card" style="background:var(--card-sunken)"><p class="toggle" style="margin-top:0">How it works</p><div data-use="lesson"></div></div>
+      <div><h4 style="margin-top:0;font-size:17px">Problems</h4><div data-use="list"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="opt">
+  <h2>C · Tabs, plus a method link on every problem</h2>
+  <p class="why">The method page has two tabs, "Learn" and "Practice". Each problem page also shows a small method pill ("Stars &amp; bars ⓘ") that opens the same lesson in a side panel, so you can look it up mid-problem without leaving.</p>
+  <div class="two">
+    <div class="card">
+      <span class="back">← All methods</span>
+      <h3>Stars &amp; bars</h3>
+      <div class="tabs"><span class="tab on">Learn</span><span class="tab">Practice (4)</span></div>
+      <div data-use="lesson"></div>
+    </div>
+    <div>
+      <p class="small muted" style="margin:0 0 6px"><b>On a problem page:</b></p>
+      <div class="card"><p class="small muted" style="margin:0">EASY · COUNTING · BALLS</p><h3 style="font-size:19px">Packing candy bags</h3><p class="small">You have 8 identical candies to put into 4 different bags…</p><span class="pill">Stars &amp; bars ⓘ</span></div>
+      <p class="small muted" style="margin:12px 0 6px"><b>…which opens:</b></p>
+      <div class="drawer"><p class="toggle" style="margin-top:0">Stars &amp; bars · How it works</p><p class="small">Line the items up as stars, then drop in <span data-tex="k-1"></span> bars to cut them into groups…</p><div class="formula"><span data-tex="\binom{n+k-1}{k-1}"></span><span class="when">groups may be empty</span></div><p class="small muted">(full lesson continues)</p></div>
+    </div>
+  </div>
+</section>
+</div>
+<script>
+document.querySelectorAll('[data-use]').forEach(el => el.replaceWith(document.getElementById(el.dataset.use).content.cloneNode(true)));
+window.addEventListener('load', () => document.querySelectorAll('[data-tex]').forEach(el => katex.render(el.dataset.tex, el, { throwOnError: false, displayMode: !!el.parentElement.closest('.formula') && el.parentElement.classList.contains('formula') })));
+</script>
+</body>
+</html>
