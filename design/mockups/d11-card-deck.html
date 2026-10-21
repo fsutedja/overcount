@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D11 card deck</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4efe6;--card:#fffbf3;--card-sunken:#f8f3ea;--border:#e4d9c6;--ink:#2b2823;--ink-muted:#675f53;--accent:#4f8f87;--accent-ink:#276660;--accent-soft:#e3eeec;--on-accent:#fffbf3;--deco:#c2734f;--deco-soft:#f3e2d8;--wrong-ink:#8e3352}
+:root[data-theme=dark]{--bg:#1f1d1a;--card:#2a2723;--card-sunken:#24221e;--border:#3a362f;--ink:#eee7da;--ink-muted:#b3aa9b;--accent:#5fa69c;--accent-ink:#7cc1b7;--accent-soft:#23332f;--on-accent:#1f1d1a;--deco:#d99474;--deco-soft:#3b2c24;--wrong-ink:#eba5bc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',sans-serif;padding:24px 16px 60px;line-height:1.45}
+.wrap{max-width:900px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--ink-muted);margin:0 0 20px}
+.opt{border:2px dashed var(--border);border-radius:18px;padding:16px 18px;margin-bottom:26px}
+.opt>h2{margin:0 0 2px;font-size:18px}.why{color:var(--ink-muted);font-size:14px;margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px}
+.muted{color:var(--ink-muted)}.small{font-size:13px}
+.deck{max-width:560px;display:grid;grid-template-columns:28px repeat(13,minmax(0,1fr));gap:3px;align-items:center}
+.deck .h{font-size:12px;color:var(--ink-muted);text-align:center;font-weight:700}
+.deck .s{font-size:16px;text-align:center}
+.c{aspect-ratio:3/4;border-radius:5px;border:1px solid var(--border);background:var(--card);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--ink-muted);position:relative}
+.c.red{color:var(--wrong-ink)}
+.c.dim{opacity:.35}
+.c.hand{border:2.5px solid var(--ink);color:var(--ink);background:var(--card)}
+.c.hand.red{color:var(--wrong-ink)}
+.c.g1{background:var(--accent-soft)}
+.c.g2{background:var(--deco-soft)}
+.c.g12{background:repeating-linear-gradient(135deg,var(--accent-soft) 0 4px,var(--deco-soft) 4px 8px)}
+.c.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--ink-muted);margin-top:8px;align-items:center}
+.sw{display:inline-block;width:14px;height:18px;border-radius:3px;vertical-align:-4px;margin-right:5px;border:1px solid var(--border)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:700px){.two{grid-template-columns:1fr}}
+.bracket{font-size:12px;font-weight:700;color:var(--ink-muted)}
+.tb{position:fixed;top:12px;right:12px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--ink);font:inherit;cursor:pointer;z-index:2}
+</style>
+</head>
+<body>
+<button class="tb" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">Light / dark</button>
+<div class="wrap">
+<h1>D11 · Card-deck grid</h1>
+<p class="sub">For card problems, shown in the Example tab above the ✅/❌ lines. Problem: a 3-card hand counts if it's all hearts or all face cards. The ✅ hand here is K♣ Q♠ J♦ (all face cards). Rows are suits, columns are ranks; the hand's cards have a thick ink outline.</p>
+
+<section class="opt">
+  <h2>A · Shade both groups, stripes where they overlap</h2>
+  <p class="why">Hearts shaded teal, face cards shaded terracotta, the 3 heart face cards striped (in both groups). Shows the inclusion–exclusion overlap at a glance; the stripes and the legend keep it readable without colour.</p>
+  <div class="card"><div class="deck" data-deck="a"></div>
+  <div class="legend"><span><span class="sw" style="background:var(--accent-soft)"></span>hearts (13)</span><span><span class="sw" style="background:var(--deco-soft)"></span>face cards (12)</span><span><span class="sw" style="background:repeating-linear-gradient(135deg,var(--accent-soft) 0 4px,var(--deco-soft) 4px 8px)"></span>both (3)</span><span><span class="sw" style="border:2.5px solid var(--ink)"></span>the ✅ hand</span></div></div>
+</section>
+
+<section class="opt">
+  <h2>B · Just the hand, groups marked by brackets</h2>
+  <p class="why">No group shading: the hand's cards are filled teal, everything else plain. The groups are named by labels along the edge ("hearts" beside the ♥ row, "face cards" above J Q K). The calmest; the overlap is left for the learner to spot.</p>
+  <div class="card">
+    <div class="deck" style="margin-bottom:2px;grid-template-columns:28px repeat(13,minmax(0,1fr)) 54px"><span></span><span style="grid-column:12/15;text-align:center;border-bottom:2px solid var(--ink-muted)" class="bracket">face cards</span></div>
+    <div class="deck" data-deck="b"></div>
+    <div class="legend"><span><span class="sw" style="background:var(--accent);border-color:var(--accent)"></span>the ✅ hand</span><span>◂ hearts row is labelled on the right</span></div></div>
+</section>
+
+<section class="opt">
+  <h2>C · Two small decks, one per group</h2>
+  <p class="why">Side by side: "all hearts" picks from the left deck's highlighted cards, "all face cards" from the right. The 3 cards highlighted in both are the overlap. Teaches "count each group, then subtract the overlap" most directly; takes two smaller grids.</p>
+  <div class="two"><div class="card"><p style="margin:0 0 6px;font-weight:700">All hearts: choose from 13</p><div class="deck" data-deck="c1"></div></div>
+  <div class="card"><p style="margin:0 0 6px;font-weight:700">All face cards: choose from 12</p><div class="deck" data-deck="c2"></div></div></div>
+  <p class="small muted" style="margin:8px 0 0">The 3 heart face cards (J♥ Q♥ K♥) are in both, so they're counted twice: subtract them once.</p>
+</section>
+</div>
+<script>
+const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+const SUITS = [['H','♥',1],['D','♦',1],['C','♣',0],['S','♠',0]];
+const HAND = ['KC','QS','JD'];
+const face = (r) => ['J','Q','K'].includes(r);
+document.querySelectorAll('[data-deck]').forEach((el) => {
+  const mode = el.dataset.deck;
+  let html = '<span></span>' + RANKS.map((r) => `<span class="h">${r}</span>`).join('');
+  for (const [s, sym, red] of SUITS) {
+    html += `<span class="s" style="color:${red ? 'var(--wrong-ink)' : 'var(--ink)'}">${sym}</span>`;
+    for (const r of RANKS) {
+      const code = r + s, inHand = HAND.includes(code), heart = s === 'H', f = face(r);
+      let cls = 'c' + (red ? ' red' : '');
+      if (mode === 'a') { cls += heart && f ? ' g12' : heart ? ' g1' : f ? ' g2' : ''; if (inHand) cls += ' hand'; }
+      if (mode === 'b') { if (inHand) cls += ' on'; }
+      if (mode === 'c1') { cls += heart ? ' g1' : ' dim'; if (heart && f) cls += ' hand'; }
+      if (mode === 'c2') { cls += f ? ' g2' : ' dim'; if (heart && f) cls += ' hand'; }
+      html += `<span class="${cls}">${r}</span>`;
+    }
+  }
+  if (mode === 'b') html = html.replace('<span class="s" style="color:var(--wrong-ink)">♥</span>', '<span class="s" style="color:var(--wrong-ink)">♥</span>');
+  el.innerHTML = html;
+  if (mode === 'b') el.insertAdjacentHTML('afterend', '');
+});
+// B: label the hearts row on the right edge.
+const b = document.querySelector('[data-deck="b"]');
+b.style.gridTemplateColumns = '28px repeat(13,minmax(0,1fr)) 54px';
+const cells = [...b.children];
+const perRow = 14;
+const rows = [];
+for (let i = 0; i < cells.length; i += perRow) rows.push(cells.slice(i, i + perRow));
+b.innerHTML = '';
+rows.forEach((row, i) => { row.forEach((c) => b.appendChild(c)); const lab = document.createElement('span'); lab.className = 'bracket'; lab.style.paddingLeft = '6px'; lab.textContent = i === 1 ? '◂ hearts' : ''; b.appendChild(lab); });
+</script>
+</body>
+</html>
