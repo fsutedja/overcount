@@ -340,7 +340,12 @@ def to_latex(expr: Expr, variables: Literal["placeholders", "names"] = "placehol
             case ast.BinOp(left=left, op=ast.Div(), right=right):
                 return f"\\frac{{{emit(left)}}}{{{emit(right)}}}"
             case ast.BinOp(left=left, op=ast.Pow(), right=right):
-                return f"{wrap(left, _ATOM)}^{{{emit(right)}}}"
+                # (a!)^g keeps its brackets: a!^g would read as a!·…
+                is_factorial = (
+                    isinstance(left, ast.Call) and isinstance(left.func, ast.Name) and left.func.id == "fact"
+                )
+                base = f"\\left({emit(left)}\\right)" if is_factorial else wrap(left, _ATOM)
+                return f"{base}^{{{emit(right)}}}"
             case ast.UnaryOp(operand=operand):
                 return f"-{wrap(operand, 3)}"
             case ast.Call(func=ast.Name(id="C"), args=[n, k]):

@@ -12,6 +12,7 @@ from typing import Any
 from .examples import compute_examples
 from .expr import parse, to_group_latex, to_latex
 from .instances import build_instances
+from .lessons import lessons_json, load_lessons
 from .roadmap import load_roadmap, roadmap_json
 from .schema import Family, Mistake, Problem, SkeletonGroup
 from .taxonomy import kind_of
@@ -153,6 +154,8 @@ def build_bank(content_dir: Path) -> Bank:
         files[f"families/{family.family_id}.json"] = _dump(family_data, compact=True)
     roadmap = roadmap_json(load_roadmap(content_dir / "roadmap.yaml"))
     files["index.json"] = _dump({"schema_version": 1, "roadmap": roadmap, "problems": index})
+    # Lessons are loaded only when one is opened, so they live in their own file.
+    files["methods.json"] = _dump(lessons_json(load_lessons(content_dir / "methods.yaml")))
     return Bank(files)
 
 

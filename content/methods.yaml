@@ -1,0 +1,481 @@
+# Method lessons ("How it works"), one per counting method in pipeline/src/overcount/taxonomy.py.
+#
+# - Text marks math with $…$ (rendered with KaTeX); never write code notation like ^ or .. in text.
+# - Formulas use the expression grammar (C, P, !, ^, Sum) and are rendered as math. Each one has
+#   an id with a brute-force check in pipeline/tests/test_lessons.py, so a typo fails the tests.
+# - `equals` turns a formula into an identity: expr = equals.
+
+methods:
+  product-sum-rule:
+    summary: >-
+      Multiply for steps that all happen; add for either/or choices.
+    how:
+      - >-
+        If a choice happens in steps, and step one has $a$ options and step two has $b$ options
+        whatever you picked first, there are $a \times b$ ways to do both.
+      - >-
+        If you pick exactly one option from group A *or* group B, and no option is in both,
+        there are $a + b$ ways.
+    formulas:
+      - id: product
+        expr: a*b
+        when: >-
+          step 1 has a options, then step 2 has b options
+      - id: sum
+        expr: a+b
+        when: >-
+          one choice from A or from B, with no overlap
+    example: >-
+      An outfit is a shirt (4 kinds) and trousers (3 kinds), so $4 \times 3 = 12$
+      outfits. A snack that is fruit (4 kinds) or a biscuit (3 kinds) gives $4 + 3 = 7$ snacks.
+    trap: >-
+      Adding when both steps happen (or multiplying when only one happens). Ask "do I make
+      both choices, or one of them?"
+
+  permutations:
+    summary: >-
+      Arrange items in order; every item is different.
+    how:
+      - >-
+        Fill the positions one at a time. The first position has $n$ choices, the next $n-1$
+        (one item is used up), and so on.
+      - >-
+        Lining up all $n$ items gives $n!$. Filling only $k$ positions gives
+        $n(n-1)\cdots(n-k+1)$, written $P(n,k)$.
+    formulas:
+      - id: all
+        expr: n!
+        when: >-
+          arrange all n different items in a row
+      - id: some
+        expr: P(n, k)
+        when: >-
+          arrange k of the n items (order matters)
+    example: >-
+      Gold, silver and bronze among 8 runners is $P(8,3) = 8 \times 7 \times 6 = 336$.
+    trap: >-
+      Using $P(n,k)$ when order doesn't matter. A team of 3 is not a podium of 3.
+
+  combinations:
+    summary: >-
+      Choose a group; order doesn't matter.
+    how:
+      - >-
+        Count ordered picks with $P(n,k)$, then notice each group of $k$ was counted once for
+        every order of its members, $k!$ times.
+      - >-
+        Divide that out: $C(n,k) = \frac{P(n,k)}{k!}$.
+    formulas:
+      - id: choose
+        expr: C(n, k)
+        when: >-
+          choose k of n different items, order doesn't matter
+      - id: from-ordered
+        expr: P(n, k)/k!
+        equals: C(n, k)
+        when: >-
+          why it works, ordered picks divided by the orders of each group
+    example: >-
+      A 3-person committee from 8 people is $C(8,3) = \frac{8 \times 7 \times 6}{3!} = 56$.
+    trap: >-
+      Multiplying several $C$'s for groups that are really the same kind of choice (choosing
+      3 people as "1, then 2 more" counts each committee several times).
+
+  multiset-permutations:
+    summary: >-
+      Arrange items where some are identical.
+    how:
+      - >-
+        Pretend every item is different and arrange them: $n!$ ways.
+      - >-
+        Identical items swapping places give the same arrangement, so divide by the orders of
+        each group of repeats.
+    formulas:
+      - id: two-kinds
+        expr: (a+b)!/(a!*b!)
+        when: >-
+          a items of one kind and b of another
+      - id: three-kinds
+        expr: (a+b+c)!/(a!*b!*c!)
+        when: >-
+          three kinds of repeated items
+    example: >-
+      The letters of BANANA (one B, two N's, three A's) make
+      $\frac{6!}{1!\,2!\,3!} = 60$ different words.
+    trap: >-
+      Dividing by $n!$ for every letter, or forgetting a group that repeats.
+
+  stars-and-bars:
+    summary: >-
+      Share identical items among distinct groups.
+    how:
+      - >-
+        Line the items up as stars and drop in bars to cut the line into groups. With $k$
+        groups you need $k-1$ bars.
+      - >-
+        Every arrangement of the stars and bars is exactly one way to share the items, so count
+        the ways to choose which of the $n+k-1$ spots hold bars.
+    formulas:
+      - id: empty-allowed
+        expr: C(n+k-1, k-1)
+        when: >-
+          n identical items, k groups, a group may get nothing
+      - id: at-least-one
+        expr: C(n-1, k-1)
+        when: >-
+          every group gets at least one
+      - id: minimums
+        expr: C(n-m+k-1, k-1)
+        when: >-
+          the minimums add up to m, so hand those out first
+    example: >-
+      7 identical cookies for 3 kids is $C(9,2) = 36$ ways. ★★★ | | ★★★★ means A gets 3,
+      B gets 0, C gets 4.
+    trap: >-
+      The items must be identical. 7 different cookies for 3 kids is $3^7$ (each cookie
+      picks a kid), not stars and bars.
+
+  inclusion-exclusion:
+    summary: >-
+      Count a union by adding the groups and subtracting the overlaps.
+    how:
+      - >-
+        Adding $|A| + |B|$ counts everything in both groups twice, so subtract the overlap
+        once.
+      - >-
+        With three groups, the pairwise overlaps get subtracted too often, so add back the part
+        in all three. The signs alternate with the size of the overlap.
+    formulas:
+      - id: two
+        expr: a + b - x
+        when: >-
+          the groups have a and b items, and x items are in both
+      - id: three
+        expr: a + b + c - x - y - z + t
+        when: >-
+          x, y, z are the pairwise overlaps and t is in all three
+    example: >-
+      Of 30 students, 18 play football, 12 play chess and 5 do both, so $18 + 12 - 5 = 25$
+      do at least one.
+    trap: >-
+      Stopping after the pairs with three groups; the triple overlap must be added back.
+
+  derangements:
+    summary: >-
+      Count arrangements where nothing lands in its own place.
+    how:
+      - >-
+        Start with all $n!$ arrangements and remove the bad ones, where someone gets their own
+        item.
+      - >-
+        Fix $k$ chosen people in their own places, $C(n,k)$ ways, and shuffle the rest freely,
+        $(n-k)!$ ways. Overlaps get counted several times, so alternate the signs:
+        subtract $k = 1$, add back $k = 2$, and so on.
+      - >-
+        Simplifying $C(n,k)(n-k)! = \frac{n!}{k!}$ gives the short form.
+    formulas:
+      - id: inclusion-exclusion
+        expr: Sum((-1)^k*C(n, k)*(n-k)!, k, 0, n)
+        when: >-
+          the alternating sum, straight from the reasoning
+      - id: short
+        expr: n!*Sum((-1)^k/k!, k, 0, n)
+        when: >-
+          the same number, simplified
+    example: >-
+      For 3 hats, $3! - 3 \cdot 2! + 3 \cdot 1! - 1 = 6 - 6 + 3 - 1 = 2$, namely BCA and CAB.
+    trap: >-
+      Subtracting $C(n,1)(n-1)!$ only. Arrangements where two people match were removed
+      twice and must be added back.
+
+  complement:
+    summary: >-
+      Count everything, then subtract what you don't want.
+    how:
+      - >-
+        Problems that say "at least one" split into many cases. The opposite, "none", is
+        usually one simple count.
+      - >-
+        Count the total, count the opposite, and subtract.
+    formulas:
+      - id: subtract
+        expr: t - b
+        when: >-
+          t outcomes in total, b of them are the ones you don't want
+      - id: dice
+        expr: 6^n - 5^n
+        when: >-
+          n dice rolls (in order) with at least one 6
+    example: >-
+      4 dice rolls with at least one 6 give $6^4 - 5^4 = 1296 - 625 = 671$ lists.
+    trap: >-
+      Using "exactly one" as the opposite of "at least one". The opposite is "none".
+
+  symmetry-relative-order:
+    summary: >-
+      When every order of some items is equally common, take your share.
+    how:
+      - >-
+        Look only at where a few chosen items sit relative to each other. Across all
+        arrangements, each of their $r!$ relative orders turns up equally often.
+      - >-
+        So the arrangements where they appear in one particular order are $\frac{1}{r!}$ of
+        all of them.
+    formulas:
+      - id: one-order
+        expr: n!/r!
+        when: >-
+          r chosen items must appear in one given order among n
+      - id: a-before-b
+        expr: n!/2
+        when: >-
+          A comes somewhere before B
+    example: >-
+      5 people in a line with Ann somewhere before Ben: half of $5! = 120$, so 60.
+    trap: >-
+      Fixing positions you weren't asked to fix. "Before" means anywhere earlier, not
+      right next to.
+
+  choose-then-order:
+    summary: >-
+      Pick who is involved, then arrange or assign roles.
+    how:
+      - >-
+        Split the job into "which items?" and "in what arrangement?".
+      - >-
+        Choose the group with $C(n,k)$, then multiply by the ways to arrange it, $k!$ for a
+        row, or the number of role choices.
+    formulas:
+      - id: row
+        expr: C(n, k)*k!
+        equals: P(n, k)
+        when: >-
+          choose k of n, then line them up
+      - id: captain
+        expr: C(n, k)*k
+        when: >-
+          choose a team of k, then one of them as captain
+    example: >-
+      A 4-person team with a captain from 9 people: $C(9,4) \times 4 = 504$.
+    trap: >-
+      Ordering the team and also naming a captain, which counts each team in several
+      orders.
+
+  glue-block:
+    summary: >-
+      Items that must stay together move as one block.
+    how:
+      - >-
+        Glue the items that must be together into one block and arrange the block with the
+        other items.
+      - >-
+        Then arrange the items inside the block.
+    formulas:
+      - id: block
+        expr: (n-k+1)!*k!
+        when: >-
+          k of the n items must be next to each other in a row
+    example: >-
+      6 friends in a row with 2 who insist on sitting together: $5! \times 2! = 240$.
+    trap: >-
+      Forgetting the $k!$ orders inside the block.
+
+  gap-method:
+    summary: >-
+      Keep items apart by placing the others first, then using the gaps.
+    how:
+      - >-
+        Arrange the unrestricted items first. They leave gaps between them and at both ends,
+        one more gap than items.
+      - >-
+        Put each item that must stay apart into a different gap.
+    formulas:
+      - id: distinct
+        expr: (n-k)!*P(n-k+1, k)
+        when: >-
+          n different items in a row, k of them may not be next to each other
+      - id: positions
+        expr: C(n-k+1, k)
+        when: >-
+          choose k of n places in a row with no two next to each other
+    example: >-
+      3 girls and 4 boys in a row with no two girls together: $4! \times P(5,3) = 1440$.
+    trap: >-
+      Counting only the gaps between items and forgetting the two ends.
+
+  restricted-first:
+    summary: >-
+      Place the fussy items first, then fill in the rest.
+    how:
+      - >-
+        Items with conditions have fewer options, so deal with them before anything else.
+      - >-
+        Once they're placed, the remaining items go anywhere.
+    formulas:
+      - id: not-at-ends
+        expr: (n-2)*(n-1)!
+        when: >-
+          one person in a row of n must not stand at either end
+    example: >-
+      5 people in a row, Ann not at either end: Ann has 3 spots, the rest $4!$, so $72$.
+    trap: >-
+      Placing free items first, which makes the fussy item's options depend on earlier
+      choices.
+
+  divide-overcounting:
+    summary: >-
+      Count with labels, then divide by the orders that don't matter.
+    how:
+      - >-
+        Count as if everything were labelled or ordered; that is often easy.
+      - >-
+        Each real outcome was counted once for every relabelling that changes nothing, so
+        divide by that number.
+    formulas:
+      - id: pairs
+        expr: (2*m)!/(2^m*m!)
+        when: >-
+          split 2m people into m pairs, where pairs have no names
+      - id: groups
+        expr: (a*g)!/((a!)^g*g!)
+        when: >-
+          split a·g people into g unnamed groups of a
+    example: >-
+      4 people into 2 pairs: $\frac{4!}{2^2 \cdot 2!} = 3$.
+    trap: >-
+      Dividing by $g!$ when the groups do have names (Team Red and Team Blue).
+
+  circular:
+    summary: >-
+      Around a table, rotations are the same seating.
+    how:
+      - >-
+        A row of $n$ people has $n!$ orders, but turning the table gives the same seating,
+        and each seating appears $n$ times.
+      - >-
+        So there are $\frac{n!}{n} = (n-1)!$ seatings. Equivalently, seat one person first to
+        fix the turning, then arrange the rest.
+      - >-
+        If flipping over also counts as the same (bracelets), halve again.
+    formulas:
+      - id: table
+        expr: (n-1)!
+        when: >-
+          n people around a round table
+      - id: bracelet
+        expr: (n-1)!/2
+        when: >-
+          n different beads on a bracelet (rotations and flips), n at least 3
+    example: >-
+      5 people at a round table: $4! = 24$ seatings.
+    trap: >-
+      Halving for a table. People at a table see left and right differently, so flips are
+      not the same seating.
+
+  lattice-paths:
+    summary: >-
+      Paths on a grid are choices of which steps go right.
+    how:
+      - >-
+        A path from the corner to $a$ right and $b$ up is a list of $a$ R's and $b$ U's in
+        some order.
+      - >-
+        Choose which of the $a+b$ steps are R's.
+      - >-
+        To pass through a point, count the paths to it and from it, then multiply.
+    formulas:
+      - id: corner
+        expr: C(a+b, a)
+        when: >-
+          a steps right and b steps up
+      - id: through
+        expr: C(c+d, c)*C(a-c+b-d, a-c)
+        when: >-
+          paths that pass through the point (c, d)
+    example: >-
+      To go 4 right and 3 up: $C(7,4) = 35$ paths.
+    trap: >-
+      Using $2^{a+b}$, which allows paths that overshoot the corner.
+
+  balls-into-boxes:
+    summary: >-
+      Ask whether the balls and the boxes are different.
+    how:
+      - >-
+        Different balls into different boxes means each ball picks its box on its own.
+      - >-
+        To keep every box non-empty, subtract the ways that leave boxes empty, with
+        inclusion–exclusion.
+      - >-
+        Identical balls into different boxes is stars and bars.
+    formulas:
+      - id: any
+        expr: k^n
+        when: >-
+          n different balls into k different boxes
+      - id: onto
+        expr: Sum((-1)^j*C(k, j)*(k-j)^n, j, 0, k)
+        when: >-
+          every box gets at least one ball
+      - id: identical
+        expr: C(n+k-1, k-1)
+        when: >-
+          n identical balls into k different boxes
+    example: >-
+      4 different letters into 3 mailboxes: $3^4 = 81$ ways.
+    trap: >-
+      Using $n^k$. Each ball makes the choice, so the number of boxes is the base.
+
+  pigeonhole:
+    summary: >-
+      More items than boxes forces two to share.
+    how:
+      - >-
+        Put items into boxes as evenly as you can. With $k$ boxes, $k$ items can all go in
+        different boxes, but item $k + 1$ must join one of them.
+      - >-
+        To force a box with $r$ items, fill every box with $r - 1$ first; one more forces it.
+    formulas:
+      - id: two
+        expr: k + 1
+        when: >-
+          fewest items that force two in the same box
+      - id: r
+        expr: k*(r-1) + 1
+        when: >-
+          fewest items that force r in the same box
+    example: >-
+      There are 12 months, so among any 13 people two share a birth month.
+    trap: >-
+      Answering $k$. With exactly $k$ items everyone can still be in a different box.
+
+  binomial-identities:
+    summary: >-
+      Count one thing in two ways, and the two answers are equal.
+    how:
+      - >-
+        Pick a question, like "how many groups can you choose?", and answer it in two
+        different ways. Both answers count the same thing, so they're equal.
+      - >-
+        Pascal's rule splits groups by whether they include one special person.
+    formulas:
+      - id: pascal
+        expr: C(n-1, k-1) + C(n-1, k)
+        equals: C(n, k)
+        when: >-
+          groups with the special person, plus groups without
+      - id: row-sum
+        expr: Sum(C(n, j), j, 0, n)
+        equals: 2^n
+        when: >-
+          all groups of every size, or each person in or out
+      - id: vandermonde
+        expr: Sum(C(a, j)*C(b, k-j), j, 0, k)
+        equals: C(a+b, k)
+        when: >-
+          choose k from a boys and b girls, split by how many boys
+    example: >-
+      Groups from 4 people: $1 + 4 + 6 + 4 + 1 = 16 = 2^4$.
+    trap: >-
+      Checking an identity on one number instead of explaining why both sides count the
+      same thing.
