@@ -343,6 +343,15 @@ the same as the problem card tabs. Filters live in the address, so they survive 
 - **Considered:** A · teal, terracotta, berry; B · one teal getting darker.
 - **Mockup:** [design/mockups/d13-difficulty.html](design/mockups/d13-difficulty.html)
 
+## D14 · Linking blanks to the diagram
+
+**Decided: none.** Blanks don't highlight diagram pieces. Help's why-steps and the
+small-numbers check already explain what each part of the formula counts, and a per-blank hint
+(option C) would partly answer the blank.
+- **Considered:** A · the Example diagram lights up, B · a tiny diagram under each group,
+  C · a hint card beside the focused blank.
+- **Mockup:** [design/mockups/d14-blank-links.html](design/mockups/d14-blank-links.html)
+
 ## No emoji
 
 - No emoji in the interface or in learner-facing content. The example lines read

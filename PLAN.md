@@ -585,9 +585,9 @@ resume section.
    chart (attempts vs. correct).
 9. **Home roadmap:** the roadmap graph with each node's methods and solved / total (replacing the
    temporary `/practice` methods list), and the daily problem card + mini heatmap on Home.
-10. **Visuals:** the outcome diagrams are already built (Status, §2a); what's left is binding
-    them to the Help skeleton slots (highlight the pieces a slot counts), plus a **13×4 card-deck grid** (ranks × suits, relevant cards highlighted) for card problems.
-    Style options are shown to you before building.
+10. ✅ **Visuals:** outcome diagrams for 10 visual types, the Example tab with checked examples,
+    and the 13×4 card-deck grid (D11). Linking blanks to the diagram was considered and dropped
+    (D14).
 11. **Content runs:** generate by `targets.yaml` coverage (counting, inclusion–exclusion/
     complement, distributions, probability). Fix `needs_review` items in Claude Code sessions.
     Target ≈ 50 roots, ≥ 3 per topic tag, all contexts and difficulties.
