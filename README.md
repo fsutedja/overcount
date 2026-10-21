@@ -3,10 +3,10 @@
 **Practice combinatorics and probability one decision at a time.**
 
 Most counting mistakes aren't arithmetic. They're overcounting, undercounting, or picking the
-wrong formula. Overcount breaks each problem into fill-in-the-blank steps ("choose ? of ?",
-"× or +?", "overcounted? divide by ?") so you can see exactly where your reasoning goes wrong.
-Answers are math expressions like `C(7,3)·C(5,2)`, graded by value, so any equivalent form
-counts.
+wrong formula. Overcount lets you answer freely first; when you're stuck, it shows the answer's
+structure as a one-line formula with empty boxes to fill in, explains *why* step by step, and
+only then shows the worked solution. Answers are math expressions like `C(7,3)·C(5,2)`, graded
+by exact value, so any equivalent form counts.
 
 > 🚧 Work in progress. The MVP is being built milestone by milestone.
 
@@ -19,13 +19,29 @@ generate  →  verify  →  publish
               simulation)      instances)
 ```
 
-- **Generate:** problem *templates* (variables + ranges + step scaffold + a Python checker) are
-  drafted with the Gemini API free tier, behind a pluggable `Generator` interface.
-- **Verify:** every template is checked by its own brute-force checker across many random
-  variable settings (plus Monte Carlo simulation for probability problems). Failures go to
-  `needs_review/` for manual fixing.
-- **Publish:** verified templates are expanded into thousands of concrete problems, shipped as
-  static JSON. The site makes no runtime AI calls and costs $0 to serve.
+- **Generate:** problem *families* (a root problem plus harder variants, each a template with
+  variables and ranges) are drafted with the Gemini API free tier. A reply that fails any check
+  is sent back with the problems found, up to twice.
+- **Verify:** each family comes with a small Python checker that lists every candidate outcome
+  and decides which ones count. Counting those outcomes must equal the answer formula on many
+  number sets, every ✅/❌ example must be a real outcome that does / doesn't count, and every
+  fill-in skeleton must add up to the answer. Probability problems with unequal chances use a
+  Monte Carlo simulation. The checker runs in a sandbox, and nothing is published until a
+  person approves it.
+- **Publish:** approved families become ~100 concrete number sets each, with examples, outcome
+  diagrams, Help steps and a worked small case, shipped as static JSON. The site makes no
+  runtime AI calls and costs $0 to serve.
+
+## Learning features
+
+- **Examples and diagrams:** every problem shows one outcome that counts and one that doesn't,
+  drawn as a small diagram (dice, cards, beads on a circle, stars and bars, …).
+- **Fill in the blanks → Help → Show solution:** blanks for every number, then "why" steps one
+  at a time, then the worked answer with this problem's numbers.
+- **Practice by method:** 19 counting methods, each with a short lesson (formulas checked by
+  brute force) and its own problem list.
+- **Progress:** each try is saved in your browser; tries show as dots, and a problem is
+  *mastered* when solved within two tries.
 
 ## Roadmap
 
