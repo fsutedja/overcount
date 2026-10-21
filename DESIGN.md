@@ -264,4 +264,16 @@ complements.
 
 ## D3 · Home and progress
 
-Pending (before milestone 9).
+**Decided (desktop): B · Branching map (NeetCode-style).**
+
+- The 8 roadmap stops are laid out as a small map with connector lines showing which topics
+  build on which (Counting basics → Combinations → Stars and bars and Complement →
+  Inclusion–exclusion → Probability basics → Conditional and Distributions).
+- Each stop is a card with its title, "solved / total" and a progress bar; the stop you're on
+  has an accent-ink outline; stops with no problems yet are faded ("coming soon"). Clicking a
+  stop opens its methods.
+- Today's problem and the activity card (day streak, solved, 5-week heatmap) sit in a side
+  column.
+- **Phones:** not decided yet (the mockup turns the map into a plain list).
+- **Considered:** A · One path, C · Dashboard.
+- **Mockup:** [design/mockups/d3-home.html](design/mockups/d3-home.html)
