@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D14 blanks and diagram</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<style>
+:root{--bg:#f4efe6;--card:#fffbf3;--card-sunken:#f8f3ea;--border:#e4d9c6;--ink:#2b2823;--ink-muted:#675f53;--accent:#4f8f87;--accent-ink:#276660;--accent-soft:#e3eeec;--on-accent:#fffbf3;--deco:#c2734f;--deco-soft:#f3e2d8}
+:root[data-theme=dark]{--bg:#1f1d1a;--card:#2a2723;--card-sunken:#24221e;--border:#3a362f;--ink:#eee7da;--ink-muted:#b3aa9b;--accent:#5fa69c;--accent-ink:#7cc1b7;--accent-soft:#23332f;--on-accent:#1f1d1a;--deco:#d99474;--deco-soft:#3b2c24}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',sans-serif;padding:24px 16px 60px;line-height:1.45}
+.wrap{max-width:1080px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--ink-muted);margin:0 0 20px}
+.opt{border:2px dashed var(--border);border-radius:18px;padding:16px 18px;margin-bottom:28px}
+.opt>h2{margin:0 0 2px;font-size:18px}.why{color:var(--ink-muted);font-size:14px;margin:0 0 12px}
+.page{display:grid;grid-template-columns:1fr 1.05fr;gap:18px;align-items:start}@media(max-width:820px){.page{grid-template-columns:1fr}}
+.label{font-weight:700;margin:0 0 8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px}
+.answer{border:2px solid var(--accent);border-radius:14px;background:var(--card);padding:14px 16px}
+.muted{color:var(--ink-muted)}.small{font-size:13px}
+.grp{font-size:12px;font-weight:700;color:var(--ink-muted);margin:6px 0 4px}
+.pieces{display:flex;gap:6px;flex-wrap:wrap}
+.p{width:34px;height:34px;border-radius:8px;border:2.5px solid var(--ink);display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--card);box-shadow:3px 3px 0 var(--border);transition:all .15s}
+.p.chosen{background:var(--accent);color:var(--on-accent)}
+.p.dim{opacity:.3}
+.p.glow{outline:3px solid var(--deco);outline-offset:2px}
+.skel{display:flex;align-items:flex-start;gap:14px;margin-top:10px;font-family:KaTeX_Main,serif;font-size:28px}
+.g{display:inline-flex;flex-direction:column;align-items:center}
+.g .lab{font-family:'Atkinson Hyperlegible';font-size:13px;color:var(--ink-muted);margin-top:2px}
+.binom{display:inline-flex;align-items:center}
+.binom .par{font-size:56px;line-height:1;transform:scaleX(.6)}
+.stack{display:inline-flex;flex-direction:column;gap:4px}
+.blank{width:34px;height:30px;border:1.5px solid #acacac;border-radius:3px;background:var(--card)}
+.blank.focus{border:2px solid var(--accent-ink);box-shadow:0 0 0 3px var(--accent-soft)}
+.mini{display:flex;gap:3px;margin-top:6px}.mini i{width:10px;height:10px;border-radius:3px;border:1.5px solid var(--ink);display:inline-block}.mini i.on{background:var(--accent)}.mini i.glow{background:var(--deco-soft);border-color:var(--deco)}
+.pop{position:absolute;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 10px;box-shadow:0 4px 14px rgba(0,0,0,.08);font-size:13px;width:210px}
+.tb{position:fixed;top:12px;right:12px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--ink);font:inherit;cursor:pointer;z-index:3}
+</style>
+</head>
+<body>
+<button class="tb" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">Light / dark</button>
+<div class="wrap">
+<h1>D14 · Linking the blanks to the diagram</h1>
+<p class="sub">Problem: choose 3 of 8 juniors and 2 of 6 seniors. The learner has clicked into the top blank of the "juniors" group (the number of juniors to choose from). Each option shows what lights up.</p>
+
+<template id="diagram">
+  <div class="grp">juniors</div><div class="pieces" data-g="J"></div>
+  <div class="grp">seniors</div><div class="pieces" data-g="S"></div>
+</template>
+<template id="skeleton">
+  <div class="skel">
+    <span class="g"><span class="binom"><span class="par">(</span><span class="stack"><span class="blank focus"></span><span class="blank"></span></span><span class="par">)</span></span><span class="lab">juniors</span><span data-mini="J"></span></span>
+    <span style="padding-top:22px">×</span>
+    <span class="g"><span class="binom"><span class="par">(</span><span class="stack"><span class="blank"></span><span class="blank"></span></span><span class="par">)</span></span><span class="lab">seniors</span><span data-mini="S"></span></span>
+  </div>
+</template>
+
+<section class="opt" data-mode="a">
+  <h2>A · The Example diagram lights up</h2>
+  <p class="why">While a blank has focus, the matching pieces in the Example diagram on the left get a terracotta ring (here: all 8 juniors, "the juniors to choose from"); the rest fade. Uses the diagram you already see; on phones it's further away, above the answer box.</p>
+  <div class="page"><div><p class="label">Problem</p><div class="card"><p class="small muted" style="margin:0 0 6px">▾ Example</p><div data-use="diagram"></div></div></div>
+  <div><p class="label">Your answer</p><div class="answer"><b>Total number of teams</b><div data-use="skeleton"></div></div></div></div>
+</section>
+
+<section class="opt" data-mode="b">
+  <h2>B · A tiny diagram under each group</h2>
+  <p class="why">Each part of the formula gets its own small row of pieces under its label (8 squares under "juniors", 6 under "seniors"); the ones the focused blank is about are highlighted. Everything is right next to the blanks, at the cost of a little more height.</p>
+  <div class="page"><div><p class="label">Problem</p><div class="card"><p class="small muted" style="margin:0 0 6px">▾ Example</p><div data-use="diagram"></div></div></div>
+  <div><p class="label">Your answer</p><div class="answer"><b>Total number of teams</b><div data-use="skeleton"></div></div></div></div>
+</section>
+
+<section class="opt" data-mode="c">
+  <h2>C · A small hint card beside the focused blank</h2>
+  <p class="why">A small card appears next to the focused blank with a one-line hint in words and a mini picture ("How many juniors are there to choose from?"). No highlight elsewhere. The most explicit, but it's a hint that partly does the thinking.</p>
+  <div class="page"><div><p class="label">Problem</p><div class="card"><p class="small muted" style="margin:0 0 6px">▾ Example</p><div data-use="diagram"></div></div></div>
+  <div><p class="label">Your answer</p><div class="answer" style="position:relative;min-height:190px"><b>Total number of teams</b><div data-use="skeleton"></div>
+  <div class="pop" style="left:70px;top:58px"><b>This blank:</b> how many juniors are there to choose from?<div class="mini" style="margin-top:6px"><i class="glow"></i><i class="glow"></i><i class="glow"></i><i class="glow"></i><i class="glow"></i><i class="glow"></i><i class="glow"></i><i class="glow"></i></div></div></div></div></div>
+</section>
+</div>
+<script>
+document.querySelectorAll('[data-use]').forEach((el) => el.appendChild(document.getElementById(el.dataset.use).content.cloneNode(true)));
+document.querySelectorAll('.opt').forEach((opt) => {
+  const mode = opt.dataset.mode;
+  opt.querySelectorAll('[data-g]').forEach((g) => {
+    const kind = g.dataset.g, n = kind === 'J' ? 8 : 6, chosen = kind === 'J' ? 3 : 2;
+    g.innerHTML = Array.from({ length: n }, (_, i) => {
+      let cls = 'p' + (i < chosen ? ' chosen' : '');
+      if (mode === 'a') cls += kind === 'J' ? ' glow' : ' dim';
+      return `<span class="${cls}">${kind}${i + 1}</span>`;
+    }).join('');
+  });
+  opt.querySelectorAll('[data-mini]').forEach((m) => {
+    if (mode !== 'b') { m.remove(); return; }
+    const kind = m.dataset.mini, n = kind === 'J' ? 8 : 6;
+    m.outerHTML = `<span class="mini">${Array.from({ length: n }, () => `<i class="${kind === 'J' ? 'glow' : ''}"></i>`).join('')}</span>`;
+  });
+});
+</script>
+</body>
+</html>
