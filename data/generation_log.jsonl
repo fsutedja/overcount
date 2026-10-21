@@ -6,3 +6,18 @@
 {"at": "2026-10-20T22:56:54+00:00", "target_id": "hearts-or-face-cards", "model": "gemini-3.8-flash", "prompt_version": "family-v1", "status": "staged", "requests": 1}
 {"at": "2026-10-21T00:26:48+00:00", "target_id": "marbles-in-jars", "model": "gemini-3.8-flash", "prompt_version": "family-v2", "status": "staged", "requests": 1}
 {"at": "2026-10-21T00:28:36+00:00", "target_id": "dice-total-solutions", "model": "gemini-3.8-flash", "prompt_version": "family-v2", "status": "invalid_reply", "requests": 1, "detail": "reply is not valid JSON: Expecting ',' delimiter at position 6910"}
+{"at": "2026-10-21T00:30:51+00:00", "target_id": "committee-budget-split", "model": "gemini-3.8-flash", "prompt_version": "family-v2", "status": "staged", "requests": 1}
+{"at": "2026-10-21T00:32:17+00:00", "target_id": "hat-check-no-match", "model": "gemini-3.8-flash", "prompt_version": "family-v2", "status": "staged", "requests": 1}
+{"at": "2026-10-21T00:33:54+00:00", "target_id": "secret-santa-no-self", "model": "gemini-3.8-flash", "prompt_version": "family-v2", "status": "invalid_reply", "requests": 2, "detail": "reply must be an object with a \"family\" object"}
+{"at": "2026-10-21T00:35:04+00:00", "target_id": "letters-wrong-envelopes", "model": "gemini-3.8-flash", "prompt_version": "family-v2", "status": "staged", "requests": 1}
+{"at": "2026-10-21T02:56:26+00:00", "target_id": "dice-total-solutions", "model": "gemini-3.8-flash", "prompt_version": "family-v2", "status": "staged", "requests": 1}
+{"at": "2026-10-21T02:58:26+00:00", "target_id": "secret-santa-no-self", "model": "gemini-3.8-flash", "prompt_version": "family-v2", "status": "staged", "requests": 1}
+{"at": "2026-10-21T03:44:26+00:00", "target_id": "marbles-in-jars", "model": "gemini-3.8-flash", "prompt_version": "family-v3", "status": "staged", "requests": 2}
+{"at": "2026-10-21T03:46:45+00:00", "target_id": "hat-check-no-match", "model": "gemini-3.8-flash", "prompt_version": "family-v3", "status": "staged", "requests": 1}
+{"at": "2026-10-21T03:49:41+00:00", "target_id": "line-relative-order", "model": "gemini-3.8-flash", "prompt_version": "family-v3", "status": "check_failed", "requests": 1, "detail": "schema \u00b7 line-relative-order: 1 schema error(s): 1 validation error for Family\nproblems.2\n  Value error, malformed placeholder (use {{x}} exactly) in: 'Among the remaining three friends {B, C, D}, B must appear before both C and D, which happens in 1/3 of lines. Dividing by 3 gives {{n}}!/12.' [type=value_error, input_value={'id': 'line-relative-ord...ght': 'highlight_four'}}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error"}
+{"at": "2026-10-21T03:50:57+00:00", "target_id": "line-relative-order", "model": "gemini-3.8-flash", "prompt_version": "family-v3", "status": "check_failed", "requests": 1, "detail": "schema \u00b7 line-relative-order: only 4 valid instances; need at least 5; schema \u00b7 line-relative-order-chain: only 4 valid instances; need at least 5; schema \u00b7 line-relative-order-four: only 4 valid instances; need at least 5"}
+{"at": "2026-10-21T03:51:10+00:00", "target_id": "line-relative-order", "model": "gemini-3.8-flash", "prompt_version": "family-v3", "status": "quota", "requests": 3, "detail": "Gemini's daily free-tier quota is used up"}
+{"at": "2026-10-21T03:51:24+00:00", "target_id": "hat-check-no-match", "status": "verified_pass", "gates": []}
+{"at": "2026-10-21T03:51:24+00:00", "target_id": "marbles-in-jars", "status": "verified_pass", "gates": []}
+{"at": "2026-10-21T04:49:26+00:00", "target_id": "hat-check-no-match", "status": "verified_pass", "gates": []}
+{"at": "2026-10-21T04:49:26+00:00", "target_id": "marbles-in-jars", "status": "verified_pass", "gates": []}
