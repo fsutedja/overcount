@@ -3,16 +3,40 @@
   "problems": [
     {
       "id": "club-president",
-      "origin": { "kind": "authored" },
+      "origin": {
+        "kind": "authored"
+      },
       "title": "President and advisor",
       "statement": "A chess club has {{J}} juniors and {{S}} seniors, and the school has {{t}} teachers. The club needs one president, who can be any junior or any senior, and one teacher as advisor. In how many ways can the president and advisor be chosen?",
       "variables": {
-        "J": { "min": 3, "max": 12, "default": 7 },
-        "S": { "min": 3, "max": 12, "default": 5 },
-        "t": { "min": 2, "max": 6, "default": 4 }
+        "J": {
+          "min": 3,
+          "max": 12,
+          "default": 7
+        },
+        "S": {
+          "min": 3,
+          "max": 12,
+          "default": 5
+        },
+        "t": {
+          "min": 2,
+          "max": 6,
+          "default": 4
+        }
       },
       "difficulty": "easy",
-      "tags": { "topics": ["counting/basics"], "contexts": ["committees-seating"] },
+      "tags": {
+        "topics": [
+          "counting/basics"
+        ],
+        "contexts": [
+          "committees-seating"
+        ],
+        "methods": [
+          "product-sum-rule"
+        ]
+      },
       "answer": {
         "prompt": "Ways to choose a president and an advisor",
         "expr": "(J+S)*t",
@@ -30,14 +54,31 @@
         ],
         "skeleton": {
           "parts": [
-            { "group": "president", "expr": "([a]+[b])" },
-            { "op": "*" },
-            { "group": "advisor", "expr": "[c]" }
+            {
+              "group": "president",
+              "expr": "([a]+[b])"
+            },
+            {
+              "op": "*"
+            },
+            {
+              "group": "advisor",
+              "expr": "[c]"
+            }
           ],
           "slots": {
-            "a": { "hint": "juniors", "answer": "J" },
-            "b": { "hint": "seniors", "answer": "S" },
-            "c": { "hint": "teachers", "answer": "t" }
+            "a": {
+              "hint": "juniors",
+              "answer": "J"
+            },
+            "b": {
+              "hint": "seniors",
+              "answer": "S"
+            },
+            "c": {
+              "hint": "teachers",
+              "answer": "t"
+            }
           }
         }
       },
@@ -67,16 +108,40 @@
       "id": "club-president-optional-advisor",
       "variant_of": "club-president",
       "twist": "the advisor seat may stay empty",
-      "origin": { "kind": "authored" },
+      "origin": {
+        "kind": "authored"
+      },
       "title": "President and an optional advisor",
       "statement": "A chess club has {{J}} juniors and {{S}} seniors, and the school has {{t}} teachers. The club needs one president, who can be any junior or any senior. It may also pick one teacher as advisor, or leave the advisor seat empty. How many different choices are possible?",
       "variables": {
-        "J": { "min": 3, "max": 12, "default": 7 },
-        "S": { "min": 3, "max": 12, "default": 5 },
-        "t": { "min": 2, "max": 6, "default": 4 }
+        "J": {
+          "min": 3,
+          "max": 12,
+          "default": 7
+        },
+        "S": {
+          "min": 3,
+          "max": 12,
+          "default": 5
+        },
+        "t": {
+          "min": 2,
+          "max": 6,
+          "default": 4
+        }
       },
       "difficulty": "medium",
-      "tags": { "topics": ["counting/basics"], "contexts": ["committees-seating"] },
+      "tags": {
+        "topics": [
+          "counting/basics"
+        ],
+        "contexts": [
+          "committees-seating"
+        ],
+        "methods": [
+          "product-sum-rule"
+        ]
+      },
       "answer": {
         "prompt": "Ways to choose a president and an optional advisor",
         "expr": "(J+S)*(t+1)",
@@ -94,15 +159,35 @@
         ],
         "skeleton": {
           "parts": [
-            { "group": "president", "expr": "([a]+[b])" },
-            { "op": "*" },
-            { "group": "advisor", "expr": "([c]+[d])" }
+            {
+              "group": "president",
+              "expr": "([a]+[b])"
+            },
+            {
+              "op": "*"
+            },
+            {
+              "group": "advisor",
+              "expr": "([c]+[d])"
+            }
           ],
           "slots": {
-            "a": { "hint": "juniors", "answer": "J" },
-            "b": { "hint": "seniors", "answer": "S" },
-            "c": { "hint": "teachers", "answer": "t" },
-            "d": { "hint": "no one", "answer": "1" }
+            "a": {
+              "hint": "juniors",
+              "answer": "J"
+            },
+            "b": {
+              "hint": "seniors",
+              "answer": "S"
+            },
+            "c": {
+              "hint": "teachers",
+              "answer": "t"
+            },
+            "d": {
+              "hint": "no one",
+              "answer": "1"
+            }
           }
         }
       },

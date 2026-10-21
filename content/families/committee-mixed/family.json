@@ -3,18 +3,50 @@
   "problems": [
     {
       "id": "committee-mixed",
-      "origin": { "kind": "authored" },
+      "origin": {
+        "kind": "authored"
+      },
       "title": "Robotics club team",
       "statement": "A robotics club has {{J}} juniors and {{S}} seniors. In how many ways can a team of {{j}} juniors and {{s}} seniors be chosen?",
       "variables": {
-        "J": { "min": 5, "max": 10, "default": 8 },
-        "S": { "min": 4, "max": 8, "default": 6 },
-        "j": { "min": 2, "max": 4, "default": 3 },
-        "s": { "min": 2, "max": 3, "default": 2 }
+        "J": {
+          "min": 5,
+          "max": 10,
+          "default": 8
+        },
+        "S": {
+          "min": 4,
+          "max": 8,
+          "default": 6
+        },
+        "j": {
+          "min": 2,
+          "max": 4,
+          "default": 3
+        },
+        "s": {
+          "min": 2,
+          "max": 3,
+          "default": 2
+        }
       },
-      "constraints": ["j < J", "s < S"],
+      "constraints": [
+        "j < J",
+        "s < S"
+      ],
       "difficulty": "easy",
-      "tags": { "topics": ["counting/combinations"], "contexts": ["committees-seating"] },
+      "tags": {
+        "topics": [
+          "counting/combinations"
+        ],
+        "contexts": [
+          "committees-seating"
+        ],
+        "methods": [
+          "combinations",
+          "product-sum-rule"
+        ]
+      },
       "answer": {
         "prompt": "Total number of teams",
         "expr": "C(J,j)*C(S,s)",
@@ -37,15 +69,35 @@
         ],
         "skeleton": {
           "parts": [
-            { "group": "juniors", "expr": "C([a],[b])" },
-            { "op": "*" },
-            { "group": "seniors", "expr": "C([c],[d])" }
+            {
+              "group": "juniors",
+              "expr": "C([a],[b])"
+            },
+            {
+              "op": "*"
+            },
+            {
+              "group": "seniors",
+              "expr": "C([c],[d])"
+            }
           ],
           "slots": {
-            "a": { "hint": "total", "answer": "J" },
-            "b": { "hint": "pick", "answer": "j" },
-            "c": { "hint": "total", "answer": "S" },
-            "d": { "hint": "pick", "answer": "s" }
+            "a": {
+              "hint": "total",
+              "answer": "J"
+            },
+            "b": {
+              "hint": "pick",
+              "answer": "j"
+            },
+            "c": {
+              "hint": "total",
+              "answer": "S"
+            },
+            "d": {
+              "hint": "pick",
+              "answer": "s"
+            }
           },
           "slot_mistakes": [
             {
@@ -89,18 +141,51 @@
       "id": "committee-captain",
       "variant_of": "committee-mixed",
       "twist": "one junior is captain",
-      "origin": { "kind": "authored" },
+      "origin": {
+        "kind": "authored"
+      },
       "title": "Robotics club team with a captain",
       "statement": "A robotics club has {{J}} juniors and {{S}} seniors. A team of {{j}} juniors and {{s}} seniors is chosen, and one of the juniors on the team is named captain. How many different teams with a captain are possible?",
       "variables": {
-        "J": { "min": 5, "max": 10, "default": 8 },
-        "S": { "min": 4, "max": 8, "default": 6 },
-        "j": { "min": 2, "max": 4, "default": 3 },
-        "s": { "min": 2, "max": 3, "default": 2 }
+        "J": {
+          "min": 5,
+          "max": 10,
+          "default": 8
+        },
+        "S": {
+          "min": 4,
+          "max": 8,
+          "default": 6
+        },
+        "j": {
+          "min": 2,
+          "max": 4,
+          "default": 3
+        },
+        "s": {
+          "min": 2,
+          "max": 3,
+          "default": 2
+        }
       },
-      "constraints": ["j < J", "s < S"],
+      "constraints": [
+        "j < J",
+        "s < S"
+      ],
       "difficulty": "medium",
-      "tags": { "topics": ["counting/combinations"], "contexts": ["committees-seating"] },
+      "tags": {
+        "topics": [
+          "counting/combinations"
+        ],
+        "contexts": [
+          "committees-seating"
+        ],
+        "methods": [
+          "combinations",
+          "choose-then-order",
+          "product-sum-rule"
+        ]
+      },
       "answer": {
         "prompt": "Total number of teams with a captain",
         "expr": "C(J,j)*j*C(S,s)",
@@ -118,18 +203,46 @@
         ],
         "skeleton": {
           "parts": [
-            { "group": "juniors", "expr": "C([a],[b])" },
-            { "op": "*" },
-            { "group": "captain", "expr": "[c]" },
-            { "op": "*" },
-            { "group": "seniors", "expr": "C([d],[e])" }
+            {
+              "group": "juniors",
+              "expr": "C([a],[b])"
+            },
+            {
+              "op": "*"
+            },
+            {
+              "group": "captain",
+              "expr": "[c]"
+            },
+            {
+              "op": "*"
+            },
+            {
+              "group": "seniors",
+              "expr": "C([d],[e])"
+            }
           ],
           "slots": {
-            "a": { "hint": "total", "answer": "J" },
-            "b": { "hint": "pick", "answer": "j" },
-            "c": { "hint": "choices", "answer": "j" },
-            "d": { "hint": "total", "answer": "S" },
-            "e": { "hint": "pick", "answer": "s" }
+            "a": {
+              "hint": "total",
+              "answer": "J"
+            },
+            "b": {
+              "hint": "pick",
+              "answer": "j"
+            },
+            "c": {
+              "hint": "choices",
+              "answer": "j"
+            },
+            "d": {
+              "hint": "total",
+              "answer": "S"
+            },
+            "e": {
+              "hint": "pick",
+              "answer": "s"
+            }
           },
           "slot_mistakes": [
             {

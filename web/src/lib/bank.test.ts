@@ -64,3 +64,17 @@ describe('committed bank', () => {
     })
   })
 })
+
+describe('bank tags', () => {
+  it('gives every problem at least one method and a kind that matches its primary topic', () => {
+    for (const problem of problems) {
+      expect(problem.tags.methods.length, problem.id).toBeGreaterThan(0)
+      const counting = problem.tags.topics[0].startsWith('counting/')
+      expect(problem.kind, problem.id).toBe(counting ? 'counting' : 'probability')
+    }
+    for (const summary of index.problems) {
+      expect(summary.tags.methods.length, summary.id).toBeGreaterThan(0)
+      expect(summary.kind, summary.id).toBeDefined()
+    }
+  })
+})

@@ -9,7 +9,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from .taxonomy import Context, Difficulty, MistakeTag, StepKind, Topic
+from .taxonomy import Context, Difficulty, Method, MistakeTag, StepKind, Topic
 
 PLACEHOLDER = re.compile(r"\{\{(\w+)\}\}")
 SLOT_MARKER = re.compile(r"\[(\w+)\]")
@@ -133,6 +133,8 @@ class Tags(Model):
     #: The first topic is the primary one: it places the problem on the roadmap.
     topics: list[Topic] = Field(min_length=1)
     contexts: list[Context] = Field(min_length=1)
+    #: Counting techniques the problem drills, for "practice by method".
+    methods: list[Method] = Field(min_length=1)
 
 
 class Origin(Model):

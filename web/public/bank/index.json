@@ -8,12 +8,16 @@
       "twist": null,
       "title": "Packing candy bags",
       "difficulty": "easy",
+      "kind": "counting",
       "tags": {
         "topics": [
           "counting/stars-bars"
         ],
         "contexts": [
           "balls-urns"
+        ],
+        "methods": [
+          "stars-and-bars"
         ]
       },
       "mistake_tags": [
@@ -29,12 +33,16 @@
       "twist": "every bag gets at least one candy",
       "title": "No empty candy bags",
       "difficulty": "easy",
+      "kind": "counting",
       "tags": {
         "topics": [
           "counting/stars-bars"
         ],
         "contexts": [
           "balls-urns"
+        ],
+        "methods": [
+          "stars-and-bars"
         ]
       },
       "mistake_tags": [
@@ -51,12 +59,16 @@
       "twist": "one specific bag receives a minimum amount",
       "title": "Special bag minimum",
       "difficulty": "medium",
+      "kind": "counting",
       "tags": {
         "topics": [
           "counting/stars-bars"
         ],
         "contexts": [
           "balls-urns"
+        ],
+        "methods": [
+          "stars-and-bars"
         ]
       },
       "mistake_tags": [
@@ -73,12 +85,16 @@
       "twist": null,
       "title": "President and advisor",
       "difficulty": "easy",
+      "kind": "counting",
       "tags": {
         "topics": [
           "counting/basics"
         ],
         "contexts": [
           "committees-seating"
+        ],
+        "methods": [
+          "product-sum-rule"
         ]
       },
       "mistake_tags": [
@@ -93,12 +109,16 @@
       "twist": "the advisor seat may stay empty",
       "title": "President and an optional advisor",
       "difficulty": "medium",
+      "kind": "counting",
       "tags": {
         "topics": [
           "counting/basics"
         ],
         "contexts": [
           "committees-seating"
+        ],
+        "methods": [
+          "product-sum-rule"
         ]
       },
       "mistake_tags": [
@@ -113,12 +133,17 @@
       "twist": null,
       "title": "Robotics club team",
       "difficulty": "easy",
+      "kind": "counting",
       "tags": {
         "topics": [
           "counting/combinations"
         ],
         "contexts": [
           "committees-seating"
+        ],
+        "methods": [
+          "combinations",
+          "product-sum-rule"
         ]
       },
       "mistake_tags": [
@@ -135,12 +160,18 @@
       "twist": "one junior is captain",
       "title": "Robotics club team with a captain",
       "difficulty": "medium",
+      "kind": "counting",
       "tags": {
         "topics": [
           "counting/combinations"
         ],
         "contexts": [
           "committees-seating"
+        ],
+        "methods": [
+          "combinations",
+          "choose-then-order",
+          "product-sum-rule"
         ]
       },
       "mistake_tags": [
@@ -156,12 +187,17 @@
       "twist": null,
       "title": "At least one six",
       "difficulty": "easy",
+      "kind": "counting",
       "tags": {
         "topics": [
           "counting/complement"
         ],
         "contexts": [
           "dice"
+        ],
+        "methods": [
+          "complement",
+          "product-sum-rule"
         ]
       },
       "mistake_tags": [
@@ -178,12 +214,17 @@
       "twist": "at least two sixes",
       "title": "At least two sixes",
       "difficulty": "medium",
+      "kind": "counting",
       "tags": {
         "topics": [
           "counting/complement"
         ],
         "contexts": [
           "dice"
+        ],
+        "methods": [
+          "complement",
+          "product-sum-rule"
         ]
       },
       "mistake_tags": [
@@ -198,12 +239,17 @@
       "twist": "no ones and at least one six",
       "title": "At least one six without ones",
       "difficulty": "medium",
+      "kind": "counting",
       "tags": {
         "topics": [
           "counting/complement"
         ],
         "contexts": [
           "dice"
+        ],
+        "methods": [
+          "complement",
+          "product-sum-rule"
         ]
       },
       "mistake_tags": [
@@ -219,6 +265,7 @@
       "twist": null,
       "title": "All hearts or all face cards",
       "difficulty": "medium",
+      "kind": "counting",
       "tags": {
         "topics": [
           "counting/inclusion-exclusion",
@@ -226,6 +273,10 @@
         ],
         "contexts": [
           "cards-poker"
+        ],
+        "methods": [
+          "inclusion-exclusion",
+          "combinations"
         ]
       },
       "mistake_tags": [
@@ -241,6 +292,7 @@
       "twist": "red cards instead of hearts",
       "title": "All red cards or all face cards",
       "difficulty": "medium",
+      "kind": "counting",
       "tags": {
         "topics": [
           "counting/inclusion-exclusion",
@@ -248,6 +300,10 @@
         ],
         "contexts": [
           "cards-poker"
+        ],
+        "methods": [
+          "inclusion-exclusion",
+          "combinations"
         ]
       },
       "mistake_tags": [
@@ -262,6 +318,7 @@
       "twist": "exclusive or (not both)",
       "title": "All hearts or all face cards, but not both",
       "difficulty": "medium",
+      "kind": "counting",
       "tags": {
         "topics": [
           "counting/inclusion-exclusion",
@@ -269,6 +326,10 @@
         ],
         "contexts": [
           "cards-poker"
+        ],
+        "methods": [
+          "inclusion-exclusion",
+          "combinations"
         ]
       },
       "mistake_tags": [
@@ -283,12 +344,17 @@
       "twist": null,
       "title": "Round table",
       "difficulty": "easy",
+      "kind": "counting",
       "tags": {
         "topics": [
           "counting/symmetry-circular"
         ],
         "contexts": [
           "committees-seating"
+        ],
+        "methods": [
+          "circular",
+          "divide-overcounting"
         ]
       },
       "mistake_tags": [
@@ -303,12 +369,17 @@
       "twist": "mirror images count as the same",
       "title": "Bracelet of beads",
       "difficulty": "medium",
+      "kind": "counting",
       "tags": {
         "topics": [
           "counting/symmetry-circular"
         ],
         "contexts": [
           "balls-urns"
+        ],
+        "methods": [
+          "circular",
+          "divide-overcounting"
         ]
       },
       "mistake_tags": [

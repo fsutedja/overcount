@@ -133,7 +133,7 @@ DICE: dict[str, Any] = {
             "statement": "A fair die is rolled {{n}} times. What is the probability of at least one six?",
             "variables": {"n": {"min": 1, "max": 6, "default": 3}},
             "difficulty": "easy",
-            "tags": {"topics": ["counting/complement"], "contexts": ["dice"]},
+            "tags": {"topics": ["counting/complement"], "contexts": ["dice"], "methods": ["complement"]},
             "answer": {
                 "prompt": "P(at least one six)",
                 "expr": "1-(5/6)^n",

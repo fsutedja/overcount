@@ -7,6 +7,16 @@ export type StoredValue = { type: 'rational'; exact: string } | { type: 'real'; 
 
 export type Difficulty = 'easy' | 'medium' | 'hard'
 
+/** Counting or Probability, derived by the pipeline from the primary topic. */
+export type Kind = 'counting' | 'probability'
+
+export interface Tags {
+  topics: string[]
+  contexts: string[]
+  /** Counting techniques the problem drills (pipeline/src/overcount/taxonomy.py). */
+  methods: string[]
+}
+
 /** Solution step kinds, each shown with its math-symbol icon (see DESIGN.md, D2). */
 export type StepKind =
   | 'choose'
@@ -80,7 +90,8 @@ export interface Problem {
   title: string
   statement: string
   difficulty: Difficulty
-  tags: { topics: string[]; contexts: string[] }
+  kind: Kind
+  tags: Tags
   answer: {
     prompt: string
     latex: string
@@ -104,7 +115,8 @@ export interface ProblemSummary {
   twist: string | null
   title: string
   difficulty: Difficulty
-  tags: { topics: string[]; contexts: string[] }
+  kind: Kind
+  tags: Tags
   mistake_tags: MistakeTag[]
   instance_count: number
 }

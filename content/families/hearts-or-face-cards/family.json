@@ -28,6 +28,10 @@
         ],
         "contexts": [
           "cards-poker"
+        ],
+        "methods": [
+          "inclusion-exclusion",
+          "combinations"
         ]
       },
       "answer": {
@@ -158,6 +162,10 @@
         ],
         "contexts": [
           "cards-poker"
+        ],
+        "methods": [
+          "inclusion-exclusion",
+          "combinations"
         ]
       },
       "answer": {
@@ -288,6 +296,10 @@
         ],
         "contexts": [
           "cards-poker"
+        ],
+        "methods": [
+          "inclusion-exclusion",
+          "combinations"
         ]
       },
       "answer": {

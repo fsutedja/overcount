@@ -26,6 +26,10 @@
         ],
         "contexts": [
           "dice"
+        ],
+        "methods": [
+          "complement",
+          "product-sum-rule"
         ]
       },
       "answer": {
@@ -132,6 +136,10 @@
         ],
         "contexts": [
           "dice"
+        ],
+        "methods": [
+          "complement",
+          "product-sum-rule"
         ]
       },
       "answer": {
@@ -252,6 +260,10 @@
         ],
         "contexts": [
           "dice"
+        ],
+        "methods": [
+          "complement",
+          "product-sum-rule"
         ]
       },
       "answer": {

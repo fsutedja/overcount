@@ -3,14 +3,31 @@
   "problems": [
     {
       "id": "round-table",
-      "origin": { "kind": "authored" },
+      "origin": {
+        "kind": "authored"
+      },
       "title": "Round table",
       "statement": "{{n}} friends sit around a round table. Two seatings count as the same if one is a rotation of the other, so everyone has the same left and right neighbours. How many different seatings are there?",
       "variables": {
-        "n": { "min": 4, "max": 8, "default": 6 }
+        "n": {
+          "min": 4,
+          "max": 8,
+          "default": 6
+        }
       },
       "difficulty": "easy",
-      "tags": { "topics": ["counting/symmetry-circular"], "contexts": ["committees-seating"] },
+      "tags": {
+        "topics": [
+          "counting/symmetry-circular"
+        ],
+        "contexts": [
+          "committees-seating"
+        ],
+        "methods": [
+          "circular",
+          "divide-overcounting"
+        ]
+      },
       "answer": {
         "prompt": "Number of different seatings",
         "expr": "n!/n",
@@ -28,13 +45,27 @@
         ],
         "skeleton": {
           "parts": [
-            { "group": "orders in a row", "expr": "[a]!" },
-            { "op": "/" },
-            { "group": "rotations", "expr": "[b]" }
+            {
+              "group": "orders in a row",
+              "expr": "[a]!"
+            },
+            {
+              "op": "/"
+            },
+            {
+              "group": "rotations",
+              "expr": "[b]"
+            }
           ],
           "slots": {
-            "a": { "hint": "people", "answer": "n" },
-            "b": { "hint": "rotations", "answer": "n" }
+            "a": {
+              "hint": "people",
+              "answer": "n"
+            },
+            "b": {
+              "hint": "rotations",
+              "answer": "n"
+            }
           }
         }
       },
@@ -58,14 +89,31 @@
       "id": "round-table-mirror",
       "variant_of": "round-table",
       "twist": "mirror images count as the same",
-      "origin": { "kind": "authored" },
+      "origin": {
+        "kind": "authored"
+      },
       "title": "Bracelet of beads",
       "statement": "{{n}} different beads are threaded onto a bracelet. Two bracelets are the same if one can be rotated or flipped over to match the other. How many different bracelets are there?",
       "variables": {
-        "n": { "min": 4, "max": 8, "default": 6 }
+        "n": {
+          "min": 4,
+          "max": 8,
+          "default": 6
+        }
       },
       "difficulty": "medium",
-      "tags": { "topics": ["counting/symmetry-circular"], "contexts": ["balls-urns"] },
+      "tags": {
+        "topics": [
+          "counting/symmetry-circular"
+        ],
+        "contexts": [
+          "balls-urns"
+        ],
+        "methods": [
+          "circular",
+          "divide-overcounting"
+        ]
+      },
       "answer": {
         "prompt": "Number of different bracelets",
         "expr": "n!/(2*n)",
@@ -83,16 +131,38 @@
         ],
         "skeleton": {
           "parts": [
-            { "group": "orders in a row", "expr": "[a]!" },
-            { "op": "/" },
-            { "group": "rotations", "expr": "[b]" },
-            { "op": "/" },
-            { "group": "flips", "expr": "[c]" }
+            {
+              "group": "orders in a row",
+              "expr": "[a]!"
+            },
+            {
+              "op": "/"
+            },
+            {
+              "group": "rotations",
+              "expr": "[b]"
+            },
+            {
+              "op": "/"
+            },
+            {
+              "group": "flips",
+              "expr": "[c]"
+            }
           ],
           "slots": {
-            "a": { "hint": "beads", "answer": "n" },
-            "b": { "hint": "rotations", "answer": "n" },
-            "c": { "hint": "sides", "answer": "2" }
+            "a": {
+              "hint": "beads",
+              "answer": "n"
+            },
+            "b": {
+              "hint": "rotations",
+              "answer": "n"
+            },
+            "c": {
+              "hint": "sides",
+              "answer": "2"
+            }
           }
         }
       },

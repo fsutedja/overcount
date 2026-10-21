@@ -12,6 +12,7 @@ from typing import Any
 from .expr import display_text, parse, to_group_latex, to_latex
 from .instances import build_instances
 from .schema import Family, Mistake, Problem, SkeletonGroup
+from .taxonomy import kind_of
 
 _OP_DISPLAY = {"*": "×", "+": "+", "-": "−", "/": "÷"}
 _OP_LATEX = {"*": "\\times", "+": "+", "-": "-", "/": "\\div"}
@@ -60,7 +61,12 @@ def problem_json(problem: Problem, family_id: str) -> Json:
         "title": problem.title,
         "statement": problem.statement,
         "difficulty": problem.difficulty,
-        "tags": {"topics": list(problem.tags.topics), "contexts": list(problem.tags.contexts)},
+        "kind": kind_of(problem.tags.topics[0]),
+        "tags": {
+            "topics": list(problem.tags.topics),
+            "contexts": list(problem.tags.contexts),
+            "methods": list(problem.tags.methods),
+        },
         "answer": {
             "prompt": problem.answer.prompt,
             "latex": _latex(problem.answer.expr),
@@ -92,6 +98,7 @@ def index_entry(problem_data: Json, problem: Problem) -> Json:
         "twist": problem.twist,
         "title": problem.title,
         "difficulty": problem.difficulty,
+        "kind": problem_data["kind"],
         "tags": problem_data["tags"],
         "mistake_tags": mistake_tags(problem),
         "instance_count": len(problem_data["instances"]),
