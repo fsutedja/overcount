@@ -53,8 +53,10 @@ object and nothing else:
         appear in a group; use a slot whose answer is the variable. Example for derangements:
         `[a]!*Sum((-1)^k/k!, k, [b], [c])` with a = "n", b = "0", c = "n".
       - `slot_mistakes` (optional): [{"slot", "expr", "feedback", "mistake_tag"}].
-  - `help_steps`: 2–5 numbered "why" steps, shown one at a time when the learner asks for Help,
-    that build up to the skeleton: {"kind", "title", "text", "expr"?}.
+  - `help_steps`: 2–5 numbered "why" steps that build up to the skeleton, shown one at a time
+    when the learner presses Help next to the blanks: {"kind", "title", "text", "expr"?}.
+    Help gives the **reasoning**; it never fills in this problem's numbers (that's the
+    solution's job), and the two must not repeat each other.
     - Write them with letters (n, k, J…), never this problem's numbers and never `{{x}}`
       placeholders, so they teach the idea and leave the arithmetic to the learner.
     - `text` is one or two plain sentences; write math as LaTeX inside `$…$`, e.g.
@@ -64,8 +66,11 @@ object and nothing else:
     - The last step ends with "Now fill in the numbers." and its `expr` (if any) has the same
       shape as the skeleton.
     - A small-case check (smallest numbers, worked out) is added automatically after the steps.
-  - `solution`: 2–4 steps {"kind", "title", "expr", "explanation"}, where the last step's
-    `expr` equals the answer. Explanations are one or two plain sentences.
+  - `solution`: 2–4 steps {"kind", "title", "expr"}, the worked computation shown by "Show
+    solution": each `expr` uses the variables (the site fills in the numbers and shows the
+    value, e.g. C(8,3) = 56), titles are a few words, and there is no explanation text
+    (the reasoning lives in `help_steps`). The last step's
+    `expr` equals the answer.
   - `visual`: {"type": <visual type>, "legend": <optional short line>}. See **Examples and
     visuals** below.
   - `checker`: names of the functions in checker.py:

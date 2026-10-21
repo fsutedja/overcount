@@ -27,9 +27,10 @@
 - No "served" label; feedback is just "✓ Correct. That's N."
 
 ## Product
-- Answer-first: free answer box → wrong/"Help" → numbered "why" steps (one at
-  a time) that build to a one-line skeleton with empty-box blanks → last resort
-  "Show solution" (read-only steps).
+- Answer-first: free answer box → "Fill in the blanks" opens a one-line skeleton
+  with empty-box blanks right away → "Help" reveals numbered "why" steps one at a
+  time (reasoning in letters, never this problem's filled-in answers) → last
+  resort "Show solution" (the worked answer with numbers; never repeats Help).
 - Answers are expressions graded by exact value; number shown only at the end.
 
 ## Tech decisions

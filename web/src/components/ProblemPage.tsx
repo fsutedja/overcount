@@ -21,17 +21,17 @@ interface ProblemPageProps {
 }
 
 /**
- * Answer-first problem page (PLAN.md, DESIGN.md D2): the problem stays pinned on the left; on the
- * right the learner answers freely, can open Help for a one-line skeleton, and can finally see
- * the worked solution.
+ * Answer-first problem page (CLAUDE.md, Product): the problem stays pinned on the left; on the
+ * right the learner answers freely, can fill in the blanks of a one-line skeleton, ask for Help
+ * (numbered why-steps, revealed one at a time), and finally see the worked solution.
  */
 export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPageProps) {
   const [freeLatex, setFreeLatex] = useState('')
   const [freeResult, setFreeResult] = useState<AnswerResult | null>(null)
-  const [helpOpen, setHelpOpen] = useState(false)
-  /** Help steps shown so far; the blanks appear once every step (and the small case) is shown. */
+  /** The skeleton with blanks is open (instead of the free answer box). */
+  const [blanksOpen, setBlanksOpen] = useState(false)
+  /** Help steps shown so far (0 = Help not asked for yet). */
   const [stepsShown, setStepsShown] = useState(0)
-  const blanksReady = stepsShown >= problem.help_steps.length
   const [slotValues, setSlotValues] = useState<Record<string, string>>({})
   const [skeletonResult, setSkeletonResult] = useState<SkeletonResult | null>(null)
   const [skeletonMisses, setSkeletonMisses] = useState(0)
@@ -47,7 +47,7 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
   // only once the learner has tried (DESIGN.md, D6 and D7).
   const showMethods =
     (fromMethod !== null && problem.tags.methods.includes(fromMethod)) || progress.tries.some((right) => !right) || solved
-  const nudgeHelp = !solved && !helpOpen && progress.status === 'tried' && progress.wrong >= NUDGE_AFTER_WRONG
+  const nudgeBlanks = !solved && !blanksOpen && progress.status === 'tried' && progress.wrong >= NUDGE_AFTER_WRONG
 
   const record = (result: AnswerResult, answer: string) => {
     if (result.kind === 'invalid') return
@@ -80,11 +80,12 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
     if (result.kind === 'correct') setSolvedLatex(skeletonLatex(problem.answer.skeleton, slotValues))
   }
 
-  const openHelp = () => {
-    setHelpOpen(true)
-    setStepsShown((n) => Math.max(n, 1))
+  const openBlanks = () => {
+    setBlanksOpen(true)
     setHelpLevel((level) => (level < 1 ? 1 : level))
   }
+
+  const openHelp = () => setStepsShown((n) => Math.max(n, 1))
 
   const showSolution = () => {
     setSolutionShown(true)
@@ -147,18 +148,9 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
                   <span className="font-bold">✓ Correct.</span> That's {formatValue(instance.values.answer)}.
                 </p>
               </div>
-            ) : helpOpen ? (
-              <div className="mt-3">
-                <HelpSteps
-                  steps={problem.help_steps}
-                  check={problem.help_check}
-                  revealed={stepsShown}
-                  onNext={() => setStepsShown((n) => n + 1)}
-                  onSkip={() => setStepsShown(problem.help_steps.length)}
-                />
-                {blanksReady && (
-                <>
-                <p className="mt-5 text-sm text-ink-muted">Here's the structure. Fill in the numbers.</p>
+            ) : blanksOpen ? (
+              <div className="mt-1">
+                <p className="text-sm text-ink-muted">Here's the structure. Fill in the numbers.</p>
                 <div className="mt-4">
                   <HelpSkeleton
                     skeleton={problem.answer.skeleton}
@@ -170,9 +162,7 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
                     onSubmit={checkSkeleton}
                   />
                 </div>
-                <Feedback result={skeletonResult} fallback="The highlighted boxes don't match. Reread the problem for those numbers." />
-                </>
-                )}
+                <Feedback result={skeletonResult} fallback="The shaded boxes don't match. Reread the problem for those numbers." />
               </div>
             ) : (
               <div className="mt-1">
@@ -192,41 +182,55 @@ export function ProblemPage({ problem, instance, fromMethod = null }: ProblemPag
                     onSubmit={checkFree}
                   />
                 </div>
-                <Feedback result={freeResult} fallback="Try again, or open Help to see the structure." />
+                <Feedback result={freeResult} fallback="Try again, or fill in the blanks to see the structure." />
               </div>
             )}
 
             {!solved && (
               <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-                {(!helpOpen || blanksReady) && (
-                  <button
-                    type="button"
-                    onClick={helpOpen ? checkSkeleton : checkFree}
-                    className="rounded-lg bg-accent-ink px-4 py-2 font-bold text-on-accent hover:opacity-90"
-                  >
-                    Check answer
+                <button
+                  type="button"
+                  onClick={blanksOpen ? checkSkeleton : checkFree}
+                  className="rounded-lg bg-accent-ink px-4 py-2 font-bold text-on-accent hover:opacity-90"
+                >
+                  Check answer
+                </button>
+                {!blanksOpen && (
+                  <button type="button" onClick={openBlanks} className="font-bold text-accent-ink underline-offset-4 hover:underline">
+                    Fill in the blanks
                   </button>
                 )}
-                {!helpOpen && (
+                {nudgeBlanks && <span className="text-sm text-ink-muted">← stuck? fill in the blanks</span>}
+                {blanksOpen && stepsShown === 0 && (
                   <button type="button" onClick={openHelp} className="font-bold text-accent-ink underline-offset-4 hover:underline">
                     Help
                   </button>
                 )}
-                {nudgeHelp && <span className="text-sm text-ink-muted">← stuck? try Help</span>}
-                {helpOpen && (
+                {blanksOpen && (
                   <button
                     type="button"
-                    onClick={() => setHelpOpen(false)}
+                    onClick={() => setBlanksOpen(false)}
                     className="text-sm font-bold text-ink-muted underline-offset-4 hover:underline"
                   >
                     Type the full expression instead
                   </button>
                 )}
-                {helpOpen && skeletonMisses >= 1 && !solutionShown && (
+                {blanksOpen && skeletonMisses >= 1 && !solutionShown && (
                   <button type="button" onClick={showSolution} className="text-sm font-bold text-ink-muted underline-offset-4 hover:underline">
                     Show solution
                   </button>
                 )}
+              </div>
+            )}
+            {!solved && blanksOpen && stepsShown > 0 && (
+              <div className="mt-5 border-t border-border pt-4">
+                <h3 className="mb-3 font-bold">Help: why it works</h3>
+                <HelpSteps
+                  steps={problem.help_steps}
+                  check={problem.help_check}
+                  revealed={stepsShown}
+                  onNext={() => setStepsShown((n) => n + 1)}
+                />
               </div>
             )}
             {solved && !solutionShown && (

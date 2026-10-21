@@ -10,15 +10,14 @@ interface HelpStepsProps {
   /** How many steps are showing; when it equals steps.length, the small-case check shows too. */
   revealed: number
   onNext: () => void
-  onSkip: () => void
 }
 
 /**
- * Help, part one (CLAUDE.md, Product): numbered "why" steps revealed one at a time, then a check
- * with the smallest numbers. The skeleton with blanks follows (rendered by the caller).
- * Cards use the solution-step style (DESIGN.md, D2).
+ * Help (CLAUDE.md, Product): numbered "why" steps revealed one at a time, then a check with the
+ * smallest numbers. It explains the reasoning in letters and never fills in this problem's
+ * blanks; the worked answer with numbers is "Show solution". Cards use the D2 step style.
  */
-export function HelpSteps({ steps, check, revealed, onNext, onSkip }: HelpStepsProps) {
+export function HelpSteps({ steps, check, revealed, onNext }: HelpStepsProps) {
   const done = revealed >= steps.length
   return (
     <div className="space-y-3">
@@ -43,9 +42,6 @@ export function HelpSteps({ steps, check, revealed, onNext, onSkip }: HelpStepsP
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <button type="button" onClick={onNext} className="rounded-lg border-2 border-accent-ink px-4 py-1.5 font-bold text-accent-ink hover:bg-accent-soft">
             {revealed === 0 ? 'Show the first step' : 'Next step'}
-          </button>
-          <button type="button" onClick={onSkip} className="text-sm font-bold text-ink-muted underline-offset-4 hover:underline">
-            Skip to the blanks
           </button>
           <span className="text-sm text-ink-muted">
             {revealed} of {steps.length} steps

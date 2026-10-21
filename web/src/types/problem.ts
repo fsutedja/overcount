@@ -94,7 +94,6 @@ export interface SolutionStep {
   kind: StepKind
   title: string
   latex: string
-  explanation: string
 }
 
 /** Diagram types for "one outcome" (pipeline/src/overcount/visual.py). */

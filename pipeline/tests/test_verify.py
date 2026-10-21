@@ -217,7 +217,7 @@ DICE: dict[str, Any] = {
                 },
             },
             "help_steps": [
-                {"kind": "complement", "title": "Use the opposite", "text": "No six at all is easier to count."},
+                {"kind": "complement", "title": "Use the opposite", "text": "No six is easier to count."},
                 {"kind": "complement", "title": "Subtract from 1", "text": "Now fill in the numbers."},
             ],
             "solution": [

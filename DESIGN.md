@@ -247,6 +247,17 @@ complements.
 - **Considered:** A · Lesson unfolds under a pill, C · Short cheat card under the answer box.
 - **Mockup:** [design/mockups/d7-lesson-in-page.html](design/mockups/d7-lesson-in-page.html)
 
+## Help flow (answer panel)
+
+- The free answer box comes first. **Fill in the blanks** (accent-ink link, where Help used to be)
+  opens the skeleton at once, so you can type straight away.
+- With the blanks open, **Help** reveals the numbered why-steps one at a time under a thin rule
+  ("Help: why it works"), ending with the small-numbers check. Steps use the D2 step cards.
+- **Show solution** (after one wrong try at the blanks) shows each step as math with this
+  problem's numbers and its value, e.g. C(8, 3) = 56; no explanation text, so it never repeats
+  Help.
+- The nudge after 3 wrong tries reads "← stuck? fill in the blanks".
+
 ## D3 · Home and progress
 
 Pending (before milestone 9).

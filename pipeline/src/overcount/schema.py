@@ -174,10 +174,13 @@ class HelpStep(Model):
 
 
 class SolutionStep(Model):
+    """One step of "Show solution": the computation with this problem's numbers. The reasoning
+    lives in help_steps, so an explanation is optional (and not shown)."""
+
     kind: StepKind
     title: NonEmpty
     expr: NonEmpty
-    explanation: NonEmpty
+    explanation: NonEmpty | None = None
 
 
 class Tags(Model):
@@ -259,7 +262,8 @@ class Problem(Model):
             raise ValueError(f"variable names {sorted(reserved)} are reserved by the expression grammar")
         texts = [self.statement, self.answer.prompt]
         texts += [m.feedback for m in self.answer.common_wrong + list(self.answer.skeleton.slot_mistakes)]
-        texts += [step.title for step in self.solution] + [step.explanation for step in self.solution]
+        texts += [step.title for step in self.solution]
+        texts += [step.explanation for step in self.solution if step.explanation]
         unknown = {name for text in texts for name in PLACEHOLDER.findall(text)} - set(self.variables)
         if unknown:
             raise ValueError(f"text uses unknown placeholders {sorted(unknown)}")

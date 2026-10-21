@@ -96,7 +96,6 @@ def problem_json(problem: Problem, family_id: str, checker: Path) -> Json:
                 "kind": step.kind,
                 "title": step.title,
                 "latex": _latex(step.expr),
-                "explanation": step.explanation,
             }
             for step in problem.solution
         ],

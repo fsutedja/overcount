@@ -54,10 +54,7 @@ def _problem_card(problem: Problem | None) -> str:
         f"<li><b>{e(h.title)}</b> {e(h.text)}" + (f" <code>{e(h.expr)}</code>" if h.expr else "") + "</li>"
         for h in problem.help_steps
     )
-    steps = "".join(
-        f"<li><b>{e(s.title)}</b> <code>{e(s.expr)}</code><br>{e(_fill(s.explanation, default))}</li>"
-        for s in problem.solution
-    )
+    steps = "".join(f"<li><b>{e(s.title)}</b> <code>{e(s.expr)}</code></li>" for s in problem.solution)
     wrong = "".join(
         f"<li><code>{e(m.expr)}</code> <i>{e(m.mistake_tag)}</i>: {e(_fill(m.feedback, default))}</li>"
         for m in problem.answer.common_wrong
