@@ -83,6 +83,7 @@ object and nothing else:
 
 ## Wording rules (beginners must understand the statement)
 
+- No emoji anywhere a learner reads it (statements, reasons, Help steps, feedback).
 - Use plain, everyday words. Name the things being counted ("lists", "teams", "hands", "ways to
   share the cookies").
 - Describe ONE outcome concretely, so the reader knows exactly what to write down: "Roll a die

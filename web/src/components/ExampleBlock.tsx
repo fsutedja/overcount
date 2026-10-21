@@ -11,7 +11,7 @@ const shownPair = new Map<string, number>()
 
 /**
  * "What does one outcome look like?": a diagram of an outcome that counts, then one that counts
- * (✅) and one that doesn't (❌), each with a reason. "Show another example" steps through more
+ * and one that doesn't, each with a reason (words, not emoji). "Show another example" steps through more
  * checked pairs; none of them reveal the answer.
  */
 export function ExampleBlock({ problem, instance }: { problem: Problem; instance: Instance }) {
@@ -27,7 +27,7 @@ export function ExampleBlock({ problem, instance }: { problem: Problem; instance
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {problem.visual.deck_groups?.length ? (
         // Card problems with groups show the whole deck, groups shaded and the hand outlined (D11).
         <DeckGrid groups={problem.visual.deck_groups} hand={pair.yes.outcome.map(String)} />
@@ -37,11 +37,11 @@ export function ExampleBlock({ problem, instance }: { problem: Problem; instance
       {problem.visual.legend && <p className="text-center text-sm text-ink-muted">{problem.visual.legend}</p>}
       <ul className="space-y-1.5" aria-live="polite">
         <li className="rounded-lg bg-correct-bg px-3 py-1.5 text-correct-ink">
-          <span aria-label="counts">✅</span> <span className="font-bold">{pair.yes.text}</span>{' '}
+          <span className="font-bold">Counts:</span> <span className="font-bold">{pair.yes.text}</span>{' '}
           <span>({pair.yes.reason})</span>
         </li>
         <li className="rounded-lg bg-wrong-bg px-3 py-1.5 text-wrong-ink">
-          <span aria-label="doesn't count">❌</span> <span className="font-bold">{pair.no.text}</span>{' '}
+          <span className="font-bold">Doesn't count:</span> <span className="font-bold">{pair.no.text}</span>{' '}
           <span>({pair.no.reason})</span>
         </li>
       </ul>

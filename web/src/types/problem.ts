@@ -130,7 +130,7 @@ export interface ExampleOutcome {
 
 /** One instance's examples, computed and checked by the pipeline. */
 export interface InstanceExample {
-  /** ✅/❌ pairs: the first is hand-picked, the rest feed "Show another example". */
+  /** Counts / doesn't-count pairs: the first is hand-picked, the rest feed "Show another example". */
   pairs: { yes: ExampleOutcome; no: ExampleOutcome }[]
   /** Subset visuals: everything that could be chosen, either one list or named groups. */
   pool?: string[] | Record<string, string[]>

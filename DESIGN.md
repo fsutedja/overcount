@@ -310,6 +310,13 @@ the same as the problem card tabs. Filters live in the address, so they survive 
 - **Considered:** B · only the hand, groups named by edge labels; C · two small decks.
 - **Mockup:** [design/mockups/d11-card-deck.html](design/mockups/d11-card-deck.html)
 
+## No emoji
+
+- No emoji in the interface or in learner-facing content. The example lines read
+  "**Counts:** …" and "**Doesn't count:** …" (in their correct / wrong boxes), and legends say
+  "the hand that counts". Plain text symbols that are part of the type (✓ in "✓ Correct.", ↻, ‹ ›,
+  ▾, card suits) are fine. The `family-v3` prompt tells Gemini the same.
+
 ## Help flow (answer panel)
 
 - The free answer box comes first. **Fill in the blanks** (accent-ink link, where Help used to be)

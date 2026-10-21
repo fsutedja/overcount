@@ -15,7 +15,7 @@ const inGroup = (group: DeckGroup, rank: string, suit: string) =>
 /**
  * The 13×4 card-deck grid (DESIGN.md, D11): suits as rows, ranks as columns. The first group is
  * shaded teal, the second terracotta, cards in both are striped, and the hand's cards get a
- * thick ink outline. The legend names each group with its size.
+ * thick ink outline (the hand that counts). The legend names each group with its size.
  */
 export function DeckGrid({ groups, hand }: { groups: DeckGroup[]; hand: string[] }) {
   const [first, second] = groups
@@ -28,7 +28,7 @@ export function DeckGrid({ groups, hand }: { groups: DeckGroup[]; hand: string[]
   }
 
   return (
-    <figure className="m-0">
+    <figure className="m-0 mb-2">
       <div
         className="mx-auto grid max-w-[34rem] items-center gap-[3px]"
         style={{ gridTemplateColumns: '1.5rem repeat(13, minmax(0, 1fr))' }}
@@ -82,7 +82,7 @@ export function DeckGrid({ groups, hand }: { groups: DeckGroup[]; hand: string[]
         )}
         <span className="flex items-center gap-1.5">
           <span className="h-4 w-3 rounded-[3px] border-[2.5px] border-ink" />
-          the ✅ hand
+          the hand that counts
         </span>
       </figcaption>
     </figure>
