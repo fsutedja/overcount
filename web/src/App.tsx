@@ -28,7 +28,7 @@ export default function App() {
             <Route path="/progress" element={<ProgressPage />} />
             {import.meta.env.DEV && <Route path="/dev/visuals" element={<VisualsGallery />} />}
             {import.meta.env.DEV && <Route path="/dev/preview/:familyId" element={<PreviewRoute />} />}
-            <Route path="*" element={<p className="mx-auto max-w-5xl px-4 py-8 text-ink-muted">Page not found.</p>} />
+            <Route path="*" element={<h1 className="mx-auto max-w-5xl px-4 py-8 text-ink-muted">Page not found.</h1>} />
           </Routes>
         </Suspense>
       </main>

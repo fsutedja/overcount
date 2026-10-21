@@ -26,10 +26,18 @@ export function ActivityCalendar({ columns, months, total }: { columns: HeatCell
   const step = CELL + GAP
   return (
     <section className="min-w-0 rounded-xl border border-border bg-card px-4 py-3" aria-labelledby="calendar-title">
-      <h3 id="calendar-title" className="mb-2 font-bold">
+      <h2 id="calendar-title" className="mb-2 font-bold">
         {total} {total === 1 ? 'problem' : 'problems'} solved in the last year
-      </h3>
-      <div ref={scroller} className="relative overflow-x-auto pb-1" onScroll={() => setHover(null)}>
+      </h2>
+      {/* Focusable so keyboard users can scroll it sideways on narrow screens. */}
+      <div
+        ref={scroller}
+        tabIndex={0}
+        role="region"
+        aria-label="Daily solved squares (scrolls sideways)"
+        className="relative overflow-x-auto pb-1"
+        onScroll={() => setHover(null)}
+      >
         <div className="relative" style={{ width: 32 + columns.length * step, height: 18 + 7 * step }}>
           {months.map((m) => (
             <span key={m.column} className="absolute top-0 text-xs text-ink-muted" style={{ left: 32 + m.column * step }}>

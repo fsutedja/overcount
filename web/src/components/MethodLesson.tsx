@@ -24,7 +24,7 @@ export function MethodLesson({ method, compact = false }: { method: string; comp
         <RichText text={lesson.summary} />
       </p>
       <section>
-        <h3 className="mb-1 font-bold">How it works</h3>
+        <h2 className="mb-1 font-bold">How it works</h2>
         {lesson.how.map((paragraph, i) => (
           <p key={i} className="mt-2">
             <RichText text={paragraph} />
@@ -32,7 +32,7 @@ export function MethodLesson({ method, compact = false }: { method: string; comp
         ))}
       </section>
       <section>
-        <h3 className="mb-2 font-bold">Formulas</h3>
+        <h2 className="mb-2 font-bold">Formulas</h2>
         <ul className="space-y-2">
           {lesson.formulas.map((formula) => (
             <li
@@ -46,13 +46,13 @@ export function MethodLesson({ method, compact = false }: { method: string; comp
         </ul>
       </section>
       <section>
-        <h3 className="mb-1 font-bold">Example</h3>
+        <h2 className="mb-1 font-bold">Example</h2>
         <p className="rounded-lg bg-accent-soft px-4 py-2 text-accent-ink">
           <RichText text={lesson.example} />
         </p>
       </section>
       <section>
-        <h3 className="mb-1 font-bold">Watch out</h3>
+        <h2 className="mb-1 font-bold">Watch out</h2>
         <p className="text-ink-muted">
           <RichText text={lesson.trap} />
         </p>

@@ -41,9 +41,9 @@ export function TriesChart({ days }: { days: Day[] }) {
 
   return (
     <section className="min-w-0 rounded-xl border border-border bg-card px-4 py-3" aria-labelledby="tries-title">
-      <h3 id="tries-title" className="font-bold">
+      <h2 id="tries-title" className="font-bold">
         Tries per day <span className="text-sm font-normal text-ink-muted">· last {days.length} days</span>
-      </h3>
+      </h2>
       <p className="sr-only">
         {totalTries} tries, {totalRight} right, over the last {days.length} days.
       </p>
