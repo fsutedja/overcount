@@ -310,6 +310,22 @@ the same as the problem card tabs. Filters live in the address, so they survive 
 - **Considered:** B · only the hand, groups named by edge labels; C · two small decks.
 - **Mockup:** [design/mockups/d11-card-deck.html](design/mockups/d11-card-deck.html)
 
+## D12 · Moving between problems
+
+**Decided: B · Problem list on the left.**
+
+- On wide screens (`lg` and up) a narrow column sits left of the problem, its top level with
+  the problem card. Top to bottom: "← Back to the list" (or "← All methods"), the list's title,
+  then the method's problems in Practice-list order, each with its try marks; the current one
+  is highlighted (accent-soft, accent-ink text, a 3px accent-ink bar on the left). It stays in
+  view while scrolling.
+- Opened from a method's Practice tab, the title is that method's name; from anywhere else it
+  says "Related problems" and uses the problem's first method, so the method isn't given away
+  (D6 spoiler rule).
+- Narrower screens: a "▸ Problems" button above the page unfolds the same list.
+- **Considered:** A · back link and previous / next; C · A plus a problem menu.
+- **Mockup:** [design/mockups/d12-problem-nav.html](design/mockups/d12-problem-nav.html)
+
 ## No emoji
 
 - No emoji in the interface or in learner-facing content. The example lines read

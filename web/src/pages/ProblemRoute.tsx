@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { ProblemPage } from '../components/ProblemPage'
+import { ProblemSidebar } from '../components/ProblemSidebar'
 import { loadProblem } from '../lib/bank'
 import type { Problem } from '../types/problem'
 
@@ -41,13 +42,17 @@ export function ProblemRoute() {
     setParams(query, { replace: true })
   }
   return (
-    <ProblemPage
-      // A new number set starts a fresh attempt: blanks, Help and solution reset.
-      key={`${problem.id}|${instance.key}`}
-      problem={problem}
-      instance={instance}
-      fromMethod={params.get('method')}
-      onNewNumbers={problem.instances.length >= MIN_NUMBER_SETS ? newNumbers : undefined}
-    />
+    // D12: the problem list sits beside the problem on wide screens (a "Problems" button below).
+    <div className="mx-auto max-w-7xl lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start lg:gap-2 lg:px-4">
+      <ProblemSidebar key={problem.id} problem={problem} fromMethod={params.get('method')} />
+      <ProblemPage
+        // A new number set starts a fresh attempt: blanks, Help and solution reset.
+        key={`${problem.id}|${instance.key}`}
+        problem={problem}
+        instance={instance}
+        fromMethod={params.get('method')}
+        onNewNumbers={problem.instances.length >= MIN_NUMBER_SETS ? newNumbers : undefined}
+      />
+    </div>
   )
 }

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D12 problem navigation</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4efe6;--card:#fffbf3;--card-sunken:#f8f3ea;--border:#e4d9c6;--ink:#2b2823;--ink-muted:#675f53;--accent:#4f8f87;--accent-ink:#276660;--accent-soft:#e3eeec;--on-accent:#fffbf3;--correct-ink:#35652f;--wrong-ink:#8e3352}
+:root[data-theme=dark]{--bg:#1f1d1a;--card:#2a2723;--card-sunken:#24221e;--border:#3a362f;--ink:#eee7da;--ink-muted:#b3aa9b;--accent:#5fa69c;--accent-ink:#7cc1b7;--accent-soft:#23332f;--on-accent:#1f1d1a;--correct-ink:#a6cf99;--wrong-ink:#eba5bc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',sans-serif;padding:24px 16px 60px;line-height:1.45}
+.wrap{max-width:1180px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--ink-muted);margin:0 0 20px}
+.opt{border:2px dashed var(--border);border-radius:18px;padding:16px 18px;margin-bottom:28px}
+.opt>h2{margin:0 0 2px;font-size:18px}.why{color:var(--ink-muted);font-size:14px;margin:0 0 14px}
+.page{display:grid;grid-template-columns:1fr 1.1fr;gap:18px;align-items:start}
+.withside{display:grid;grid-template-columns:230px 1fr;gap:18px;align-items:start}
+@media(max-width:860px){.page,.withside{grid-template-columns:1fr}}
+.label{font-weight:700;margin:0 0 8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px}
+.answer{border:2px solid var(--accent);border-radius:14px;background:var(--card);padding:14px 16px}
+.meta{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-muted);margin:0}
+.title{font-size:19px;font-weight:700;margin:2px 0 6px}
+.muted{color:var(--ink-muted)}.small{font-size:14px}
+.link{color:var(--accent-ink);font-weight:700}
+.input{border:2px solid var(--accent);border-radius:8px;height:42px;margin:10px 0}
+.btn{display:inline-block;background:var(--accent-ink);color:var(--on-accent);font-weight:700;border-radius:8px;padding:6px 13px;font-size:14px}
+.navrow{display:flex;justify-content:space-between;align-items:center;margin:0 0 12px;font-size:14px}
+.pn{display:flex;gap:8px;align-items:center}
+.arrow{border:2px solid var(--accent-ink);color:var(--accent-ink);border-radius:999px;padding:0 9px;font-weight:700}
+.side .item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:14px}
+.side .item.on{background:var(--accent-soft);color:var(--accent-ink);font-weight:700;box-shadow:inset 3px 0 0 var(--accent-ink)}
+.side h3{margin:0 0 6px;font-size:13px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.05em}
+.dots{display:inline-flex;gap:3px}.dots i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.ok{background:var(--correct-ink)}.ring{border:2px solid var(--wrong-ink)}
+.drop{border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-weight:700;background:var(--card)}
+.menu{position:absolute;top:34px;left:0;width:300px;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.08);padding:6px;z-index:2}
+.tb{position:fixed;top:12px;right:12px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--ink);font:inherit;cursor:pointer;z-index:3}
+</style>
+</head>
+<body>
+<button class="tb" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">Light / dark</button>
+<div class="wrap">
+<h1>D12 · Moving between problems</h1>
+<p class="sub">On a problem page opened from a method's Practice list (here: Product and sum rules). The list it moves through is that method's problems, in the same order as the Practice tab; from elsewhere (Home, Progress) it's the problem's first method.</p>
+
+<template id="problem"><div><p class="label">Problem</p><div class="card"><p class="meta">Medium · counting · committees</p><p class="title">President and an optional advisor</p><p style="margin:0" class="small">A chess club has 7 juniors and 5 seniors, and the school has 4 teachers… How many different choices are possible?</p><p class="small muted" style="margin:10px 0 0">▾ Example | Product and sum rules</p></div></div></template>
+<template id="answer"><div><p class="label">Your answer</p><div class="answer"><b>Ways to choose a president and an optional advisor</b><div class="input"></div><span class="btn">Check answer</span> <span class="link small" style="margin-left:10px">Fill in the blanks</span></div></div></template>
+<template id="items">
+  <div class="item"><span>President and advisor</span><span class="dots"><i class="ok"></i></span></div>
+  <div class="item on"><span>President and an optional advisor</span><span class="dots"></span></div>
+  <div class="item"><span>At least one six</span><span class="dots"><i class="ring"></i><i class="ok"></i></span></div>
+  <div class="item"><span>At least two sixes</span><span class="dots"><i class="ring"></i><i class="ring"></i></span></div>
+  <div class="item"><span>Team with a captain</span><span class="dots"></span></div>
+</template>
+
+<section class="opt">
+  <h2>A · Back link and previous / next</h2>
+  <p class="why">One line above the page: "← Product and sum rules" goes back to that list; "‹ 2 of 5 ›" steps to the previous or next problem in it. Smallest change, nothing in the way while you work.</p>
+  <div class="navrow"><span class="link">← Product and sum rules</span><span class="pn"><span class="arrow">‹</span><span class="muted">2 of 5</span><span class="arrow">›</span></span></div>
+  <div class="page"><div data-use="problem"></div><div data-use="answer"></div></div>
+</section>
+
+<section class="opt">
+  <h2>B · Problem list on the left</h2>
+  <p class="why">A narrow column with the method's problems, the current one highlighted, each with its try dots (like LeetCode's problem list). Jump anywhere in one click; on phones it folds into a "Problems" button at the top. Takes width from the problem and answer.</p>
+  <div class="withside"><div class="card side"><h3>Product and sum rules</h3><div data-use="items"></div><p class="small" style="margin:8px 0 0"><span class="link">← All methods</span></p></div>
+  <div class="page"><div data-use="problem"></div><div data-use="answer"></div></div></div>
+</section>
+
+<section class="opt">
+  <h2>C · Back and previous / next, plus a problem menu</h2>
+  <p class="why">Option A's line, where "2 of 5" opens a small menu listing the method's problems with try dots (shown open here). Jump anywhere without a permanent sidebar.</p>
+  <div class="navrow" style="position:relative"><span class="link">← Product and sum rules</span><span class="pn" style="position:relative"><span class="arrow">‹</span><span class="drop">2 of 5 ▾</span><span class="arrow">›</span><div class="menu side" style="left:auto;right:40px" data-use="items"></div></span></div>
+  <div class="page" style="margin-top:8px"><div data-use="problem"></div><div data-use="answer"></div></div>
+</section>
+</div>
+<script>
+document.querySelectorAll('[data-use]').forEach((el) => {
+  const frag = document.getElementById(el.dataset.use).content.cloneNode(true);
+  if (el.children.length === 0 && el.tagName !== 'DIV') el.replaceWith(frag); else el.appendChild(frag);
+});
+</script>
+</body>
+</html>
