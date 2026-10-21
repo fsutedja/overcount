@@ -69,10 +69,9 @@ function MethodList({ index, solved }: { index: BankIndex; solved: Set<string> }
   const byMethod = (method: string) => index.problems.filter((p) => p.tags.methods.includes(method))
   return (
     <>
-      <h1 className="text-2xl font-bold">Practice by method</h1>
-      <p className="mt-1 text-ink-muted">
-        Pick a technique to drill. This simple list stands in until the roadmap is built.
-      </p>
+      {/* The header already shows which page this is; the heading is kept for screen readers. */}
+      <h1 className="sr-only">Practice by method</h1>
+      <p className="text-ink-muted">Pick a method to practise.</p>
       {index.roadmap.map((node) => {
         const nodeProblems = index.problems.filter((p) => node.topics.includes(p.tags.topics[0]))
         return (

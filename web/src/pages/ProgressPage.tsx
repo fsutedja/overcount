@@ -44,8 +44,9 @@ export function ProgressPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-6 md:py-8">
-      <h1 className="text-2xl font-bold">Progress</h1>
-      <nav aria-label="Progress views" className="mt-3 flex gap-1 border-b border-border">
+      {/* The header already shows which page this is; the heading is kept for screen readers. */}
+      <h1 className="sr-only">Progress</h1>
+      <nav aria-label="Progress views" className="flex gap-1 border-b border-border">
         {(['overview', 'problems'] as const).map((t) => (
           <Link
             key={t}
