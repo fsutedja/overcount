@@ -43,7 +43,7 @@ export function ProblemRoute() {
   }
   return (
     // D12: the problem list sits beside the problem on wide screens (a "Problems" button below).
-    <div className="mx-auto max-w-7xl lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start lg:gap-2 lg:px-4">
+    <div className="mx-auto max-w-7xl lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start lg:gap-4 lg:px-6">
       <ProblemSidebar key={problem.id} problem={problem} fromMethod={params.get('method')} />
       <ProblemPage
         // A new number set starts a fresh attempt: blanks, Help and solution reset.
