@@ -236,8 +236,9 @@ complements.
 
 **Decided: B · Tabs inside the problem card.**
 
-- Under the statement: **Example** (always the default on every problem) and one **Method: …**
-  tab per method (at most 2). The Method tab shows the lesson in the same space; the answer box
+- Under the statement, on **one line**: ▾, **Example** (always the default on every problem), a
+  thin vertical divider (`--border`), then one tab per method named by the method alone (at
+  most 2; screen readers hear "Method: …"). The row scrolls sideways rather than wrapping. The Method tab shows the lesson in the same space; the answer box
   is never covered or moved.
 - The ▾ button at the start of the tab row folds the whole area; that choice is remembered
   across problems (it replaces the old "▾ Example" toggle). Clicking a tab unfolds it.

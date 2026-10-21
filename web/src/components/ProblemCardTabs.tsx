@@ -27,37 +27,42 @@ export function ProblemCardTabs({ problem, instance, methods }: { problem: Probl
     setTab(next)
     if (!open) setOpenAndSave(true)
   }
-  const tabs = [{ id: 'example', label: 'Example' }, ...shown.map((m) => ({ id: m, label: `Method: ${names[m]}` }))]
+  const tabButton = (id: string, label: string, title?: string) => (
+    <button
+      key={id}
+      type="button"
+      role="tab"
+      title={title}
+      aria-label={title ?? label}
+      aria-selected={open && active === id}
+      aria-controls={panelId}
+      onClick={() => choose(id)}
+      className={`-mb-px shrink-0 border-b-[3px] px-1.5 py-2 text-sm font-bold whitespace-nowrap ${
+        open && active === id ? 'border-accent-ink text-accent-ink' : 'border-transparent text-ink-muted hover:text-ink'
+      }`}
+    >
+      {label}
+    </button>
+  )
 
   return (
     <div className="mt-4">
-      <div className="flex items-end gap-1 border-b border-border">
+      {/* One line: ▾ Example | method names (DESIGN.md, D7). Scrolls sideways rather than wrapping. */}
+      <div className="flex items-end gap-1 overflow-x-auto border-b border-border">
         <button
           type="button"
           onClick={() => setOpenAndSave(!open)}
           aria-expanded={open}
           aria-controls={panelId}
           aria-label={open ? 'Hide examples and methods' : 'Show examples and methods'}
-          className="px-1 py-2 font-bold text-accent-ink"
+          className="shrink-0 py-2 pr-1 font-bold text-accent-ink"
         >
           <span aria-hidden="true">{open ? '▾' : '▸'}</span>
         </button>
-        <div role="tablist" aria-label="About this problem" className="flex flex-wrap gap-1">
-          {tabs.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              role="tab"
-              aria-selected={open && active === t.id}
-              aria-controls={panelId}
-              onClick={() => choose(t.id)}
-              className={`-mb-px border-b-[3px] px-2 py-2 text-sm font-bold ${
-                open && active === t.id ? 'border-accent-ink text-accent-ink' : 'border-transparent text-ink-muted hover:text-ink'
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
+        <div role="tablist" aria-label="About this problem" className="flex items-end">
+          {tabButton('example', 'Example')}
+          {shown.length > 0 && <span className="mx-1.5 mb-2.5 h-4 w-px shrink-0 self-end bg-border" aria-hidden="true" />}
+          {shown.map((m) => tabButton(m, names[m], `Method: ${names[m]}`))}
         </div>
       </div>
       {open && (
