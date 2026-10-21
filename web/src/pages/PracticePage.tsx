@@ -280,7 +280,7 @@ function ProblemList(props: {
                     <Chip>{p.difficulty}</Chip>
                   </span>
                   <span className="flex min-w-[4.5rem] shrink-0 justify-end">
-                    <TryDots tries={problemProgress(attempts, p.id).tries} />
+                    <TryDots tries={problemProgress(attempts, p.id).tries} max={5} />
                   </span>
                 </Link>
               </li>

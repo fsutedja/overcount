@@ -54,8 +54,9 @@ export function ProblemSidebar({ problem, fromMethod }: { problem: Problem; from
                     : 'hover:bg-card-sunken'
                 }`}
               >
-                <span>{p.title}</span>
-                <TryDots tries={problemProgress(attempts, p.id).tries} />
+                <span className="min-w-0">{p.title}</span>
+                {/* At most 3 marks here (older ones become "+n"), so titles keep their width. */}
+                <TryDots tries={problemProgress(attempts, p.id).tries} max={3} />
               </Link>
             </li>
           )
