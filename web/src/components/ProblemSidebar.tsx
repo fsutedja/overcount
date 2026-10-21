@@ -34,7 +34,7 @@ export function ProblemSidebar({ problem, fromMethod }: { problem: Problem; from
   const back = (
     <Link
       to={fromMethod ? `/practice?method=${encodeURIComponent(fromMethod)}` : '/practice'}
-      className="text-sm leading-6 font-bold text-accent-ink hover:underline"
+      className="leading-6 font-bold text-accent-ink hover:underline"
     >
       {fromMethod ? '← Back to the list' : '← All methods'}
     </Link>
