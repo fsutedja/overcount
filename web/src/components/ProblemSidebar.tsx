@@ -32,15 +32,18 @@ export function ProblemSidebar({ problem, fromMethod }: { problem: Problem; from
 
   const list = (
     <nav aria-label={title}>
-      <Link
-        to={fromMethod ? `/practice?method=${encodeURIComponent(fromMethod)}` : '/practice'}
-        className="mb-3 block border-b border-border px-2.5 pt-1 pb-2.5 text-sm font-bold text-accent-ink hover:underline"
-      >
-        {fromMethod ? '← Back to the list' : '← All methods'}
-      </Link>
-      <h2 className="mb-2 border-b border-border px-2.5 pb-2.5 text-sm font-bold tracking-wide text-ink-muted uppercase">
-        {title}
-      </h2>
+      {/* One row: a back arrow, then the list's title, with a single divider under both. */}
+      <div className="mb-2 flex items-center gap-2 border-b border-border px-2.5 pt-1 pb-2.5">
+        <Link
+          to={fromMethod ? `/practice?method=${encodeURIComponent(fromMethod)}` : '/practice'}
+          aria-label={fromMethod ? 'Back to the list' : 'All methods'}
+          title={fromMethod ? 'Back to the list' : 'All methods'}
+          className="-ml-1 rounded-md px-1 font-bold text-accent-ink hover:bg-card-sunken"
+        >
+          ←
+        </Link>
+        <h2 className="text-sm font-bold tracking-wide text-ink-muted uppercase">{title}</h2>
+      </div>
       <ul className="space-y-1">
         {problems.map((p) => {
           const current = p.id === problem.id

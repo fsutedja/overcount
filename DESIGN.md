@@ -319,7 +319,7 @@ the same as the problem card tabs. Filters live in the address, so they survive 
 **Decided: B · Problem list on the left.**
 
 - On wide screens (`lg` and up) a narrow column sits left of the problem, its top level with
-  the problem card. Top to bottom: "← Back to the list" (or "← All methods"), the list's title (14px caps, with a divider under it),
+  the problem card. Top to bottom: one row with a back arrow "←" (to the list, or to all methods) and the list's title (14px caps), with one divider under it,
   then the method's problems in Practice-list order, each with its try marks; the current one
   is highlighted (accent-soft, accent-ink text, a 3px accent-ink bar on the left). It stays in
   view while scrolling.
