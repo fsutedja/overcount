@@ -68,15 +68,12 @@
           ],
           "slots": {
             "a": {
-              "hint": "juniors",
               "answer": "J"
             },
             "b": {
-              "hint": "seniors",
               "answer": "S"
             },
             "c": {
-              "hint": "teachers",
               "answer": "t"
             }
           }
@@ -181,19 +178,15 @@
           ],
           "slots": {
             "a": {
-              "hint": "juniors",
               "answer": "J"
             },
             "b": {
-              "hint": "seniors",
               "answer": "S"
             },
             "c": {
-              "hint": "teachers",
               "answer": "t"
             },
             "d": {
-              "hint": "no one",
               "answer": "1"
             }
           }

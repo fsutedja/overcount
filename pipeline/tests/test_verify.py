@@ -191,9 +191,9 @@ DICE: dict[str, Any] = {
                 "skeleton": {
                     "parts": [{"group": "no six at all", "expr": "1-([a]/[b])^[c]"}],
                     "slots": {
-                        "a": {"hint": "not six", "answer": "5"},
-                        "b": {"hint": "faces", "answer": "6"},
-                        "c": {"hint": "rolls", "answer": "n"},
+                        "a": {"answer": "5"},
+                        "b": {"answer": "6"},
+                        "c": {"answer": "n"},
                     },
                 },
             },

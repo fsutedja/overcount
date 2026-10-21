@@ -10,13 +10,12 @@ from pathlib import Path
 from typing import Any
 
 from .examples import compute_examples
-from .expr import display_text, parse, to_group_latex, to_latex
+from .expr import parse, to_group_latex, to_latex
 from .instances import build_instances
 from .roadmap import load_roadmap, roadmap_json
 from .schema import Family, Mistake, Problem, SkeletonGroup
 from .taxonomy import kind_of
 
-_OP_DISPLAY = {"*": "×", "+": "+", "-": "−", "/": "÷"}
 _OP_LATEX = {"*": "\\times", "+": "+", "-": "-", "/": "\\div"}
 
 Json = dict[str, Any]
@@ -59,12 +58,11 @@ def problem_json(problem: Problem, family_id: str, checker: Path) -> Json:
         {
             "group": {
                 "label": part.group,
-                "display": display_text(part.expr),
                 "latex": to_group_latex(parse(part.expr)),
             }
         }
         if isinstance(part, SkeletonGroup)
-        else {"op": {"display": _OP_DISPLAY[part.op], "latex": _OP_LATEX[part.op]}}
+        else {"op": {"latex": _OP_LATEX[part.op]}}
         for part in skeleton.parts
     ]
     return {
@@ -87,7 +85,7 @@ def problem_json(problem: Problem, family_id: str, checker: Path) -> Json:
             "common_wrong": [_mistake(m) for m in problem.answer.common_wrong],
             "skeleton": {
                 "parts": parts,
-                "slots": {slot: {"hint": spec.hint} for slot, spec in skeleton.slots.items()},
+                "slots": list(skeleton.slots),
                 "slot_mistakes": [{"slot": m.slot, **_mistake(m)} for m in skeleton.slot_mistakes],
             },
         },

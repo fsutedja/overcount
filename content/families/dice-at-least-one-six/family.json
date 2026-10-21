@@ -69,19 +69,15 @@
           ],
           "slots": {
             "a": {
-              "hint": "faces",
               "answer": "6"
             },
             "b": {
-              "hint": "rolls",
               "answer": "n"
             },
             "c": {
-              "hint": "non-sixes",
               "answer": "5"
             },
             "d": {
-              "hint": "rolls",
               "answer": "n"
             }
           }
@@ -190,31 +186,24 @@
           ],
           "slots": {
             "a": {
-              "hint": "faces",
               "answer": "6"
             },
             "b": {
-              "hint": "rolls",
               "answer": "n"
             },
             "c": {
-              "hint": "non-sixes",
               "answer": "5"
             },
             "d": {
-              "hint": "rolls",
               "answer": "n"
             },
             "e": {
-              "hint": "positions",
               "answer": "n"
             },
             "f": {
-              "hint": "non-sixes",
               "answer": "5"
             },
             "g": {
-              "hint": "remaining",
               "answer": "n-1"
             }
           }
@@ -321,19 +310,15 @@
           ],
           "slots": {
             "a": {
-              "hint": "allowed faces",
               "answer": "5"
             },
             "b": {
-              "hint": "rolls",
               "answer": "n"
             },
             "c": {
-              "hint": "no one or six",
               "answer": "4"
             },
             "d": {
-              "hint": "rolls",
               "answer": "n"
             }
           }

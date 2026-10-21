@@ -69,11 +69,9 @@
           ],
           "slots": {
             "a": {
-              "hint": "stars + bars",
               "answer": "n+k-1"
             },
             "b": {
-              "hint": "bars",
               "answer": "k-1"
             }
           },
@@ -182,11 +180,9 @@
           ],
           "slots": {
             "a": {
-              "hint": "gaps",
               "answer": "n-1"
             },
             "b": {
-              "hint": "bars",
               "answer": "k-1"
             }
           }
@@ -293,11 +289,9 @@
           ],
           "slots": {
             "a": {
-              "hint": "left + bars",
               "answer": "n-m+k-1"
             },
             "b": {
-              "hint": "bars",
               "answer": "k-1"
             }
           }

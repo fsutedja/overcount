@@ -78,27 +78,21 @@
           ],
           "slots": {
             "a": {
-              "hint": "hearts",
               "answer": "13"
             },
             "b": {
-              "hint": "hand size",
               "answer": "k"
             },
             "c": {
-              "hint": "face cards",
               "answer": "12"
             },
             "d": {
-              "hint": "hand size",
               "answer": "k"
             },
             "e": {
-              "hint": "heart faces",
               "answer": "3"
             },
             "f": {
-              "hint": "hand size",
               "answer": "k"
             }
           }
@@ -220,27 +214,21 @@
           ],
           "slots": {
             "a": {
-              "hint": "red cards",
               "answer": "26"
             },
             "b": {
-              "hint": "hand size",
               "answer": "k"
             },
             "c": {
-              "hint": "face cards",
               "answer": "12"
             },
             "d": {
-              "hint": "hand size",
               "answer": "k"
             },
             "e": {
-              "hint": "red faces",
               "answer": "6"
             },
             "f": {
-              "hint": "hand size",
               "answer": "k"
             }
           }
@@ -352,33 +340,30 @@
             },
             {
               "group": "remove overlap twice",
-              "expr": "2*C([e],[f])"
+              "expr": "[g]*C([e],[f])"
             }
           ],
           "slots": {
             "a": {
-              "hint": "hearts",
               "answer": "13"
             },
             "b": {
-              "hint": "hand size",
               "answer": "k"
             },
             "c": {
-              "hint": "face cards",
               "answer": "12"
             },
             "d": {
-              "hint": "hand size",
               "answer": "k"
             },
             "e": {
-              "hint": "heart faces",
               "answer": "3"
             },
             "f": {
-              "hint": "hand size",
               "answer": "k"
+            },
+            "g": {
+              "answer": "2"
             }
           }
         }

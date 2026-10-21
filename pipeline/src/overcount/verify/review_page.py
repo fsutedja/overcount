@@ -49,7 +49,7 @@ def _problem_card(problem: Problem | None) -> str:
         else e(_OP[p.op])
         for p in problem.answer.skeleton.parts
     )
-    hints = ", ".join(f"[{slot}] {e(spec.hint)}" for slot, spec in problem.answer.skeleton.slots.items())
+    hints = ", ".join(f"[{slot}] = {e(spec.answer)}" for slot, spec in problem.answer.skeleton.slots.items())
     steps = "".join(
         f"<li><b>{e(s.title)}</b> <code>{e(s.expr)}</code><br>{e(_fill(s.explanation, default))}</li>"
         for s in problem.solution

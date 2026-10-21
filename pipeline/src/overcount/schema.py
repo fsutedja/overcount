@@ -9,7 +9,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from .expr import parse
+from .expr import parse, unblanked_numbers
 from .taxonomy import Context, Difficulty, Method, MistakeTag, StepKind, Topic
 from .visual import VisualType
 
@@ -79,8 +79,8 @@ class SkeletonOp(Model):
 
 
 class Slot(Model):
-    #: Shown inside the empty box, so it must stay short (the prompt asks for at most 12 characters).
-    hint: Annotated[str, Field(min_length=1, max_length=14)]
+    #: Blanks show only "?": a hint inside the box would give the answer away. The group's label
+    #: underneath says what that part counts.
     #: Expression in the problem's variables giving this slot's value, e.g. "J".
     answer: NonEmpty
 
@@ -108,6 +108,11 @@ class Skeleton(Model):
         ]
         if len(used) != len(set(used)):
             raise ValueError(f"each slot may appear only once in the skeleton, got {used}")
+        for part in self.parts:
+            if isinstance(part, SkeletonGroup):
+                fixed = unblanked_numbers(parse(part.expr))
+                if fixed:
+                    raise ValueError(f"skeleton group {part.group!r} ({part.expr}): {'; '.join(fixed)}")
         if set(used) != set(self.slots):
             raise ValueError(f"skeleton uses slots {sorted(used)} but defines {sorted(self.slots)}")
         unknown = {m.slot for m in self.slot_mistakes} - set(self.slots)

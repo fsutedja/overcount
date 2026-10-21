@@ -84,7 +84,7 @@ def test_bank_skeleton_groups_keep_brackets(tmp_path: Path) -> None:
     bank = build_bank(CONTENT)
     family = json.loads(bank.files["families/club-president.json"])
     group = family["problems"][0]["answer"]["skeleton"]["parts"][0]["group"]
-    assert group == {"label": "president", "display": "([a] + [b])", "latex": r"\left([a] + [b]\right)"}
+    assert group == {"label": "president", "latex": r"\left([a] + [b]\right)"}
 
 
 def card_problem(**changes: Any) -> dict[str, Any]:

@@ -132,7 +132,6 @@ export function ProblemPage({ problem, instance }: ProblemPageProps) {
                 <div className="mt-4">
                   <HelpSkeleton
                     skeleton={problem.answer.skeleton}
-                    values={slotValues}
                     wrongSlots={skeletonResult?.wrongSlots ?? []}
                     onChange={(slot, value) => {
                       setSlotValues((current) => ({ ...current, [slot]: value }))

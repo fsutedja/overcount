@@ -44,9 +44,14 @@ object and nothing else:
       - `parts`: alternating {"group": "<label>", "expr": "<expr with [slot] markers>"} and
         {"op": "*" | "+" | "-" | "/"}. Start and end with a group. Labels are 1–3 words
         naming what that part counts (e.g. "juniors", "rotations").
-      - `slots`: {"a": {"hint": "total", "answer": "J"}, ...}. Each `[slot]` is used exactly
-        once. Hints are 1–2 words and **at most 12 characters** (they're shown inside a small
-        box): "total", "pick", "gaps", "stars + bars". `answer` is an expression in the variables.
+      - `slots`: {"a": {"answer": "J"}, ...}. Each `[slot]` is used exactly once. `answer` is an
+        expression in the variables. Blanks show only "?" (no hints), so the group labels must
+        say what each part counts.
+      - **Every number is a blank.** Inside a group, every number the learner needs is a
+        `[slot]`: Σ lower and upper bounds, factorial bases, coefficients, exponents. Only `1`
+        (as in `(-1)^k` or `1/k!`) and the Σ index letter may appear as-is. Variables never
+        appear in a group; use a slot whose answer is the variable. Example for derangements:
+        `[a]!*Sum((-1)^k/k!, k, [b], [c])` with a = "n", b = "0", c = "n".
       - `slot_mistakes` (optional): [{"slot", "expr", "feedback", "mistake_tag"}].
   - `solution`: 2–4 steps {"kind", "title", "expr", "explanation"}, where the last step's
     `expr` equals the answer. Explanations are one or two plain sentences.

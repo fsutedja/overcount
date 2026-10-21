@@ -83,19 +83,15 @@
           ],
           "slots": {
             "a": {
-              "hint": "total",
               "answer": "J"
             },
             "b": {
-              "hint": "pick",
               "answer": "j"
             },
             "c": {
-              "hint": "total",
               "answer": "S"
             },
             "d": {
-              "hint": "pick",
               "answer": "s"
             }
           },
@@ -232,23 +228,18 @@
           ],
           "slots": {
             "a": {
-              "hint": "total",
               "answer": "J"
             },
             "b": {
-              "hint": "pick",
               "answer": "j"
             },
             "c": {
-              "hint": "choices",
               "answer": "j"
             },
             "d": {
-              "hint": "total",
               "answer": "S"
             },
             "e": {
-              "hint": "pick",
               "answer": "s"
             }
           },

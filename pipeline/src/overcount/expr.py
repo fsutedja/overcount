@@ -130,6 +130,38 @@ def _check(node: ast.AST) -> None:
             raise ExprError(f"unsupported syntax: {ast.dump(node)[:60]}")
 
 
+def unblanked_numbers(expr: Expr) -> list[str]:
+    """Numbers in a Help-skeleton group that the learner can't fill in (empty when every number is
+    a [slot]). Only 1 (as in (−1)^k or 1/k!) and a Σ's own index may appear as-is."""
+    problems: list[str] = []
+
+    def is_slot(node: ast.expr) -> bool:
+        return isinstance(node, ast.Name) and _is_slot(node.id)
+
+    def visit(node: ast.expr, bound: frozenset[str]) -> None:
+        match node:
+            case ast.Call(func=ast.Name(id="Sum"), args=[body, ast.Name(id=index), lo, hi]):
+                for side, bound_node in (("lower", lo), ("upper", hi)):
+                    if not is_slot(bound_node):
+                        problems.append(f"the Σ {side} bound must be a [slot]")
+                visit(body, bound | {index})
+                return
+            case ast.Call(func=ast.Name(id="fact"), args=[arg]):
+                if not (is_slot(arg) or (isinstance(arg, ast.Name) and arg.id in bound)):
+                    problems.append("a factorial's base must be a [slot] (or the Σ index)")
+                    return
+            case ast.Constant(value=int() as value) if value != 1:
+                problems.append(f"the number {value} must be a [slot]")
+            case ast.Name(id=name) if not _is_slot(name) and name not in bound and name not in _FUNCTIONS:
+                problems.append(f"{name} must be a [slot] (the learner fills in its number)")
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, ast.expr):
+                visit(child, bound)
+
+    visit(expr.tree, frozenset())
+    return problems
+
+
 def parse(source: str) -> Expr:
     text = _SLOT.sub(lambda m: SLOT_PREFIX + m[1], source).replace("^", "**")
     try:

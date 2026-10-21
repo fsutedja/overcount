@@ -1,7 +1,7 @@
 import pytest
 import sympy as sp
 
-from overcount.expr import ExprError, display_text, evaluate, parse, stored_value, to_latex
+from overcount.expr import ExprError, display_text, evaluate, parse, stored_value, to_latex, unblanked_numbers
 
 TEAM = {"J": sp.Integer(8), "S": sp.Integer(6), "j": sp.Integer(3), "s": sp.Integer(2)}
 
@@ -132,3 +132,24 @@ def test_sum_rejects_too_many_terms_and_fractional_bounds() -> None:
         evaluate(parse("Sum(k, k, 0, 5000)"), {})
     with pytest.raises(ExprError, match="whole numbers"):
         evaluate(parse("Sum(k, k, 0, 7/2)"), {})
+
+
+@pytest.mark.parametrize(
+    ("source", "problem"),
+    [
+        ("C([a],[b])", None),
+        ("[a]!*Sum((-1)^k/k!, k, [b], [c])", None),
+        ("1-([a]/[b])^[c]", None),
+        ("Sum((-1)^k/k!, k, 0, [b])", "lower bound"),
+        ("Sum((-1)^k/k!, k, [a], n)", "upper bound"),
+        ("2*C([a],[b])", "number 2"),
+        ("n!", "factorial"),
+        ("C(J,[b])", "J must be a [slot]"),
+    ],
+)
+def test_skeleton_groups_blank_every_number(source: str, problem: str | None) -> None:
+    found = unblanked_numbers(parse(source))
+    if problem is None:
+        assert found == []
+    else:
+        assert any(problem in p for p in found), found

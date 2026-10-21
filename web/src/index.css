@@ -48,6 +48,24 @@
     display: none;
   }
 
+  /* Help skeleton groups: the blanks are the only editable part, so no keyboard icon per group
+     (the on-screen keyboard still opens on touch devices when a blank is focused). */
+  math-field.skeleton-field::part(virtual-keyboard-toggle) {
+    display: none;
+  }
+
+  /* Theme colours instead of MathLive's defaults: wrong blanks use the wrong token, and the
+     brackets around the blank being edited aren't tinted blue. */
+  math-field {
+    --incorrect-color: var(--wrong-ink);
+    --correct-color: var(--correct-ink);
+    --smart-fence-color: currentColor;
+    --contains-highlight-background-color: transparent;
+    /* MathLive derives its remaining accents (e.g. brackets around the caret) from this hue;
+       173° is the teal of --accent. */
+    --hue: 173;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     ::before,

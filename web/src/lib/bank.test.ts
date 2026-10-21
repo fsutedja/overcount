@@ -38,7 +38,7 @@ describe('committed bank', () => {
     it('grades the skeleton filled with the slot values as correct', () => {
       for (const instance of instances) {
         const slots = Object.fromEntries(
-          Object.keys(problem.answer.skeleton.slots).map((slot) => {
+          problem.answer.skeleton.slots.map((slot) => {
             const value = instance.values[`slot.${slot}`]
             return [slot, value.type === 'rational' ? value.exact : String(value.approx)]
           }),

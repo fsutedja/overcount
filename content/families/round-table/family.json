@@ -59,11 +59,9 @@
           ],
           "slots": {
             "a": {
-              "hint": "people",
               "answer": "n"
             },
             "b": {
-              "hint": "rotations",
               "answer": "n"
             }
           }
@@ -161,15 +159,12 @@
           ],
           "slots": {
             "a": {
-              "hint": "beads",
               "answer": "n"
             },
             "b": {
-              "hint": "rotations",
               "answer": "n"
             },
             "c": {
-              "hint": "sides",
               "answer": "2"
             }
           }

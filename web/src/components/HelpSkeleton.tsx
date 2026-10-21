@@ -1,75 +1,121 @@
-import { Fragment, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
+import type { MathfieldElement } from 'mathlive'
 import type { Skeleton } from '../types/problem'
+import { Tex } from './Tex'
 
 interface HelpSkeletonProps {
   skeleton: Skeleton
-  values: Record<string, string>
   wrongSlots: string[]
   onChange: (slot: string, value: string) => void
   onSubmit: () => void
 }
 
-/** Splits a display template like "C([a], [b])" into text and slot tokens. */
-function tokens(display: string) {
-  return display.split(/(\[\w+\])/).filter(Boolean).map((token) => {
-    const slot = token.match(/^\[(\w+)\]$/)?.[1]
-    return slot ? { slot } : { text: token }
-  })
-}
+const slotIds = (latex: string) => [...latex.matchAll(/\[(\w+)\]/g)].map((m) => m[1])
 
 /**
- * The Help view: the whole answer's structure on one line, e.g. C( _ , _ ) × C( _ , _ ),
- * with each group's label underneath and a hint inside each box. The learner fills in numbers.
+ * "\binom{[a]}{[b]}" → editable MathLive blanks. Each blank holds an inner \placeholder{}, which
+ * MathLive draws as the "?" placeholder symbol until the learner types over it.
  */
-export function HelpSkeleton({ skeleton, values, wrongSlots, onChange, onSubmit }: HelpSkeletonProps) {
-  const firstInput = useRef<HTMLInputElement>(null)
-  useEffect(() => firstInput.current?.focus(), [])
-  const firstSlot = skeleton.parts.flatMap((part) => ('group' in part ? tokens(part.group.display) : []))
-    .find((token) => 'slot' in token)
+const withBlanks = (latex: string) =>
+  latex.replace(/\[(\w+)\]/g, (_, slot: string) => `\\placeholder[${slot}]{\\placeholder{}}`)
 
+/** A blank's typed value, with the "?" placeholder treated as empty. */
+const blankValue = (field: MathfieldElement, slot: string) =>
+  field.getPromptValue(slot).replace(/\\placeholder\{\}/g, '').trim()
+
+/**
+ * The Help view: the answer's structure rendered as real math (stacked Σ bounds, raised
+ * exponents, stacked fractions), with a "?" blank for every number and each group's label
+ * underneath. Each group is a read-only MathLive field whose blanks are editable; wrong blanks
+ * are marked after checking.
+ */
+export function HelpSkeleton({ skeleton, wrongSlots, onChange, onSubmit }: HelpSkeletonProps) {
   return (
-    <div className="flex flex-wrap items-start gap-x-3 gap-y-4 text-2xl">
-      {skeleton.parts.map((part, index) => {
-        if ('op' in part) {
-          return (
-            <span key={index} className="pt-1.5 font-bold" aria-label={part.op.display === '×' ? 'times' : part.op.display}>
-              {part.op.display}
-            </span>
-          )
-        }
-        const { label, display } = part.group
-        return (
-          <span key={index} role="group" aria-label={label} className="inline-flex flex-col items-center">
-            <span className="flex items-center gap-1">
-              {tokens(display).map((token, i) => {
-                if ('text' in token) return <Fragment key={i}>{token.text}</Fragment>
-                const slot = token.slot
-                const hint = skeleton.slots[slot]?.hint ?? ''
-                const wrong = wrongSlots.includes(slot)
-                return (
-                  <input
-                    key={i}
-                    ref={firstSlot && 'slot' in firstSlot && firstSlot.slot === slot ? firstInput : undefined}
-                    value={values[slot] ?? ''}
-                    onChange={(event) => onChange(slot, event.target.value)}
-                    onKeyDown={(event) => event.key === 'Enter' && onSubmit()}
-                    placeholder={hint}
-                    aria-label={`${label}: ${hint}`}
-                    aria-invalid={wrong}
-                    inputMode="decimal"
-                    autoComplete="off"
-                    style={{ width: `${Math.min(12, Math.max(4, hint.length * 0.75 + 1.5))}ch` }}
-                    className={`rounded-lg border-2 bg-card px-1 py-1 text-center text-xl font-bold placeholder:text-sm placeholder:font-normal placeholder:text-ink-muted ${
-                      wrong ? 'border-wrong-ink bg-wrong-bg text-wrong-ink' : 'border-accent text-ink'
-                    }`}
-                  />
-                )
-              })}
-            </span>
-            <span className="mt-1 text-sm text-ink-muted">{label}</span>
-          </span>
-        )
-      })}
+    <div className="flex flex-wrap items-start gap-x-3 gap-y-4">
+      {skeleton.parts.map((part, index) =>
+        'op' in part ? (
+          <Tex key={index} latex={part.op.latex} className="pt-3 text-2xl" />
+        ) : (
+          <SkeletonGroup
+            key={index}
+            label={part.group.label}
+            latex={part.group.latex}
+            autoFocus={index === 0}
+            wrongSlots={wrongSlots}
+            onChange={onChange}
+            onSubmit={onSubmit}
+          />
+        ),
+      )}
     </div>
+  )
+}
+
+interface GroupProps {
+  label: string
+  latex: string
+  autoFocus: boolean
+  wrongSlots: string[]
+  onChange: (slot: string, value: string) => void
+  onSubmit: () => void
+}
+
+function SkeletonGroup({ label, latex, autoFocus, wrongSlots, onChange, onSubmit }: GroupProps) {
+  const ref = useRef<MathfieldElement>(null)
+  const callbacks = useRef({ onChange, onSubmit })
+  useEffect(() => {
+    callbacks.current = { onChange, onSubmit }
+  })
+  const slots = slotIds(latex)
+
+  useEffect(() => {
+    const field = ref.current
+    if (!field) return
+    field.readOnly = true
+    field.placeholderSymbol = '?'
+    field.mathVirtualKeyboardPolicy = 'auto'
+    field.value = withBlanks(latex)
+    if (autoFocus) field.focus()
+
+    const handleInput = () => {
+      for (const slot of slotIds(latex)) {
+        callbacks.current.onChange(slot, blankValue(field, slot))
+        field.setPromptState(slot, undefined)
+      }
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        callbacks.current.onSubmit()
+      }
+    }
+    field.addEventListener('input', handleInput)
+    field.addEventListener('keydown', handleKeyDown, { capture: true })
+    return () => {
+      field.removeEventListener('input', handleInput)
+      field.removeEventListener('keydown', handleKeyDown, { capture: true })
+    }
+  }, [latex, autoFocus])
+
+  // Mark exactly the blanks that are wrong; the rest go back to normal.
+  useEffect(() => {
+    const field = ref.current
+    if (!field) return
+    for (const slot of slotIds(latex)) field.setPromptState(slot, wrongSlots.includes(slot) ? 'incorrect' : undefined)
+  }, [latex, wrongSlots])
+
+  const wrongHere = slots.filter((s) => wrongSlots.includes(s)).length
+  return (
+    <span role="group" aria-label={label} className="inline-flex flex-col items-center">
+      <math-field
+        ref={ref}
+        aria-label={`${label}: fill in ${slots.length === 1 ? 'the blank' : `${slots.length} blanks`}`}
+        className="skeleton-field rounded-lg bg-transparent px-1 text-2xl"
+      />
+      <span className="mt-1 text-sm text-ink-muted">
+        {label}
+        {wrongHere > 0 && <span className="sr-only">, {wrongHere} wrong</span>}
+      </span>
+    </span>
   )
 }

@@ -45,7 +45,7 @@ export function skeletonLatex(skeleton: Skeleton, slotValues: Record<string, str
  */
 export function gradeSkeleton(slotValues: Record<string, string>, problem: Problem, instance: Instance): SkeletonResult {
   const { skeleton } = problem.answer
-  const slotIds = Object.keys(skeleton.slots)
+  const slotIds = skeleton.slots
   if (slotIds.some((slot) => (slotValues[slot] ?? '').trim() === '')) {
     return { kind: 'invalid', message: 'Fill in every box.', wrongSlots: [] }
   }
