@@ -274,6 +274,9 @@ complements.
   stop opens its methods.
 - Today's problem and the activity card (day streak, solved, 5-week heatmap) sit in a side
   column.
-- **Phones:** not decided yet (the mockup turns the map into a plain list).
+- **Phones: A · One path.** The same stops in the same order on one dotted line, with numbered
+  dots (finished = filled teal, current = accent-ink outline). The current stop is open and lists
+  its methods as chips with solved / total; tapping another stop opens it. Today's problem and
+  the activity card sit above the path.
 - **Considered:** A · One path, C · Dashboard.
 - **Mockup:** [design/mockups/d3-home.html](design/mockups/d3-home.html)
