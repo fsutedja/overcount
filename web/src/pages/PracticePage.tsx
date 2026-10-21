@@ -273,10 +273,15 @@ function ProblemList(props: {
                   className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3 hover:bg-card-sunken"
                 >
                   <span className="min-w-[12rem] flex-1">
-                    {/* Try marks sit right after the title. */}
+                    {/* Try marks follow the title after a thin divider: at most 3 wrong rings plus the green dot. */}
                     <span className="inline-flex flex-wrap items-center gap-x-2.5">
                       <span className="font-bold">{p.title}</span>
-                      <TryDots tries={problemProgress(attempts, p.id).tries} max={5} />
+                      {problemProgress(attempts, p.id).tries.length > 0 && (
+                        <>
+                          <span className="h-3.5 w-px bg-border" aria-hidden="true" />
+                          <TryDots tries={problemProgress(attempts, p.id).tries} max={3} />
+                        </>
+                      )}
                     </span>
                     {p.twist && <span className="block text-sm text-ink-muted">Variation: {p.twist}</span>}
                   </span>

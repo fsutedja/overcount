@@ -55,7 +55,7 @@ export function ProblemSidebar({ problem, fromMethod }: { problem: Problem; from
                 }`}
               >
                 <span className="min-w-0">{p.title}</span>
-                {/* At most 3 marks here (older ones become "+n"), so titles keep their width. */}
+                {/* At most 3 wrong-try rings here (older ones become "+n"), so titles keep their width. */}
                 <TryDots tries={problemProgress(attempts, p.id).tries} max={3} />
               </Link>
             </li>

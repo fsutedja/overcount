@@ -204,8 +204,11 @@ complements.
   star or badge.
 - On the problem page, next to the answer prompt: the dots, a **dashed** circle for the next
   try (so it can't be mistaken for a wrong-try ring), and "try N" while unsolved. More than 8 dots collapse into "+n".
-- In the Practice list, the marks sit right after the problem's title (at most 5, older ones
-  as "+n"), so the kind and difficulty chips line up on the right.
+- In the Practice list, the marks follow the problem's title after a thin vertical divider
+  (`--border`), so the kind and difficulty chips line up on the right.
+- In lists (Practice, the problem list beside a problem) at most **3 wrong-try rings** show
+  before the green dot; older wrong tries fold into "+n" (e.g. "+6 ○○○●"). The problem page
+  itself shows up to 8.
 - **Help nudge:** after 3 wrong tries, "← stuck? try Help" appears beside the Help link in
   `--ink-muted`. It never blocks answering.
 - **Considered:** A · Quiet text, B · Chips.

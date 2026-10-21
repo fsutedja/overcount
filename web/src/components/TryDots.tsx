@@ -1,14 +1,17 @@
-/** Shown before older dots are hidden behind a "+n" count, so long histories stay one short line. */
-const MAX_DOTS = 8
+/** Wrong-try rings shown before older ones fold into a "+n" count, so rows stay one short line. */
+const MAX_WRONG = 8
 
 /**
  * One mark per try (DESIGN.md, D5 and D10): a filled green dot for right, a hollow berry ring for
  * wrong, so they differ by shape as well as colour. A first-try right answer is a single green
  * dot. With `next`, a dashed circle marks the try about to be made.
  */
-export function TryDots({ tries, next = false, max = MAX_DOTS }: { tries: boolean[]; next?: boolean; max?: number }) {
+export function TryDots({ tries, next = false, max = MAX_WRONG }: { tries: boolean[]; next?: boolean; max?: number }) {
   if (!tries.length && !next) return null
-  const hidden = Math.max(0, tries.length - max)
+  // Tries end at the first right answer, so every mark before the green one is a wrong try.
+  // Keep the last `max` rings (plus the green dot, if solved); the rest become "+n".
+  const wrong = tries.filter((ok) => !ok).length
+  const hidden = Math.max(0, wrong - max)
   const shown = tries.slice(hidden)
   const right = tries.filter(Boolean).length
   const label = `${tries.length} ${tries.length === 1 ? 'try' : 'tries'}, ${right ? 'solved' : 'not solved yet'}`
