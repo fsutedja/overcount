@@ -27,6 +27,22 @@ generate  →  verify  →  publish
 - **Publish:** verified templates are expanded into thousands of concrete problems, shipped as
   static JSON. The site makes no runtime AI calls and costs $0 to serve.
 
+## Roadmap
+
+**v1, a live practice site**
+- ✅ Playable problems with an answer-first flow, Help blanks and exact grading
+- ✅ A content pipeline: Gemini drafts → automatic verification → publish
+- 🔄 Practice by method, with saved progress and Σ notation
+- ⏭️ Roadmap home page, diagrams (incl. a card-deck grid), more problems, deploy
+
+**v2 and later**
+- A tutor chat: "Ask about this step"
+- Login, with progress synced across devices
+- Streaks and solved-per-difficulty stats
+- Weak spots, tutorials and "Fix my weak spots"
+- Your own problems (private first)
+- Machine learning to predict difficulty and recommend the next problem
+
 ## Stack
 
 | Part | Tech |

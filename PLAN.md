@@ -76,6 +76,22 @@
 6. **Follow-ups** are tracked in [POLISH.md](POLISH.md), for example lazy-loading the 1.6 MB
    Compute Engine bundle before the deploy.
 
+## Roadmap: v1 and v2
+
+**v1 (MVP, milestones 0–12): a live practice site**
+- **Done:** playable problems; the answer-first flow with Help blanks; exact grading; the
+  pipeline Gemini → verify → publish.
+- **In progress:** methods, practice by method, saved progress, Σ notation.
+- **Next:** the roadmap Home, visuals (incl. the card-deck grid), content runs, deploy.
+
+**v2+ (post-MVP, details in §8)**
+- Tutor chat ("Ask about this step").
+- Login (Supabase) with progress synced across devices.
+- Streaks and solved-per-difficulty.
+- Weak spots, tutorials, "Fix my weak spots".
+- User-uploaded problems (private first).
+- ML: predict difficulty, recommend the next problem.
+
 ## Context
 A LeetCode-style practice site for combinatorics and probability. Learners answer first and get
 help only when they need it, so they find exactly where they overcount or undercount.
