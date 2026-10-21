@@ -58,7 +58,8 @@ export function HelpSkeleton({ skeleton, values, wrongSlots, onChange, onSubmit 
                     aria-invalid={wrong}
                     inputMode="decimal"
                     autoComplete="off"
-                    className={`w-16 rounded-lg border-2 bg-card px-1 py-1 text-center text-xl font-bold placeholder:text-sm placeholder:font-normal placeholder:text-ink-muted ${
+                    style={{ width: `${Math.min(12, Math.max(4, hint.length * 0.75 + 1.5))}ch` }}
+                    className={`rounded-lg border-2 bg-card px-1 py-1 text-center text-xl font-bold placeholder:text-sm placeholder:font-normal placeholder:text-ink-muted ${
                       wrong ? 'border-wrong-ink bg-wrong-bg text-wrong-ink' : 'border-accent text-ink'
                     }`}
                   />
