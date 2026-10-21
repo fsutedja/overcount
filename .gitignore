@@ -27,3 +27,6 @@ staging/
 
 # Local Claude Code launch config
 .claude/
+
+# Dev-only previews of staged families (overcount review)
+web/public/preview/

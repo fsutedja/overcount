@@ -15,7 +15,7 @@ from .generate.gemini import GeminiGenerator
 from .generate.prompt import PROMPT_VERSION, system_prompt, user_prompt
 from .generate.ratelimit import GenerationLog, RateLimiter
 from .generate.run import run_generation
-from .publish import build_bank, stale_files, write_bank
+from .publish import build_bank, preview_family, stale_files, write_bank
 from .verify.gates import FamilyReport
 from .verify.review_page import summarize, write_review
 from .verify.route import RouteError, family_folders, route, verify_folder, write_review_report
@@ -38,6 +38,8 @@ FAMILIES_DIR = CONTENT_DIR / "families"
 STAGING_DIR = REPO_ROOT / "staging"
 REVIEW_DIR = REPO_ROOT / "needs_review"
 BANK_DIR = REPO_ROOT / "web" / "public" / "bank"
+#: Dev-only previews of staged families (gitignored).
+PREVIEW_DIR = REPO_ROOT / "web" / "public" / "preview"
 TARGETS_FILE = CONTENT_DIR / "targets.yaml"
 GENERATION_LOG = REPO_ROOT / "data" / "generation_log.jsonl"
 #: Used when .env doesn't set GEMINI_MODEL. Check `client.models.list()` if it stops working.
@@ -178,6 +180,15 @@ def review() -> None:
         log.append(**summarize(report))
     page = write_review(reports, FAMILIES_DIR, STAGING_DIR / "review.html")
     typer.echo(f"\nWrote {page.relative_to(REPO_ROOT)}. Open it, then approve or reject each family.")
+    # Passing drafts also go to a gitignored preview folder, so the dev server can show them on
+    # the real problem page (with diagrams) at /dev/preview/<slug>.
+    PREVIEW_DIR.mkdir(parents=True, exist_ok=True)
+    for stale in PREVIEW_DIR.glob("*.json"):
+        stale.unlink()
+    for report in reports:
+        if report.passed:
+            (PREVIEW_DIR / f"{report.family_id}.json").write_text(preview_family(report.folder))
+            typer.echo(f"Preview: http://localhost:5173/dev/preview/{report.family_id}")
 
 
 @app.command()

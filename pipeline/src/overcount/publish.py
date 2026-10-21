@@ -158,6 +158,13 @@ def build_bank(content_dir: Path) -> Bank:
     return Bank(files)
 
 
+def preview_family(folder: Path) -> str:
+    """One staged family in the web's family format, for the dev-only preview page."""
+    family = load_family(folder / "family.json")
+    problems = [problem_json(p, family.family_id, folder / "checker.py") for p in family.problems]
+    return _dump({"family_id": family.family_id, "problems": problems}, compact=True)
+
+
 def write_bank(bank: Bank, out_dir: Path) -> None:
     for relative, text in bank.files.items():
         target = out_dir / relative

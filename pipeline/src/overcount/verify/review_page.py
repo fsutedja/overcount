@@ -99,6 +99,11 @@ def _family_section(report: FamilyReport, families_dir: Path) -> str:
     {'<span class="badge regen">replaces the live version</span>' if old else '<span class="badge">new family</span>'}</h2>
 <p class="meta">{checks}</p>{f"<ul class='fail'>{failures}</ul>" if failures else ""}
 <p class="cmd"><code>uv run overcount approve {e(report.family_id)}</code> &nbsp; or &nbsp; <code>uv run overcount reject {e(report.family_id)}</code></p>"""
+    if report.passed:
+        preview = f"http://localhost:5173/dev/preview/{e(report.family_id)}"
+        header += (
+            f'\n<p>See it on the site, with the example and diagram: <a href="{preview}">{preview}</a></p>'
+        )
     if new is None:
         return header + f"<pre>{e(error or '')}</pre></section>"
     rows = []
