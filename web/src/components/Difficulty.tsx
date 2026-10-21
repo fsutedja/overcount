@@ -6,11 +6,14 @@ const STYLE: Record<Level, { chip: string; text: string; bars: number; label: st
   hard: { chip: 'bg-wrong-bg text-wrong-ink', text: 'text-wrong-ink', bars: 3, label: 'Hard' },
 }
 
-/** 1, 2 or 3 signal bars, so difficulty never relies on colour alone. */
+/**
+ * 1, 2 or 3 signal bars, so difficulty never relies on colour alone. Heights are in em so the
+ * tallest matches the capitals at any text size; the parent aligns them to the text baseline.
+ */
 function Bars({ count }: { count: number }) {
   return (
     <span className="inline-flex items-end gap-[2px]" aria-hidden="true">
-      {[4, 7, 10].map((height, i) => (
+      {['0.3em', '0.5em', '0.7em'].map((height, i) => (
         <span key={height} className={`w-[3px] rounded-[1px] bg-current ${i < count ? '' : 'opacity-25'}`} style={{ height }} />
       ))}
     </span>
@@ -25,7 +28,7 @@ export function Difficulty({ level, variant = 'chip' }: { level: Level; variant?
   const { chip, text, bars, label } = STYLE[level]
   return (
     <span
-      className={`inline-flex items-center gap-1.5 font-bold ${variant === 'chip' ? `rounded-md px-2 py-0.5 ${chip}` : text}`}
+      className={`inline-flex items-baseline gap-1.5 font-bold ${variant === 'chip' ? `rounded-md px-2 py-0.5 ${chip}` : text}`}
     >
       <Bars count={bars} />
       {label}
