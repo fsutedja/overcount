@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import type { Instance, Problem } from '../types/problem'
 import { gradeFreeAnswer, gradeSkeleton, skeletonLatex, type AnswerResult, type SkeletonResult } from '../lib/answer'
-import { createAttempt, recordAttempt, type HelpLevel } from '../lib/attempts'
+import { createAttempt, recordAttempt, recordedAttempts, type HelpLevel } from '../lib/attempts'
+import { NUDGE_AFTER_WRONG, problemProgress } from '../lib/progress'
 import { formatValue } from '../lib/grade'
 import { fillTemplate } from '../lib/template'
 import { ExampleBlock } from './ExampleBlock'
@@ -9,6 +10,7 @@ import { HelpSkeleton } from './HelpSkeleton'
 import { MathInput } from './MathInput'
 import { SolutionSteps } from './SolutionSteps'
 import { Tex } from './Tex'
+import { TryDots } from './TryDots'
 
 interface ProblemPageProps {
   problem: Problem
@@ -33,32 +35,37 @@ export function ProblemPage({ problem, instance }: ProblemPageProps) {
   const [helpLevel, setHelpLevel] = useState<HelpLevel>(0)
 
   const solved = solvedLatex !== null
+  /** Tries on this problem so far (across visits and number sets), for the dots and Help nudge. */
+  const [progress, setProgress] = useState(() => problemProgress(recordedAttempts(), problem.id))
+  const nudgeHelp = !solved && !helpOpen && progress.status === 'tried' && progress.wrong >= NUDGE_AFTER_WRONG
 
-  const record = (result: AnswerResult) => {
+  const record = (result: AnswerResult, answer: string) => {
     if (result.kind === 'invalid') return
-    recordAttempt(
+    const saved = recordAttempt(
       createAttempt({
         problem_id: problem.id,
         family_id: problem.family_id,
         instance_key: instance.key,
         help_level: helpLevel,
         correct: result.kind === 'correct',
+        answer,
         mistake_tags: result.kind === 'wrong' && result.mistakeTag ? [result.mistakeTag] : [],
       }),
     )
+    if (saved) setProgress(problemProgress(recordedAttempts(), problem.id))
   }
 
   const checkFree = () => {
     const result = gradeFreeAnswer(freeLatex, problem, instance)
     setFreeResult(result)
-    record(result)
+    record(result, freeLatex)
     if (result.kind === 'correct') setSolvedLatex(freeLatex)
   }
 
   const checkSkeleton = () => {
     const result = gradeSkeleton(slotValues, problem, instance)
     setSkeletonResult(result)
-    record(result)
+    record(result, skeletonLatex(problem.answer.skeleton, slotValues))
     if (result.kind === 'wrong') setSkeletonMisses((n) => n + 1)
     if (result.kind === 'correct') setSolvedLatex(skeletonLatex(problem.answer.skeleton, slotValues))
   }
@@ -102,7 +109,15 @@ export function ProblemPage({ problem, instance }: ProblemPageProps) {
             Your answer
           </h2>
           <div className="rounded-xl border-2 border-accent bg-card p-5">
-            <p className="font-bold">{problem.answer.prompt}</p>
+            <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+              <p className="font-bold">{problem.answer.prompt}</p>
+              {(progress.tries.length > 0 || !solved) && (
+                <p className="flex items-center gap-2 text-sm text-ink-muted">
+                  <TryDots tries={progress.tries} next={progress.status === 'tried' || progress.status === 'new'} />
+                  {progress.status === 'tried' || progress.status === 'new' ? `try ${progress.tries.length + 1}` : null}
+                </p>
+              )}
+            </div>
 
             {solved ? (
               <div className="mt-3">
@@ -164,6 +179,7 @@ export function ProblemPage({ problem, instance }: ProblemPageProps) {
                     Help
                   </button>
                 )}
+                {nudgeHelp && <span className="text-sm text-ink-muted">← stuck? try Help</span>}
                 {helpOpen && (
                   <button
                     type="button"

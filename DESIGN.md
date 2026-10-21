@@ -193,6 +193,22 @@ complements.
 - **Considered:** A · Tiles (flat, closest to the current UI), B · Line drawing (outlines only).
 - **Mockup:** [design/mockups/d4-visual-styles.html](design/mockups/d4-visual-styles.html)
 
+## D5 · Attempts: try dots
+
+**Decided: C · Try dots, without a star.**
+
+- One small dot per try, oldest first: `--correct-ink` for right, `--wrong-ink` for wrong. Dots
+  stop at the first right answer, so a first-try right answer is a single green dot.
+- Mastered (right within 2 tries) and solved (right later) are told apart by the dots alone; no
+  star or badge.
+- On the problem page, next to the answer prompt: the dots, an empty outlined dot for the next
+  try, and "try N" while unsolved. More than 8 dots collapse into "+n".
+- In practice lists, the dots sit at the right end of each row (they replace the ✓).
+- **Help nudge:** after 3 wrong tries, "← stuck? try Help" appears beside the Help link in
+  `--ink-muted`. It never blocks answering.
+- **Considered:** A · Quiet text, B · Chips.
+- **Mockup:** [design/mockups/d5-attempts.html](design/mockups/d5-attempts.html)
+
 ## D3 · Home and progress
 
 Pending (before milestone 9).

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { loadIndex } from '../lib/bank'
-import { progressStore, solvedProblemIds } from '../lib/progress'
+import { TryDots } from '../components/TryDots'
+import { problemProgress, progressStore, solvedProblemIds } from '../lib/progress'
 import type { BankIndex, Kind, MethodInfo, ProblemSummary } from '../types/problem'
 
 const KIND_LABEL: Record<Kind, string> = { counting: 'Counting', probability: 'Probability' }
@@ -121,6 +122,7 @@ function MethodRow({ method, problems, solved }: { method: MethodInfo; problems:
 
 function ProblemList(props: { index: BankIndex; method: string | null; kind: Kind | null; solved: Set<string> }) {
   const { index, method, kind, solved } = props
+  const attempts = useMemo(() => progressStore.list(), [])
   const info = index.roadmap.flatMap((n) => n.methods).find((m) => m.id === method)
   const inMethod = index.problems.filter((p) => !method || p.tags.methods.includes(method))
   const shown = inMethod
@@ -169,9 +171,6 @@ function ProblemList(props: { index: BankIndex; method: string | null; kind: Kin
           {shown.map((p) => (
             <li key={p.id}>
               <Link to={`/problem/${encodeURIComponent(p.id)}`} className="flex items-center gap-3 px-4 py-3 hover:bg-card-sunken">
-                <span className="w-5 shrink-0 text-correct-ink" aria-label={solved.has(p.id) ? 'Solved' : undefined}>
-                  {solved.has(p.id) ? '✓' : ''}
-                </span>
                 <span className="min-w-0 flex-1">
                   <span className="font-bold">{p.title}</span>
                   {p.twist && <span className="block text-sm text-ink-muted">Variation: {p.twist}</span>}
@@ -179,6 +178,9 @@ function ProblemList(props: { index: BankIndex; method: string | null; kind: Kin
                 <span className="flex shrink-0 gap-2 text-xs">
                   <Chip>{KIND_LABEL[p.kind]}</Chip>
                   <Chip>{p.difficulty}</Chip>
+                </span>
+                <span className="flex w-24 shrink-0 justify-end">
+                  <TryDots tries={problemProgress(attempts, p.id).tries} />
                 </span>
               </Link>
             </li>

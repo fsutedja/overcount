@@ -15,6 +15,8 @@ export interface Attempt {
   attempted_at: string
   local_date: string
   correct: boolean
+  /** The submitted LaTeX (free answer) or the filled-in skeleton. */
+  answer: string
   mistake_tags: MistakeTag[]
   schema_version: 1
 }
@@ -26,7 +28,10 @@ export function localDate(date: Date): string {
 }
 
 export function createAttempt(
-  fields: Pick<Attempt, 'problem_id' | 'family_id' | 'instance_key' | 'help_level' | 'correct' | 'mistake_tags'>,
+  fields: Pick<
+    Attempt,
+    'problem_id' | 'family_id' | 'instance_key' | 'help_level' | 'correct' | 'answer' | 'mistake_tags'
+  >,
   now = new Date(),
 ): Attempt {
   return {
@@ -39,8 +44,25 @@ export function createAttempt(
   }
 }
 
-export function recordAttempt(attempt: Attempt): void {
+/** Whitespace doesn't make an answer different. */
+const sameAnswer = (a: string, b: string) => a.replace(/\s+/g, '') === b.replace(/\s+/g, '')
+
+/**
+ * Saves an attempt, unless it repeats an answer already submitted for the same problem and
+ * numbers (that's not a new try). Returns whether it was saved.
+ */
+export function recordAttempt(attempt: Attempt): boolean {
+  const repeat = progressStore
+    .list()
+    .some(
+      (a) =>
+        a.problem_id === attempt.problem_id &&
+        a.instance_key === attempt.instance_key &&
+        sameAnswer(a.answer ?? '', attempt.answer),
+    )
+  if (repeat) return false
   progressStore.add(attempt)
+  return true
 }
 
 export function recordedAttempts(): readonly Attempt[] {
