@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D5 attempt display</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4efe6;--card:#fffbf3;--card-sunken:#f8f3ea;--border:#e4d9c6;--ink:#2b2823;--ink-muted:#675f53;--accent:#4f8f87;--accent-ink:#276660;--accent-soft:#e3eeec;--on-accent:#fffbf3;--deco:#c2734f;--correct-bg:#e1ecd8;--correct-ink:#35652f;--wrong-bg:#f3e0e7;--wrong-ink:#8e3352}
+:root[data-theme=dark]{--bg:#1f1d1a;--card:#2a2723;--card-sunken:#24221e;--border:#3a362f;--ink:#eee7da;--ink-muted:#b3aa9b;--accent:#5fa69c;--accent-ink:#7cc1b7;--accent-soft:#23332f;--on-accent:#1f1d1a;--deco:#d99474;--correct-bg:#2c3a28;--correct-ink:#a6cf99;--wrong-bg:#3e2730;--wrong-ink:#eba5bc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',sans-serif;padding:24px 16px 60px}
+.wrap{max-width:980px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--ink-muted);margin:0 0 20px}
+.opt{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:28px}
+.opt h2{margin:0 0 2px;font-size:18px}.why{color:var(--ink-muted);font-size:14px;margin:0 0 16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:700px){.grid{grid-template-columns:1fr}}
+.label{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-muted);margin:0 0 6px;font-weight:700}
+.panel{border:2px solid var(--accent);border-radius:12px;padding:14px;background:var(--card)}
+.panel p{margin:0 0 8px}
+.input{border:2px solid var(--border);border-radius:8px;height:40px;margin:8px 0}
+.btn{display:inline-block;background:var(--accent-ink);color:var(--on-accent);font-weight:700;border-radius:8px;padding:7px 14px}
+.link{color:var(--accent-ink);font-weight:700;margin-left:12px}
+.fb{border-radius:8px;padding:8px 12px;margin-top:10px;background:var(--wrong-bg);color:var(--wrong-ink)}
+.nudge{border-radius:8px;padding:8px 12px;margin-top:8px}
+.list{border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid var(--border);background:var(--card)}
+.row:first-child{border-top:0}.row .t{flex:1}
+.chip{font-size:12px;border-radius:999px;padding:2px 8px;font-weight:700}
+.muted{color:var(--ink-muted);font-size:13px}
+.tb{position:fixed;top:12px;right:12px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--ink);font:inherit;cursor:pointer}
+.dots{display:inline-flex;gap:3px;vertical-align:middle}.dots i{width:9px;height:9px;border-radius:50%;display:inline-block}
+</style>
+</head>
+<body>
+<button class="tb" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">Light / dark</button>
+<div class="wrap">
+<h1>D5 · Attempts, mastered / solved, Help nudge</h1>
+<p class="sub">Each option shows the answer panel after 3 wrong tries (with the Help nudge) and the practice list with status. Existing colours only.</p>
+<div id="opts"></div>
+</div>
+<script>
+const rows = (status) => [
+  ['Choosing a mixed team', status('mastered', 1)],
+  ['At least two sixes', status('solved', 4)],
+  ['Packing candy bags', status('tried', 2)],
+  ['Seating at a round table', status('new', 0)],
+].map(([t, s]) => `<div class="row"><span class="t">${t}</span>${s}</div>`).join('');
+
+const OPTS = [
+  { name: 'A · Quiet text', why: 'Attempt count as small grey text; status as a word with a symbol. The nudge is a plain line under the feedback, with Help as a link.',
+    count: '<p class="muted">Try 4 · 3 wrong so far</p>',
+    nudge: '<p class="nudge" style="padding:6px 0;color:var(--ink-muted)">Stuck? <span style="color:var(--accent-ink);font-weight:700">Open Help</span> to see the structure, then try again.</p>',
+    status: (s, n) => ({mastered:'<span style="color:var(--correct-ink);font-weight:700">★ Mastered</span>', solved:'<span style="color:var(--correct-ink)">✓ Solved</span>', tried:'<span class="muted">Tried</span>', new:''})[s] + (n ? `<span class="muted">${n} ${n===1?'try':'tries'}</span>` : '') },
+  { name: 'B · Chips', why: 'Rounded chips: "Mastered" in teal, "Solved" in green, "Tried" outlined. The nudge is a soft teal box with a Help button.',
+    count: '<p><span class="chip" style="border:1px solid var(--border);color:var(--ink-muted)">Try 4</span></p>',
+    nudge: '<div class="nudge" style="background:var(--accent-soft);color:var(--accent-ink)">3 wrong tries. Help shows the answer\'s structure without giving it away. <b style="text-decoration:underline">Open Help</b></div>',
+    status: (s, n) => ({mastered:'<span class="chip" style="background:var(--accent);color:var(--on-accent)">Mastered</span>', solved:'<span class="chip" style="background:var(--correct-bg);color:var(--correct-ink)">Solved</span>', tried:'<span class="chip" style="border:1px solid var(--border);color:var(--ink-muted)">Tried</span>', new:''})[s] + (n ? `<span class="muted">${n} ${n===1?'try':'tries'}</span>` : '') },
+  { name: 'C · Try dots', why: 'One dot per try: green for right, rose for wrong (like a tiny scoreboard). Mastered gets a terracotta star. The nudge appears beside the Help link.',
+    count: '<p><span class="dots"><i style="background:var(--wrong-ink)"></i><i style="background:var(--wrong-ink)"></i><i style="background:var(--wrong-ink)"></i><i style="border:2px solid var(--border)"></i></span> <span class="muted">try 4</span></p>',
+    nudge: '',
+    status: (s, n) => {
+      const dots = {mastered:['c'], solved:['w','w','w','c'], tried:['w','w'], new:[]}[s].map(d => `<i style="background:var(${d==='c'?'--correct-ink':'--wrong-ink'})"></i>`).join('');
+      return (s==='mastered' ? '<span style="color:var(--deco);font-size:18px">★</span>' : '') + `<span class="dots">${dots}</span>`;
+    } },
+];
+const root = document.getElementById('opts');
+OPTS.forEach(o => {
+  const el = document.createElement('section'); el.className = 'opt';
+  el.innerHTML = `<h2>${o.name}</h2><p class="why">${o.why}</p>
+  <div class="grid">
+    <div><p class="label">Answer panel, after 3 wrong tries</p>
+      <div class="panel"><p><b>Number of lists with at least two 6s</b></p>${o.count}
+        <div class="input"></div><span class="btn">Check answer</span><span class="link">Help</span>${o.name.startsWith('C') ? '<span class="muted" style="margin-left:8px">← stuck? try Help</span>' : ''}
+        <div class="fb">That counts lists with exactly two 6s. "At least" also includes three or more.</div>${o.nudge}
+      </div></div>
+    <div><p class="label">Practice list</p><div class="list">${rows(o.status)}</div></div>
+  </div>`;
+  root.appendChild(el);
+});
+</script>
+</body>
+</html>
