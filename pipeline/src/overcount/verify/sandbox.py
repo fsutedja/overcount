@@ -181,7 +181,17 @@ def run_example(kwargs, call):
     report["pairs"] = [{"yes": describe(y, kwargs), "no": describe(n, kwargs)} for y, n in pairs]
     return report
 
-run = {"value": run_value, "count": run_count, "example": run_example}[request["mode"]]
+def run_list(kwargs, call):
+    # The outcomes that count, up to a limit (one more tells the caller there are too many).
+    found = []
+    for outcome in functions["outcomes"](**kwargs):
+        if counts(outcome, kwargs):
+            found.append(outcome_json(outcome))
+            if len(found) > request["limit"]:
+                break
+    return found
+
+run = {"value": run_value, "count": run_count, "example": run_example, "list": run_list}[request["mode"]]
 results = []
 for call in request["calls"]:
     kwargs = {name: decode(v) for name, v in call["kwargs"].items()}
@@ -241,6 +251,13 @@ def run_examples(
     }
     results: list[dict[str, Any]] = _run(checker_path, request, calls)
     return results
+
+
+def run_list(checker_path: Path, outcomes: str, counts: str, call: Call, limit: int) -> list[Any]:
+    """The outcomes that pass `counts` for one instance, at most `limit` + 1 of them."""
+    request = {"mode": "list", "functions": {"outcomes": outcomes, "counts": counts}, "limit": limit}
+    results: list[list[Any]] = _run(checker_path, request, [call])
+    return results[0]
 
 
 def _run(checker_path: Path, request_fields: dict[str, Any], calls: list[Call]) -> Any:

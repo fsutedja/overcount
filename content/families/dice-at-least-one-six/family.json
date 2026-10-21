@@ -83,6 +83,25 @@
           }
         }
       },
+      "help_steps": [
+        {
+          "kind": "combine",
+          "title": "Count every list",
+          "text": "Each of the $n$ rolls has 6 options, so there are $6^n$ lists in total.",
+          "expr": "6^n"
+        },
+        {
+          "kind": "complement",
+          "title": "Count the opposite",
+          "text": "The opposite of \"at least one 6\" is \"no 6 at all\": each roll is one of 5 faces, so $5^n$ lists."
+        },
+        {
+          "kind": "complement",
+          "title": "Subtract",
+          "text": "Everything minus the lists with no 6. Now fill in the numbers.",
+          "expr": "6^n - 5^n"
+        }
+      ],
       "solution": [
         {
           "kind": "arrange",
@@ -209,6 +228,31 @@
           }
         }
       },
+      "help_steps": [
+        {
+          "kind": "combine",
+          "title": "Count every list",
+          "text": "There are $6^n$ lists in total.",
+          "expr": "6^n"
+        },
+        {
+          "kind": "complement",
+          "title": "Find what doesn't count",
+          "text": "A list fails if it has no 6 ($5^n$ lists) or exactly one 6."
+        },
+        {
+          "kind": "choose",
+          "title": "Count lists with exactly one 6",
+          "text": "Choose which of the $n$ rolls is the 6, and every other roll is one of 5 faces.",
+          "expr": "n*5^(n-1)"
+        },
+        {
+          "kind": "complement",
+          "title": "Subtract both",
+          "text": "Remove the no-6 lists and the one-6 lists. Now fill in the numbers.",
+          "expr": "6^n - 5^n - n*5^(n-1)"
+        }
+      ],
       "solution": [
         {
           "kind": "arrange",
@@ -324,6 +368,20 @@
           }
         }
       },
+      "help_steps": [
+        {
+          "kind": "combine",
+          "title": "Count lists with no 1s",
+          "text": "Each roll is one of the 5 faces 2 to 6, so $5^n$ lists.",
+          "expr": "5^n"
+        },
+        {
+          "kind": "complement",
+          "title": "Remove those with no 6 either",
+          "text": "Among them, the ones with no 6 use only faces 2 to 5: $4^n$ lists. Subtract them. Now fill in the numbers.",
+          "expr": "5^n - 4^n"
+        }
+      ],
       "solution": [
         {
           "kind": "arrange",

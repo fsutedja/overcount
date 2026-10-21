@@ -111,6 +111,26 @@
           ]
         }
       },
+      "help_steps": [
+        {
+          "kind": "choose",
+          "title": "Choose the juniors",
+          "text": "Pick $j$ of the $J$ juniors. Order doesn't matter in a team.",
+          "expr": "C(J, j)"
+        },
+        {
+          "kind": "choose",
+          "title": "Choose the seniors",
+          "text": "Pick $s$ of the $S$ seniors the same way.",
+          "expr": "C(S, s)"
+        },
+        {
+          "kind": "combine",
+          "title": "Both happen, so multiply",
+          "text": "Every group of juniors goes with every group of seniors. Now fill in the numbers.",
+          "expr": "C(J, j)*C(S, s)"
+        }
+      ],
       "solution": [
         {
           "kind": "choose",
@@ -253,6 +273,25 @@
           ]
         }
       },
+      "help_steps": [
+        {
+          "kind": "choose",
+          "title": "Choose the juniors",
+          "text": "Pick $j$ of the $J$ juniors.",
+          "expr": "C(J, j)"
+        },
+        {
+          "kind": "arrange",
+          "title": "Pick the captain from them",
+          "text": "Any of the $j$ chosen juniors can be captain: $j$ ways."
+        },
+        {
+          "kind": "combine",
+          "title": "Choose the seniors and multiply",
+          "text": "Pick $s$ of the $S$ seniors. All three choices happen, so multiply. Now fill in the numbers.",
+          "expr": "C(J, j)*j*C(S, s)"
+        }
+      ],
       "solution": [
         {
           "kind": "choose",

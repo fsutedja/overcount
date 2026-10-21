@@ -60,14 +60,7 @@ def build_instance(problem: Problem, assignment: dict[str, sp.Expr]) -> Instance
         answer = evaluate(parse(problem.answer.expr), assignment)
         skeleton = problem.answer.skeleton
         indices = skeleton.slot_indices
-        # A slot inside a Σ body may use the index (its value is an expression in k); every other
-        # slot is a number.
-        slots = {
-            slot: to_sympy(parse(spec.answer), assignment)
-            if slot in indices
-            else evaluate(parse(spec.answer), assignment)
-            for slot, spec in skeleton.slots.items()
-        }
+        slots = slot_values(problem, assignment)
         filled = evaluate(parse(skeleton.source), assignment | slots)
     except ExprError:
         return None
@@ -85,6 +78,23 @@ def build_instance(problem: Problem, assignment: dict[str, sp.Expr]) -> Instance
     }
     key = ",".join(f"{name}={vars_[name]}" for name in problem.variables)
     return Instance(key, vars_, values)
+
+
+def slot_values(problem: Problem, assignment: dict[str, sp.Expr]) -> dict[str, sp.Expr]:
+    """Each Help-skeleton slot's value for these numbers. A slot inside a Σ body may use the
+    index, so its value is an expression in k; every other slot is a number."""
+    indices = problem.answer.skeleton.slot_indices
+    return {
+        slot: to_sympy(parse(spec.answer), assignment)
+        if slot in indices
+        else evaluate(parse(spec.answer), assignment)
+        for slot, spec in problem.answer.skeleton.slots.items()
+    }
+
+
+def assignment_of(instance: Instance) -> dict[str, sp.Expr]:
+    """An instance's numbers back as exact sympy values."""
+    return {name: sp.Rational(value) for name, value in instance.vars.items()}
 
 
 def _slot_value(value: sp.Expr, index: str | None) -> StoredValue:

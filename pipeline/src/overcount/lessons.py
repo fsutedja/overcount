@@ -22,7 +22,7 @@ _MATH = re.compile(r"\$[^$]*\$")
 _CODE = re.compile(r"\^|_|\.\.|\\")
 
 
-def _plain_text(text: str) -> str:
+def plain_text(text: str) -> str:
     if text.count("$") % 2:
         raise ValueError(f"unbalanced $ in {text!r}")
     outside = _MATH.sub("", text)
@@ -50,7 +50,7 @@ class Formula(BaseModel):
     @field_validator("when")
     @classmethod
     def when_is_text(cls, text: str) -> str:
-        return _plain_text(text)
+        return plain_text(text)
 
 
 class Lesson(BaseModel):
@@ -65,12 +65,12 @@ class Lesson(BaseModel):
     @field_validator("summary", "example", "trap")
     @classmethod
     def text(cls, value: str) -> str:
-        return _plain_text(value)
+        return plain_text(value)
 
     @field_validator("how")
     @classmethod
     def paragraphs(cls, values: list[str]) -> list[str]:
-        return [_plain_text(v) for v in values]
+        return [plain_text(v) for v in values]
 
     @model_validator(mode="after")
     def unique_formula_ids(self) -> "Lesson":

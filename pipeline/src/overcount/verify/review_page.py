@@ -50,6 +50,10 @@ def _problem_card(problem: Problem | None) -> str:
         for p in problem.answer.skeleton.parts
     )
     hints = ", ".join(f"[{slot}] = {e(spec.answer)}" for slot, spec in problem.answer.skeleton.slots.items())
+    help_steps = "".join(
+        f"<li><b>{e(h.title)}</b> {e(h.text)}" + (f" <code>{e(h.expr)}</code>" if h.expr else "") + "</li>"
+        for h in problem.help_steps
+    )
     steps = "".join(
         f"<li><b>{e(s.title)}</b> <code>{e(s.expr)}</code><br>{e(_fill(s.explanation, default))}</li>"
         for s in problem.solution
@@ -67,6 +71,7 @@ def _problem_card(problem: Problem | None) -> str:
   <p>{e(_fill(problem.statement, default))}</p>
   <p class="answer"><code>{e(problem.answer.expr)}</code> = <b>{e(_value(default))}</b>
      <span class="meta">({e(default.key) if default else "no valid instance"})</span></p>
+  <p class="label">Help steps</p><ol>{help_steps}</ol>
   <p class="label">Help skeleton</p><p class="skeleton">{skeleton}</p><p class="meta">{hints}</p>
   <p class="label">Solution</p><ol>{steps}</ol>
   <p class="label">Common mistakes</p><ul>{wrong}</ul>

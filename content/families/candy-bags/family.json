@@ -85,6 +85,19 @@
           ]
         }
       },
+      "help_steps": [
+        {
+          "kind": "arrange",
+          "title": "Draw one way as a picture",
+          "text": "Write the $n$ candies as stars in a row and cut the row into $k$ bags with $k-1$ bars, like ●● | ● | ●●●. Every picture is one way to share, and every way gives one picture."
+        },
+        {
+          "kind": "choose",
+          "title": "Count the pictures",
+          "text": "The row has $n + k - 1$ symbols. Choosing which $k - 1$ of them are bars decides the whole picture. Now fill in the numbers.",
+          "expr": "C(n+k-1, k-1)"
+        }
+      ],
       "solution": [
         {
           "kind": "arrange",
@@ -188,6 +201,19 @@
           }
         }
       },
+      "help_steps": [
+        {
+          "kind": "cases",
+          "title": "Give every bag one candy first",
+          "text": "That uses $k$ candies and makes sure no bag is empty. The other $n - k$ candies can go anywhere."
+        },
+        {
+          "kind": "choose",
+          "title": "Share the rest with stars and bars",
+          "text": "Now $n - k$ candies go into $k$ bags, where a bag may get none. That's $n - k + k - 1 = n - 1$ symbols with $k - 1$ bars. Now fill in the numbers.",
+          "expr": "C(n-1, k-1)"
+        }
+      ],
       "solution": [
         {
           "kind": "arrange",
@@ -297,6 +323,19 @@
           }
         }
       },
+      "help_steps": [
+        {
+          "kind": "cases",
+          "title": "Fill the gold bag's minimum first",
+          "text": "Put $m$ candies in the gold bag straight away. That leaves $n - m$ candies with no rules at all."
+        },
+        {
+          "kind": "choose",
+          "title": "Share the rest with stars and bars",
+          "text": "Now $n - m$ candies go into $k$ bags, where a bag may get none: $n - m + k - 1$ symbols with $k - 1$ bars. Now fill in the numbers.",
+          "expr": "C(n-m+k-1, k-1)"
+        }
+      ],
       "solution": [
         {
           "kind": "choose",

@@ -176,3 +176,26 @@ def test_a_skeleton_that_does_not_equal_the_answer_is_rejected() -> None:
     problem = Family.model_validate(derangement_family(c="n-k+1")).problems[0]
     with pytest.raises(ValueError, match="skeleton filled with its slot answers"):
         build_instances(problem)
+
+
+def test_help_check_works_out_the_smallest_case() -> None:
+    from overcount.help_check import help_check
+
+    folder = REPO_ROOT / "content" / "families" / "round-table"
+    problem = Family.model_validate_json((folder / "family.json").read_text()).problems[0]
+    check = help_check(problem, build_instances(problem), folder / "checker.py")
+    assert check["vars"] == {"n": "4"}
+    assert (check["filled"], check["worked"]) == (r"{4}! \div {4}", r"24 \div 4")
+    assert check["answer"] == {"type": "rational", "exact": "6"}
+    assert len(check["outcomes"]) == 6 and check["outcomes"][0].startswith("A → B → C → D")
+
+
+def test_help_check_lists_the_terms_of_a_sum() -> None:
+    from overcount.help_check import help_check
+
+    problem = Family.model_validate(derangement_family()).problems[0]
+    folder = REPO_ROOT / "content" / "families" / "round-table"
+    check = help_check(problem, build_instances(problem), folder / "checker.py")
+    assert check["vars"] == {"n": "4"}
+    assert check["worked"] == "24 - 24 + 12 - 4 + 1"  # = 9 derangements of 4
+    assert "outcomes" not in check  # 9 is more than we list

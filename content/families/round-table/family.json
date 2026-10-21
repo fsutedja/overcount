@@ -67,6 +67,20 @@
           }
         }
       },
+      "help_steps": [
+        {
+          "kind": "arrange",
+          "title": "Line everyone up first",
+          "text": "Pretend the seats are numbered: $n$ people can sit in $n!$ orders.",
+          "expr": "n!"
+        },
+        {
+          "kind": "overcount",
+          "title": "Turning the table changes nothing",
+          "text": "Each real seating shows up $n$ times, once for each turn of the table, so divide by $n$. Now fill in the numbers.",
+          "expr": "n!/n"
+        }
+      ],
       "solution": [
         {
           "kind": "arrange",
@@ -170,6 +184,26 @@
           }
         }
       },
+      "help_steps": [
+        {
+          "kind": "arrange",
+          "title": "Line the beads up first",
+          "text": "Pretend the spots are numbered: $n$ beads can go in $n!$ orders.",
+          "expr": "n!"
+        },
+        {
+          "kind": "overcount",
+          "title": "Turning changes nothing",
+          "text": "Each bracelet shows up $n$ times, once per turn, so divide by $n$.",
+          "expr": "n!/n"
+        },
+        {
+          "kind": "overcount",
+          "title": "Flipping changes nothing either",
+          "text": "Flipping the bracelet over gives the same one, so divide by 2 as well. Now fill in the numbers.",
+          "expr": "n!/n/2"
+        }
+      ],
       "solution": [
         {
           "kind": "arrange",

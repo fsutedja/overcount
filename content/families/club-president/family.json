@@ -79,6 +79,20 @@
           }
         }
       },
+      "help_steps": [
+        {
+          "kind": "combine",
+          "title": "Choose the president",
+          "text": "The president is a junior or a senior, so add: $J + S$ choices.",
+          "expr": "J+S"
+        },
+        {
+          "kind": "combine",
+          "title": "Choose the advisor",
+          "text": "Whoever is president, there are $t$ teachers to pick from. Both choices happen, so multiply. Now fill in the numbers.",
+          "expr": "(J+S)*t"
+        }
+      ],
       "solution": [
         {
           "kind": "cases",
@@ -192,6 +206,26 @@
           }
         }
       },
+      "help_steps": [
+        {
+          "kind": "combine",
+          "title": "Choose the president",
+          "text": "The president is a junior or a senior, so add: $J + S$ choices.",
+          "expr": "J+S"
+        },
+        {
+          "kind": "combine",
+          "title": "Choose the advisor seat",
+          "text": "The seat holds one of $t$ teachers or stays empty: $t + 1$ options.",
+          "expr": "t+1"
+        },
+        {
+          "kind": "combine",
+          "title": "Both happen, so multiply",
+          "text": "Every president goes with every advisor option. Now fill in the numbers.",
+          "expr": "(J+S)*(t+1)"
+        }
+      ],
       "solution": [
         {
           "kind": "cases",

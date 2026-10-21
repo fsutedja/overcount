@@ -98,6 +98,26 @@
           }
         }
       },
+      "help_steps": [
+        {
+          "kind": "choose",
+          "title": "Hands of all hearts",
+          "text": "Choose $k$ of the 13 hearts.",
+          "expr": "C(13, k)"
+        },
+        {
+          "kind": "choose",
+          "title": "Hands of all face cards",
+          "text": "Choose $k$ of the 12 face cards (J, Q, K in 4 suits).",
+          "expr": "C(12, k)"
+        },
+        {
+          "kind": "inclusion-exclusion",
+          "title": "Subtract the overlap once",
+          "text": "Hands that are both were counted twice: they use only the 3 heart face cards. Now fill in the numbers.",
+          "expr": "C(13, k) + C(12, k) - C(3, k)"
+        }
+      ],
       "solution": [
         {
           "kind": "choose",
@@ -234,6 +254,26 @@
           }
         }
       },
+      "help_steps": [
+        {
+          "kind": "choose",
+          "title": "Hands of all red cards",
+          "text": "Choose $k$ of the 26 red cards.",
+          "expr": "C(26, k)"
+        },
+        {
+          "kind": "choose",
+          "title": "Hands of all face cards",
+          "text": "Choose $k$ of the 12 face cards.",
+          "expr": "C(12, k)"
+        },
+        {
+          "kind": "inclusion-exclusion",
+          "title": "Subtract the overlap once",
+          "text": "Hands that are both use only the 6 red face cards. Now fill in the numbers.",
+          "expr": "C(26, k) + C(12, k) - C(6, k)"
+        }
+      ],
       "solution": [
         {
           "kind": "choose",
@@ -368,6 +408,20 @@
           }
         }
       },
+      "help_steps": [
+        {
+          "kind": "choose",
+          "title": "Count each kind",
+          "text": "All hearts: choose from 13. All face cards: choose from 12.",
+          "expr": "C(13, k) + C(12, k)"
+        },
+        {
+          "kind": "inclusion-exclusion",
+          "title": "Take the overlap out twice",
+          "text": "Hands that are both were counted twice, and \"not both\" means they shouldn't be counted at all, so subtract them twice. Now fill in the numbers.",
+          "expr": "C(13, k) + C(12, k) - 2*C(3, k)"
+        }
+      ],
       "solution": [
         {
           "kind": "choose",

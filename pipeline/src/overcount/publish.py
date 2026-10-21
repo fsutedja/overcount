@@ -11,6 +11,7 @@ from typing import Any
 
 from .examples import compute_examples
 from .expr import parse, to_group_latex, to_latex
+from .help_check import help_check
 from .instances import build_instances
 from .lessons import lessons_json, load_lessons
 from .roadmap import load_roadmap, roadmap_json
@@ -41,9 +42,8 @@ def mistake_tags(problem: Problem) -> list[str]:
     return sorted(tags)
 
 
-def _instances_json(problem: Problem, checker: Path) -> list[Json]:
+def _instances_json(problem: Problem, instances: list[Any], checker: Path) -> list[Json]:
     """Every instance, each with its ✅/❌ example computed by the checker."""
-    instances = build_instances(problem)
     examples = compute_examples(problem, instances, checker, membership=False)
     out = []
     for example in examples:
@@ -54,6 +54,7 @@ def _instances_json(problem: Problem, checker: Path) -> list[Json]:
 
 
 def problem_json(problem: Problem, family_id: str, checker: Path) -> Json:
+    instances = build_instances(problem)
     skeleton = problem.answer.skeleton
     parts: list[Json] = [
         {
@@ -99,8 +100,14 @@ def problem_json(problem: Problem, family_id: str, checker: Path) -> Json:
             }
             for step in problem.solution
         ],
+        "help_steps": [
+            {"kind": step.kind, "title": step.title, "text": step.text}
+            | ({"latex": to_latex(parse(step.expr), variables="names")} if step.expr else {})
+            for step in problem.help_steps
+        ],
+        "help_check": help_check(problem, instances, checker),
         "visual": problem.visual.model_dump(exclude_none=True),
-        "instances": _instances_json(problem, checker),
+        "instances": _instances_json(problem, instances, checker),
     }
 
 

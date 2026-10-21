@@ -7,9 +7,10 @@ turns a validated family into the web bank format.
 import re
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from .expr import parse, slot_indices, unblanked_numbers
+from .lessons import plain_text
 from .taxonomy import Context, Difficulty, Method, MistakeTag, StepKind, Topic
 from .visual import VisualType
 
@@ -145,6 +146,33 @@ class Answer(Model):
     skeleton: Skeleton
 
 
+class HelpStep(Model):
+    """One numbered "why" step of Help, revealed one at a time before the skeleton.
+
+    Written with letters (n, k), not this problem's numbers, so it teaches the idea and leaves
+    the arithmetic to the learner. Text marks math with $…$."""
+
+    kind: StepKind
+    title: NonEmpty
+    text: NonEmpty
+    #: Optional formula in letters, e.g. "C(n, k)*(n-k)!", shown under the text.
+    expr: NonEmpty | None = None
+
+    @field_validator("title", "text")
+    @classmethod
+    def readable(cls, value: str) -> str:
+        if PLACEHOLDER.search(value):
+            raise ValueError("Help steps use letters (n, k), not {{x}} placeholders")
+        return plain_text(value)
+
+    @field_validator("expr")
+    @classmethod
+    def parses(cls, source: str | None) -> str | None:
+        if source is not None:
+            parse(source)
+        return source
+
+
 class SolutionStep(Model):
     kind: StepKind
     title: NonEmpty
@@ -212,6 +240,8 @@ class Problem(Model):
     difficulty: Difficulty
     tags: Tags
     answer: Answer
+    #: Help: numbered "why" steps that build up to the skeleton (CLAUDE.md, Product).
+    help_steps: list[HelpStep] = Field(min_length=2, max_length=5)
     solution: list[SolutionStep] = Field(min_length=1)
     #: How one outcome is drawn. The ✅/❌ outcomes and their reasons come from the checker.
     visual: Visual
