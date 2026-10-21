@@ -15,7 +15,8 @@ const longDate = (date: string) =>
  */
 export function ActivityCalendar({ columns, months, total }: { columns: HeatCell[][]; months: { column: number; label: string }[]; total: number }) {
   const scroller = useRef<HTMLDivElement>(null)
-  const [hover, setHover] = useState<{ cell: HeatCell; left: number; top: number } | null>(null)
+  /** The hovered day and where to show its tooltip (screen coordinates, outside the scroller). */
+  const [hover, setHover] = useState<{ cell: HeatCell; x: number; y: number; align: 'start' | 'center' | 'end' } | null>(null)
 
   // Start scrolled to the most recent weeks on narrow screens.
   useEffect(() => {
@@ -28,7 +29,7 @@ export function ActivityCalendar({ columns, months, total }: { columns: HeatCell
       <h3 id="calendar-title" className="mb-2 font-bold">
         {total} {total === 1 ? 'problem' : 'problems'} solved in the last year
       </h3>
-      <div ref={scroller} className="relative overflow-x-auto pb-1">
+      <div ref={scroller} className="relative overflow-x-auto pb-1" onScroll={() => setHover(null)}>
         <div className="relative" style={{ width: 32 + columns.length * step, height: 18 + 7 * step }}>
           {months.map((m) => (
             <span key={m.column} className="absolute top-0 text-xs text-ink-muted" style={{ left: 32 + m.column * step }}>
@@ -48,7 +49,13 @@ export function ActivityCalendar({ columns, months, total }: { columns: HeatCell
                 cell.inRange ? (
                   <span
                     key={cell.date}
-                    onMouseEnter={() => setHover({ cell, left: 32 + w * step, top: 18 + d * step })}
+                    onMouseEnter={(event) => {
+                      const box = event.currentTarget.getBoundingClientRect()
+                      const x = box.left + box.width / 2
+                      // Near either edge of the window, anchor the tooltip so it stays fully visible.
+                      const align = x < 140 ? 'start' : x > window.innerWidth - 140 ? 'end' : 'center'
+                      setHover({ cell, x, y: box.top, align })
+                    }}
                     onMouseLeave={() => setHover(null)}
                     className={`absolute rounded-[3px] border ${SHADE[cell.level]}`}
                     style={{ left: 32 + w * step, top: 18 + d * step, width: CELL, height: CELL }}
@@ -57,16 +64,20 @@ export function ActivityCalendar({ columns, months, total }: { columns: HeatCell
               ),
             )}
           </div>
-          {hover && (
-            <span
-              className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-md border border-border bg-card px-2 py-1 text-xs whitespace-nowrap shadow-sm"
-              style={{ left: hover.left + CELL / 2, top: hover.top - 4 }}
-            >
-              <b>{hover.cell.count}</b> solved · {longDate(hover.cell.date)}
-            </span>
-          )}
+
         </div>
       </div>
+      {hover && (
+        // Fixed to the window, so the scrolling calendar can't clip it.
+        <span
+          className={`pointer-events-none fixed z-20 -translate-y-full rounded-md border border-border bg-card px-2 py-1 text-xs whitespace-nowrap shadow-sm ${
+            hover.align === 'center' ? '-translate-x-1/2' : hover.align === 'end' ? '-translate-x-full' : ''
+          }`}
+          style={{ left: hover.x + (hover.align === 'start' ? -CELL / 2 : hover.align === 'end' ? CELL / 2 : 0), top: hover.y - 6 }}
+        >
+          <b>{hover.cell.count}</b> solved · {longDate(hover.cell.date)}
+        </span>
+      )}
       <div className="mt-1 flex items-center justify-end gap-1 text-xs text-ink-muted">
         Less
         {SHADE.map((shade) => (
