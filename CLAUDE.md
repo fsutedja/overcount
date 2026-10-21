@@ -27,8 +27,9 @@
 - No "served" label; feedback is just "✓ Correct. That's N."
 
 ## Product
-- Answer-first: free answer box → wrong/"Help" → one-line guided skeleton
-  with labeled slots → last resort "Show solution" (read-only steps).
+- Answer-first: free answer box → wrong/"Help" → numbered "why" steps (one at
+  a time) that build to a one-line skeleton with empty-box blanks → last resort
+  "Show solution" (read-only steps).
 - Answers are expressions graded by exact value; number shown only at the end.
 
 ## Tech decisions
