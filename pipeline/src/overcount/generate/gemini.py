@@ -15,7 +15,7 @@ from typing import Any
 from google import genai
 from google.genai import errors, types
 
-from .base import FamilyDraft, Target
+from .base import FamilyDraft, Feedback, Target
 from .prompt import PROMPT_VERSION, system_prompt, user_prompt
 from .ratelimit import QuotaExhausted, RateLimiter
 
@@ -103,7 +103,7 @@ class GeminiGenerator:
     ) -> "GeminiGenerator":
         return cls(genai.Client(api_key=api_key), model, limiter, families_dir)
 
-    def generate(self, target: Target) -> FamilyDraft:
+    def generate(self, target: Target, feedback: Feedback | None = None) -> FamilyDraft:
         if self._system is None:
             self._system = system_prompt(self.families_dir)
         config = types.GenerateContentConfig(
@@ -115,7 +115,7 @@ class GeminiGenerator:
             self.limiter.acquire()
             try:
                 response = self.client.models.generate_content(
-                    model=self.model, contents=user_prompt(target), config=config
+                    model=self.model, contents=user_prompt(target, feedback), config=config
                 )
             except errors.APIError as error:
                 if _is_daily_quota(error):

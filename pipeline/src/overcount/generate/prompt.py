@@ -1,11 +1,12 @@
 """Builds the generation prompt from the versioned template and two golden families."""
 
+import json
 from pathlib import Path
 
 from ..taxonomy import CONTEXTS, METHODS, MISTAKE_TAGS, STEP_KINDS, TOPICS
-from .base import Target
+from .base import Feedback, Target
 
-PROMPT_VERSION = "family-v2"
+PROMPT_VERSION = "family-v3"
 PROMPTS_DIR = Path(__file__).parent / "prompts"
 EXAMPLE_FAMILIES = ("committee-mixed", "round-table")
 
@@ -33,7 +34,7 @@ def system_prompt(families_dir: Path) -> str:
     )
 
 
-def user_prompt(target: Target) -> str:
+def user_prompt(target: Target, feedback: Feedback | None = None) -> str:
     lines = [
         "Write one problem family for this target.",
         f"- target id: {target.id}",
@@ -52,4 +53,11 @@ def user_prompt(target: Target) -> str:
         lines.append(f"- inspiration (adapt, don't copy): {target.inspiration}")
     if target.notes:
         lines.append(f"- notes: {target.notes}")
+    if feedback:
+        lines += ["", "Your previous reply was rejected by the checks. Fix every problem below and reply"]
+        lines += ["with the whole corrected JSON object (family and checker_code):"]
+        lines += [f"- {problem}" for problem in feedback.problems]
+        if feedback.previous:
+            previous = {"family": feedback.previous.family, "checker_code": feedback.previous.checker_code}
+            lines += ["", "Previous reply:", json.dumps(previous, ensure_ascii=False)]
     return "\n".join(lines)

@@ -258,6 +258,7 @@ def stats() -> None:
     statuses = Counter(e.get("status") for e in GenerationLog(GENERATION_LOG).entries())
     typer.echo("Funnel (from data/generation_log.jsonl)")
     typer.echo(f"  generated     {statuses['staged']} drafts")
+    typer.echo(f"  sent back     {statuses['check_failed']} replies that failed the checks (auto-fix)")
     typer.echo(f"  verify runs   {statuses['verified_pass']} passed, {statuses['verified_fail']} failed")
     typer.echo(f"  approved      {statuses['approved']}")
     typer.echo(f"  rejected      {statuses['rejected']}")

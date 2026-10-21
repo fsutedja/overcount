@@ -11,7 +11,7 @@ from overcount.generate.base import FamilyDraft, Target, write_draft
 from overcount.generate.gemini import GeminiGenerator, InvalidReply, parse_reply, stamp
 from overcount.generate.prompt import PROMPT_VERSION
 from overcount.generate.ratelimit import GenerationLog, QuotaExhausted, RateLimiter
-from overcount.generate.run import run_generation
+from overcount.generate.run import check_draft, run_generation
 
 TARGET = Target(
     id="candy-bags",
@@ -21,7 +21,8 @@ TARGET = Target(
     methods=["combinations"],
 )
 GOLDEN = json.loads((FAMILIES_DIR / "round-table" / "family.json").read_text())
-REPLY = json.dumps({"family": GOLDEN, "checker_code": "def solve_root(n):\n    return 1\n"})
+CHECKER = (FAMILIES_DIR / "round-table" / "checker.py").read_text()
+REPLY = json.dumps({"family": GOLDEN, "checker_code": CHECKER})
 
 
 def quota_error(per_day: bool, retry_delay: str | None = None) -> errors.ClientError:
@@ -77,7 +78,7 @@ def make_generator(
 
 def test_parses_a_plain_or_fenced_reply() -> None:
     family, code = parse_reply(REPLY)
-    assert family["family_id"] == "round-table" and code.startswith("def solve_root")
+    assert family["family_id"] == "round-table" and code == CHECKER
     assert parse_reply(f"```json\n{REPLY}\n```")[0] == family
 
 
@@ -185,14 +186,48 @@ TARGETS = [
 
 
 def test_run_stages_drafts_and_logs_them(tmp_path: Path) -> None:
-    generator, _, _ = make_generator([REPLY, "oops, not json", REPLY])
+    # The middle target gets three unreadable replies in a row (the first try plus 2 fixes).
+    generator, _, _ = make_generator([REPLY, "oops", "oops", "oops", REPLY])
     log = GenerationLog(tmp_path / "log.jsonl")
     result = run_generation(generator, generator.limiter, TARGETS, log, tmp_path / "staging", set())
     assert result.staged == ["candy-bags", "hearts-or-face-cards"]
     assert [t for t, _ in result.failed] == ["dice-at-least-one-six"]
     assert (tmp_path / "staging" / "candy-bags" / "family.json").exists()
-    assert [e["status"] for e in log.entries()] == ["staged", "invalid_reply", "staged"]
-    assert log.requests_today() == 3
+    assert [e["status"] for e in log.entries()] == ["staged", *["invalid_reply"] * 3, "staged"]
+    assert log.requests_today() == 5
+
+
+def test_run_sends_rejected_drafts_back_with_the_problems(tmp_path: Path) -> None:
+    generator, client, _ = make_generator([REPLY, REPLY])
+    verdicts = iter([["schema · round-table: visual is missing"], []])
+    log = GenerationLog(tmp_path / "log.jsonl")
+    result = run_generation(
+        generator, generator.limiter, TARGETS[:1], log, tmp_path, set(), check=lambda _: next(verdicts)
+    )
+    assert result.staged == ["candy-bags"]
+    assert [e["status"] for e in log.entries()] == ["check_failed", "staged"]
+    retry = client.models.calls[1]["contents"]
+    assert "visual is missing" in retry and "Previous reply:" in retry
+
+
+def test_run_gives_up_after_two_fixes(tmp_path: Path) -> None:
+    generator, client, _ = make_generator([REPLY, REPLY, REPLY])
+    log = GenerationLog(tmp_path / "log.jsonl")
+    result = run_generation(
+        generator, generator.limiter, TARGETS[:1], log, tmp_path, set(), check=lambda _: ["example · wrong"]
+    )
+    assert result.staged == [] and len(client.models.calls) == 3
+    assert "after 2 fixes" in result.failed[0][1]
+    assert not (tmp_path / "candy-bags").exists()
+
+
+def test_the_real_check_catches_a_family_without_examples() -> None:
+    family = json.loads(json.dumps(GOLDEN))
+    for problem in family["problems"]:
+        del problem["visual"]
+    problems = check_draft(FamilyDraft("round-table", family, CHECKER))
+    assert problems and all("visual" in p for p in problems)
+    assert check_draft(FamilyDraft("round-table", GOLDEN, CHECKER)) == []
 
 
 def test_run_resumes_and_respects_the_limit(tmp_path: Path) -> None:

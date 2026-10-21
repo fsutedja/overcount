@@ -56,12 +56,20 @@ class FamilyDraft:
     checker_code: str
 
 
+@dataclass(frozen=True)
+class Feedback:
+    """Why the previous draft was rejected, sent back so the model can fix it."""
+
+    problems: list[str]
+    previous: FamilyDraft | None = None
+
+
 class Generator(Protocol):
     name: str
     model: str
     prompt_version: str
 
-    def generate(self, target: Target) -> FamilyDraft: ...
+    def generate(self, target: Target, feedback: Feedback | None = None) -> FamilyDraft: ...
 
 
 _SAFE_SLUG = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
