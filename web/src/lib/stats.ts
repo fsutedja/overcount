@@ -53,6 +53,9 @@ export function triesPerDay(attempts: readonly Attempt[], today: Date, days = 30
   })
 }
 
+/** Columns a month label needs before the next one starts. */
+const MIN_LABEL_GAP = 3
+
 export interface HeatCell {
   date: string
   /** Distinct problems solved that day. */
@@ -88,6 +91,9 @@ export function calendar(attempts: readonly Attempt[], today: Date, weeks = 52) 
     }
     columns.push(column)
   }
+  // Like GitHub, drop a month label that would collide with the next one (a month that only
+  // has a column or two at the start of the year).
+  const spaced = months.filter((m, i) => i === months.length - 1 || months[i + 1].column - m.column >= MIN_LABEL_GAP)
   const total = columns.flat().reduce((sum, cell) => sum + (cell.inRange ? cell.count : 0), 0)
-  return { columns, months, total }
+  return { columns, months: spaced, total }
 }

@@ -32,9 +32,9 @@ describe('stats', () => {
     expect(columns[3][0].date).toBe('2026-10-18') // Sunday of this week
     expect(columns[3][3]).toMatchObject({ date: '2026-10-21', count: 2, level: 2, inRange: true })
     expect(columns[3][4].inRange).toBe(false) // Thursday hasn't happened yet
-    // Starts on Sunday 27 Sep; the next column (4 Oct) starts a new month.
-    expect(months.map((m) => m.column)).toEqual([0, 1])
-    expect(months[1].label).toBe('Oct')
+    // Starts on Sunday 27 Sep; "Sept" has one column before October starts, so like GitHub only
+    // "Oct" is labelled.
+    expect(months).toEqual([{ column: 1, label: 'Oct' }])
     expect(total).toBe(2)
   })
 

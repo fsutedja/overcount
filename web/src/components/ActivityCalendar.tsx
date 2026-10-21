@@ -24,7 +24,7 @@ export function ActivityCalendar({ columns, months, total }: { columns: HeatCell
 
   const step = CELL + GAP
   return (
-    <section className="rounded-xl border border-border bg-card px-4 py-3" aria-labelledby="calendar-title">
+    <section className="min-w-0 rounded-xl border border-border bg-card px-4 py-3" aria-labelledby="calendar-title">
       <h3 id="calendar-title" className="mb-2 font-bold">
         {total} {total === 1 ? 'problem' : 'problems'} solved in the last year
       </h3>

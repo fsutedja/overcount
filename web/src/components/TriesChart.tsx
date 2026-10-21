@@ -28,6 +28,7 @@ export function TriesChart({ days }: { days: Day[] }) {
   const path = (key: 'tries' | 'right') => days.map((d, i) => `${i ? 'L' : 'M'}${x(i)},${y(d[key])}`).join(' ')
   const ticks = [0, top / 2, top]
   const last = days.length - 1
+  const close = Math.abs(y(days[last].tries) - y(days[last].right)) < 12
   const totalTries = days.reduce((s, d) => s + d.tries, 0)
   const totalRight = days.reduce((s, d) => s + d.right, 0)
 
@@ -39,7 +40,7 @@ export function TriesChart({ days }: { days: Day[] }) {
   }
 
   return (
-    <section className="rounded-xl border border-border bg-card px-4 py-3" aria-labelledby="tries-title">
+    <section className="min-w-0 rounded-xl border border-border bg-card px-4 py-3" aria-labelledby="tries-title">
       <h3 id="tries-title" className="font-bold">
         Tries per day <span className="text-sm font-normal text-ink-muted">· last {days.length} days</span>
       </h3>
@@ -65,15 +66,16 @@ export function TriesChart({ days }: { days: Day[] }) {
           <text x={LEFT} y={H - 6} fontSize={11} className="fill-ink-muted">
             {shortDate(days[0].date)}
           </text>
-          <text x={W - RIGHT} y={H - 6} textAnchor="end" fontSize={11} className="fill-ink-muted">
+          <text x={W - RIGHT} y={H - 4} textAnchor="end" fontSize={11} className="fill-ink-muted">
             today
           </text>
           <path d={path('tries')} fill="none" strokeWidth={2} strokeDasharray="5 4" strokeLinejoin="round" className="stroke-ink-muted" />
           <path d={path('right')} fill="none" strokeWidth={2} strokeLinejoin="round" className="stroke-accent" />
-          <text x={W - RIGHT + 6} y={y(days[last].tries) + 4} fontSize={11} className="fill-ink-muted">
+          {/* End labels; when the lines end close together, nudge them apart. */}
+          <text x={W - RIGHT + 6} y={y(days[last].tries) + (close ? -3 : 4)} fontSize={11} className="fill-ink-muted">
             tries
           </text>
-          <text x={W - RIGHT + 6} y={y(days[last].right) + (days[last].right === days[last].tries ? 16 : 4)} fontSize={11} className="fill-ink">
+          <text x={W - RIGHT + 6} y={y(days[last].right) + (close ? 11 : 4)} fontSize={11} className="fill-ink">
             right
           </text>
           {hover !== null && (

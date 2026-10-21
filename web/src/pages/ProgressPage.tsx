@@ -94,7 +94,7 @@ function Tile({ value, label }: { value: number; label: string }) {
 
 function ByStop({ index, byId }: { index: BankIndex; byId: Map<string, ProblemRow> }) {
   return (
-    <section className="content-start rounded-xl border border-border bg-card px-4 py-3" aria-labelledby="stops-title">
+    <section className="min-w-0 content-start self-start rounded-xl border border-border bg-card px-4 py-3" aria-labelledby="stops-title">
       <h3 id="stops-title" className="mb-1 font-bold">
         By roadmap stop
       </h3>
