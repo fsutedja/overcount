@@ -359,6 +359,9 @@ is fixed to the bottom with Roadmap, Practice and Progress, each a small line ic
 label. The current page is accent-ink with a 2px accent-ink line on top; the others are
 ink-muted. Pages get matching bottom padding so nothing hides under it; it respects the
 phone's safe area. Desktop keeps the header links.
+- **Header pinned** (tablets and up): it stays at the top while scrolling so the nav is always in
+  reach; sticky panes (the problem card, the problem list) sit just below it. On phones it
+  scrolls away, since the tab bar covers navigation.
 - **Considered:** A · second row of links under the logo, B · menu button with a drop-down.
 - **Mockup:** [design/mockups/d15-mobile-nav.html](design/mockups/d15-mobile-nav.html)
 

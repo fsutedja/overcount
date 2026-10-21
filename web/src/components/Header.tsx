@@ -11,7 +11,8 @@ const NAV_ITEMS: { label: string; to?: string }[] = [
 
 export function Header() {
   return (
-    <header className="border-b border-border">
+    // Pinned on tablets and up so the nav stays in reach; phones use the bottom tab bar instead.
+    <header className="z-20 border-b border-border bg-bg sm:sticky sm:top-0">
       <div className="mx-auto flex max-w-5xl items-center gap-10 px-4 py-3">
         <Link to="/" className="flex items-center gap-3" aria-label="Overcount home">
           <img src={logoMark} alt="" className="h-7 w-auto [image-rendering:pixelated]" />

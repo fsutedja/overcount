@@ -73,8 +73,9 @@ export function ProblemSidebar({ problem, fromMethod }: { problem: Problem; from
   return (
     <>
       {/* Wide screens: a column beside the problem. */}
-      <aside className="hidden lg:mt-[4.25rem] lg:block">
-        <div className="sticky top-6 rounded-xl border border-border bg-card p-3">{list}</div>
+      {/* Stretched to the page height so the sticky list stays in view while scrolling. */}
+      <aside className="hidden lg:mt-[4.25rem] lg:block lg:self-stretch">
+        <div className="sticky top-21 rounded-xl border border-border bg-card p-3">{list}</div>
       </aside>
       {/* Narrower screens: a button that unfolds the same list. */}
       <div className="px-4 pt-4 lg:hidden">
