@@ -91,6 +91,23 @@ function findSumProblem(args: MathJson[], bound: ReadonlySet<string>): string | 
 }
 
 /** Returns a learner-facing message if the expression uses something we don't grade, else null. */
+/**
+ * Plain-text C(n, k), typed without the shortcut or pasted, parses as an unknown function "C".
+ * Treat it as a binomial, like the C( shortcut does.
+ */
+function normalise(node: MathJson): MathJson {
+  if (!Array.isArray(node)) return node
+  const [head, ...args] = node
+  const mapped = args.map(normalise)
+  return head === 'C' && args.length === 2 ? ['Binomial', ...mapped] : [head, ...mapped]
+}
+
+/** Parses a learner's answer into MathJSON, with plain-text C(n, k) read as a binomial. */
+function parseAnswer(latex: string): { isValid: boolean; json: MathJson } {
+  const parsed = ce.parse(latex)
+  return { isValid: parsed.isValid, json: normalise(parsed.json as MathJson) }
+}
+
 function findProblem(node: MathJson, bound: ReadonlySet<string> = new Set()): string | null {
   if (typeof node === 'string') {
     if (ALLOWED_SYMBOLS.has(node) || bound.has(node)) return null
@@ -156,16 +173,16 @@ const INDEX_SAMPLES = [0, 1, 2, 3, 4, 5]
  * So 6 − k, −k + 6 and (12 − 2k)/2 are all right; k − 6 is wrong.
  */
 function gradeIndexed(latex: string, expected: Extract<StoredValue, { type: 'indexed' }>): GradeResult {
-  const parsed = ce.parse(latex)
+  const parsed = parseAnswer(latex)
   const bound = new Set([expected.index])
-  const problem = parsed.isValid ? findProblem(parsed.json as MathJson, bound) : findProblem(['Error'])
+  const problem = parsed.isValid ? findProblem(parsed.json, bound) : findProblem(['Error'])
   if (problem) return { kind: 'invalid', message: problem.replace('no letters like x', `only the letter ${expected.index}`) }
   const reference = ce.parse(expected.latex).json as MathJson
   let compared = 0
   for (const k of INDEX_SAMPLES) {
     const want = ce.box(substitute(reference, expected.index, k) as never).evaluate()
     if (!Number.isFinite(want.re)) continue
-    const got = ce.box(exactDecimals(substitute(parsed.json as MathJson, expected.index, k)) as never).evaluate()
+    const got = ce.box(exactDecimals(substitute(parsed.json, expected.index, k)) as never).evaluate()
     if (got.isEqual(want) !== true) return { kind: 'wrong' }
     compared++
   }
@@ -175,15 +192,15 @@ function gradeIndexed(latex: string, expected: Extract<StoredValue, { type: 'ind
 export function gradeLatex(latex: string, expected: StoredValue): GradeResult {
   if (latex.trim() === '') return { kind: 'invalid', message: 'Enter an answer first.' }
   if (expected.type === 'indexed') return gradeIndexed(latex, expected)
-  const parsed = ce.parse(latex)
-  const problem = parsed.isValid ? findProblem(parsed.json as MathJson) : findProblem(['Error'])
+  const parsed = parseAnswer(latex)
+  const problem = parsed.isValid ? findProblem(parsed.json) : findProblem(['Error'])
   if (problem) return { kind: 'invalid', message: problem }
 
   if (expected.type === 'rational') {
-    const exact = ce.box(exactDecimals(parsed.json as MathJson) as never).evaluate()
+    const exact = ce.box(exactDecimals(parsed.json) as never).evaluate()
     return exact.isEqual(expectedExpression(expected)) === true ? { kind: 'correct' } : { kind: 'wrong' }
   }
-  const approx = parsed.evaluate().N().re
+  const approx = ce.box(parsed.json as never).evaluate().N().re
   if (!Number.isFinite(approx)) return { kind: 'wrong' }
   const closeEnough = Math.abs(approx - expected.approx) <= REAL_TOLERANCE * Math.max(1, Math.abs(expected.approx))
   return closeEnough ? { kind: 'correct' } : { kind: 'wrong' }
@@ -194,10 +211,10 @@ export function gradeLatex(latex: string, expected: StoredValue): GradeResult {
  * a known common mistake. Used for feedback only, so anything unparseable simply doesn't match.
  */
 export function matchesLatex(latex: string, referenceLatex: string): boolean {
-  const answer = ce.parse(latex)
-  if (!answer.isValid || findProblem(answer.json as MathJson)) return false
+  const answer = parseAnswer(latex)
+  if (!answer.isValid || findProblem(answer.json)) return false
   const reference = ce.parse(referenceLatex).evaluate()
-  return ce.box(exactDecimals(answer.json as MathJson) as never).evaluate().isEqual(reference) === true
+  return ce.box(exactDecimals(answer.json) as never).evaluate().isEqual(reference) === true
 }
 
 /** The computed number, shown as a bonus once the problem is solved. */

@@ -13,6 +13,14 @@ describe('gradeLatex', () => {
     expect(gradeLatex('840', teams)).toEqual({ kind: 'correct' })
   })
 
+  it('accepts plain-text C(n, k) and * typed without the shortcuts, or pasted', () => {
+    const teams = rational('840')
+    expect(gradeLatex('C(8,3)*C(6,2)', teams)).toEqual({ kind: 'correct' })
+    expect(gradeLatex('C\\left(8,3\\right)\\cdot C\\left(6,2\\right)', teams)).toEqual({ kind: 'correct' })
+    expect(gradeLatex('C(8,3)*C(6,3)', teams)).toEqual({ kind: 'wrong' })
+    expect(gradeLatex('C(8)', teams).kind).toBe('invalid')
+  })
+
   it('rejects a wrong value, such as ordered picks instead of unordered', () => {
     expect(gradeLatex('\\operatorname{P}(8,3)\\cdot\\binom{6}{2}', rational('840'))).toEqual({ kind: 'wrong' })
   })
