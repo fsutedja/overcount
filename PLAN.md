@@ -13,6 +13,12 @@
 | 5 · Verify | Sandboxed checkers (import/builtin allowlist + isolated process with time and memory limits); schema, brute-force and simulation gates; `verify`, `promote` and `stats`; `needs_review/` reports; GitHub Actions CI |
 | 6 · Gemini generator | `overcount generate` with `content/targets.yaml`, the versioned prompt `family-v1`, rate limits, retries with backoff, a clean stop on the daily quota or an unavailable model, and a resumable `data/generation_log.jsonl`. First run: 3 families generated; 2 passed every gate and 1 went to `needs_review/` |
 | Design D1, D2 | Palette, type and logo; two-pane layout; math-symbol step icons. See [DESIGN.md](DESIGN.md), which takes precedence over §5b wherever they differ |
+| 7 · Practice | Method pages with Practice / Learn tabs and one filter row; daily problem; ↻ new numbers (D9); a problem list beside each problem (D12); difficulty colours (D13) |
+| 8 · Progress | Overview and Problems tabs; tries-per-day line chart, a GitHub-style heatmap, streaks (D8) |
+| 9 · Home roadmap | Branching map on desktop and one path on phones (D3), daily problem, activity card |
+| 10 · Visuals | 10 outcome-diagram types, checked examples, the card-deck grid (D11) |
+| 12 · README & deploy | Live on Vercel (auto-deploys from `main`); README with pipeline diagram, setup steps and demo GIF; link-preview image; phone tab bar (D15); pinned awning header (D16); accessibility pass (axe: heading order, keyboard-scrollable heatmap) |
+| Design D3–D16 | Recorded in [DESIGN.md](DESIGN.md) with their mockups |
 
 **Changed from the original plan**
 - **Answer-first flow:** a free answer, then "Fill in the blanks" (a one-line skeleton), then
@@ -76,26 +82,21 @@
     wrong tries.
 
 **Next**
-1. **Regenerate 3 samples with `family-v3`** (marbles-in-jars, hat-check-no-match,
-   line-relative-order), one at a time, then review each on `/dev/preview/<slug>`. On 2026-10-21
-   gemini-3.8-flash answered 503 (overloaded) and gemini-3.7-flash has no free daily quota for
-   this key; a run now stops after the first overloaded target, and the request count follows
-   Google's Pacific-time day.
-2. **Design checkpoint D3 (Home):** options A path / B branching map / C dashboard are in
-   `design/mockups/d3-home.html`, waiting for a choice; then milestone 9.
-3. **Generate the other methods** (~48 families) in daily batches within the free quota, each
-   reviewed before publishing.
-4. **Milestones 7–8:** daily problem, "practice again", Progress page (heatmap, chart).
-5. **Follow-ups** are tracked in [POLISH.md](POLISH.md), e.g. lazy-loading the Compute Engine
-   bundle before the deploy.
+1. **Milestone 11, content:** generate families one at a time with `family-v3` (marbles-in-jars,
+   hat-check-no-match, line-relative-order first), each reviewed on `/dev/preview/<slug>` before
+   publishing. Gemini's free quota resets at midnight Pacific; 503s count against it, and a run
+   stops at the first one. Fallback: families written in Claude Code, through the same gates.
+2. **Coverage target:** ≈ 50 roots, ≥ 3 per roadmap node (15 problems today: 6 roots + 9
+   variants, 528 number sets).
+3. **Follow-ups** are tracked in [POLISH.md](POLISH.md).
 
 ## Roadmap: v1 and v2
 
 **v1 (MVP, milestones 0–12): a live practice site**
 - **Done:** playable problems; the answer-first flow with Help blanks; exact grading; the
-  pipeline Gemini → verify → publish.
-- **In progress:** methods, practice by method, saved progress, Σ notation.
-- **Next:** the roadmap Home, visuals (incl. the card-deck grid), content runs, deploy.
+  pipeline Gemini → verify → publish; practice by method with lessons; saved progress; the
+  roadmap Home; visuals (incl. the card-deck grid); the live deploy.
+- **Left:** content runs (milestone 11), from 15 problems to ≈ 50 roots.
 
 **v2+ (post-MVP, details in §8)**
 - Tutor chat ("Ask about this step").
@@ -576,14 +577,14 @@ resume section.
 6. ✅ **Gemini generator:** `GeminiGenerator`, structured output, rate limiter, retries, resumable
    log, `.env`/`.env.example`, `targets.yaml`. First run of ~5 targets through
    generate → verify → publish.
-7. **Practice + daily + practice again:** filters (topic, context, difficulty), date-seeded
+7. ✅ **Practice + daily + practice again:** filters (topic, context, difficulty), date-seeded
    daily problem and instance, "New numbers" (hidden when a problem has fewer than 5 number
    sets, see card problems in §2a), and "Try a variation" (nudged after a reveal).
-8. **Progress:** attempt logging via `ProgressStore` (attempt counts and mastered/solved are
+8. ✅ **Progress:** attempt logging via `ProgressStore` (attempt counts and mastered/solved are
    built early, see Status); a Progress page with attempts and mastered/solved per problem, a heatmap (one square
    per day, shaded by the number of distinct problems solved correctly that day) and a daily line
    chart (attempts vs. correct).
-9. **Home roadmap:** the roadmap graph with each node's methods and solved / total (replacing the
+9. ✅ **Home roadmap:** the roadmap graph with each node's methods and solved / total (replacing the
    temporary `/practice` methods list), and the daily problem card + mini heatmap on Home.
 10. ✅ **Visuals:** outcome diagrams for 10 visual types, the Example tab with checked examples,
     and the 13×4 card-deck grid (D11). Linking blanks to the diagram was considered and dropped
@@ -592,7 +593,7 @@ resume section.
     complement, distributions, probability). Fix `needs_review` items in Claude Code sessions.
     Target ≈ 50 roots, ≥ 3 per topic tag, all contexts and difficulties.
     Every roadmap node needs ≥ 3 roots.
-12. **README & deploy:** pipeline diagram, funnel and instance counts, GIF, setup guide, roadmap.
+12. ✅ **README & deploy:** pipeline diagram, funnel and instance counts, GIF, setup guide, roadmap.
     Vercel deploy and a mobile/a11y pass.
 
 ## 8. Post-MVP (the data shape is ready now; build later)

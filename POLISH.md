@@ -15,7 +15,7 @@ milestone touches the same area, or in milestone 12 (polish and deploy).
   Decide whether that's fine or whether the slot boxes should shrink.
 - [x] **Skeleton powers and fractions:** done; the skeleton is rendered math with empty boxes as blanks.
 - [x] **Slot hint width:** superseded; blanks are now empty boxes with no hints.
-- [ ] **Header nav links** (Roadmap, Practice, Progress) are placeholders until milestones 7–9.
+- [x] **Header nav links:** done; all three pages exist (milestones 7–9).
 
 - [x] **Mobile nav:** done, a bottom tab bar on phones (DESIGN.md, D15).
 - [x] **Σ in the Help skeleton:** done; bounds are stacked blanks.
