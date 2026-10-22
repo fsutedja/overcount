@@ -9,6 +9,7 @@ import { dayStreak, nodeProblems } from '../lib/home'
 import type { ProblemStatus } from '../lib/progress'
 import { bestStreak, calendar, problemRows, triesPerDay, type ProblemRow } from '../lib/stats'
 import type { BankIndex } from '../types/problem'
+import { ComingSoon } from '../components/ComingSoon'
 
 // "Mastered" isn't shown on this page (it still exists in the data); it counts as solved.
 const FILTERS: { id: 'all' | ProblemStatus; label: string }[] = [
@@ -105,14 +106,18 @@ function ByStop({ index, byId }: { index: BankIndex; byId: Map<string, ProblemRo
           const total = statuses.length
           const done = statuses.filter((s) => s === 'mastered' || s === 'solved').length
           return (
-            <li key={node.id} className={`border-t border-border py-2 first:border-t-0 ${total ? '' : 'opacity-55'}`}>
+            <li key={node.id} className="border-t border-border py-2 first:border-t-0">
               <div className="flex items-baseline justify-between gap-3">
-                <span className="text-[15px] font-bold">{node.title}</span>
-                <span className="shrink-0 text-xs text-ink-muted">
-                  {total ? `${done} / ${total} solved` : 'coming soon'}
-                </span>
+                <span className={`text-[15px] font-bold ${total ? '' : 'text-ink-muted'}`}>{node.title}</span>
+                {total ? (
+                  <span className="shrink-0 text-xs text-ink-muted">
+                    {done} / {total} solved
+                  </span>
+                ) : (
+                  <ComingSoon />
+                )}
               </div>
-              <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-border" aria-hidden="true">
+              <div className={`mt-1.5 h-1.5 overflow-hidden rounded-full bg-border ${total ? '' : 'opacity-40'}`} aria-hidden="true">
                 <div className="h-full bg-accent" style={{ width: total ? `${(100 * done) / total}%` : '0%' }} />
               </div>
             </li>

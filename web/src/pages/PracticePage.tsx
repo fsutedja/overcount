@@ -6,6 +6,7 @@ import { MethodLesson } from '../components/MethodLesson'
 import { TryDots } from '../components/TryDots'
 import { problemProgress, progressStore, solvedProblemIds } from '../lib/progress'
 import type { BankIndex, Kind, MethodInfo, ProblemSummary } from '../types/problem'
+import { ComingSoon } from '../components/ComingSoon'
 
 const KIND_LABEL: Record<Kind, string> = {
   counting: 'Counting',
@@ -113,7 +114,7 @@ function MethodRow({
   const { done, total } = progressFor(problems, solved)
   const label = (
     <>
-      <span className="font-bold">{method.name}</span>
+      <span className={`font-bold ${total > 0 ? '' : 'text-ink-muted'}`}>{method.name}</span>
       <span className="block text-sm text-ink-muted">{method.blurb}</span>
     </>
   )
@@ -125,7 +126,7 @@ function MethodRow({
             {label}
           </Link>
         ) : (
-          <div className="opacity-70">{label}</div>
+          <div>{label}</div>
         )}
       </div>
       {total > 0 ? (
@@ -136,7 +137,7 @@ function MethodRow({
           </span>
         </div>
       ) : (
-        <span className="shrink-0 text-sm text-ink-muted">Coming soon</span>
+        <ComingSoon />
       )}
     </li>
   )

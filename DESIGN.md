@@ -379,6 +379,17 @@ logo icon and colours are unchanged. Works in both themes from the existing toke
   a plate behind the icon (K). Mockups: [d16b-header-dark.html](design/mockups/d16b-header-dark.html),
   [d16c-pan-contrast.html](design/mockups/d16c-pan-contrast.html)
 
+## D17 · "Coming soon" rows
+
+**Decided: A · Muted text and a dashed tag.** Methods (Practice) and roadmap stops (Progress)
+with no problems yet are no longer faded with opacity, which dropped their text to 2.4–4.0 : 1.
+Their titles and blurbs use the normal muted grey (about 6 : 1), the empty progress bar is faint,
+and a small dashed-outline "Coming soon" tag (`ComingSoon.tsx`) says they aren't ready.
+The Home map keeps its faded "coming soon" stops (D3). The logo's terracotta on the awning header
+is exempt from contrast rules as a logotype.
+- **Considered:** B · sunken row, C · lighter fade (90%).
+- **Mockup:** [design/mockups/d17-coming-soon.html](design/mockups/d17-coming-soon.html)
+
 ## No emoji
 
 - No emoji in the interface or in learner-facing content. The example lines read

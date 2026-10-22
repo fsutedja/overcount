@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D17 coming soon rows</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4efe6;--card:#fffbf3;--card-sunken:#f8f3ea;--border:#e4d9c6;--ink:#2b2823;--ink-muted:#675f53;--accent:#4f8f87;--accent-ink:#276660}
+:root[data-theme=dark]{--bg:#1f1d1a;--card:#2a2723;--card-sunken:#24221e;--border:#3a362f;--ink:#eee7da;--ink-muted:#b3aa9b;--accent:#5fa69c;--accent-ink:#7cc1b7}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Atkinson Hyperlegible',sans-serif;padding:24px 16px 60px;line-height:1.45}
+.wrap{max-width:860px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--ink-muted);margin:0 0 20px}
+.opt{border:2px dashed var(--border);border-radius:18px;padding:16px 18px;margin-bottom:24px}
+.opt>h2{margin:0 0 2px;font-size:18px}.why{color:var(--ink-muted);font-size:14px;margin:0 0 12px}
+.two{display:grid;grid-template-columns:1.3fr 1fr;gap:14px}@media(max-width:720px){.two{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid var(--border)}.row:first-child{border-top:0}
+.row .main{flex:1;min-width:0}.t{font-weight:700;display:block}.b{font-size:13px;color:var(--ink-muted);display:block}
+.bar{width:90px;height:6px;border-radius:99px;background:var(--border);overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+.n{font-size:13px;color:var(--ink-muted);white-space:nowrap}
+.stop{padding:8px 14px;border-top:1px solid var(--border)}.stop:first-child{border-top:0}
+.stop .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.stop .top b{font-size:15px}
+.stop .bar{width:100%;margin-top:6px}
+.cap{font-size:12px;font-weight:700;color:var(--ink-muted);margin:0 0 6px}
+/* options */
+.now .soon{opacity:.7}.now .stop.soon{opacity:.55}
+.a .soon .t,.a .soon .top b{color:var(--ink-muted);font-weight:700}
+.a .soon .bar{opacity:.4}
+.chip{font-size:12px;border:1px dashed var(--ink-muted);border-radius:6px;padding:0 7px;color:var(--ink-muted);white-space:nowrap}
+.b-opt .soon{background:var(--card-sunken)}
+.b-opt .soon .t,.b-opt .soon .top b{color:var(--ink-muted)}
+.b-opt .soon .bar{display:none}
+.c .soon{opacity:.9}
+.tb{position:fixed;top:12px;right:12px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--ink);font:inherit;cursor:pointer;z-index:2}
+</style>
+</head>
+<body>
+<button class="tb" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark'">Light / dark</button>
+<div class="wrap">
+<h1>D17 · "Coming soon" rows that are still readable</h1>
+<p class="sub">Methods and roadmap stops with no problems yet are faded today, which drops their text below the 4.5 : 1 contrast needed for reading (2.4 to 4.0 now). Left: the Practice list. Right: Progress, "By roadmap stop".</p>
+<div id="opts"></div>
+</div>
+<script>
+const OPTS = [
+  ['now', 'Now (for reference)', 'Whole row faded with opacity. Text contrast 3.2 (Practice) and 2.4 (Progress) in light mode: fails.', 'Coming soon'],
+  ['a', 'A · Muted text and a dashed "Coming soon" tag', 'No fading. Titles and blurbs use the normal muted grey (6.1 : 1), the empty bar is faint, and a dashed tag says "Coming soon". The dashed outline reads as "not ready yet" without hiding the text.', 'chip'],
+  ['b-opt', 'B · Sunken row', 'No fading. The row sits on the slightly darker "sunken" background with muted text (about 5.8 : 1) and no bar, so it looks set back. "Coming soon" stays as plain text.', 'Coming soon'],
+  ['c', 'C · Lighter fade', 'Keep today’s look but fade much less (90%). Passes at about 4.9 : 1 in light mode; the difference between available and coming-soon rows becomes small.', 'Coming soon'],
+];
+const methods = [['Product and sum rules', 'Multiply for steps that all happen, add for either/or cases.', 0], ['Permutations', 'Ordered arrangements: n! and P(n, k).', -1], ['Repeated items', 'Arrangements with repeats: n! / (a! b! …).', -1], ['Choose, then order', 'Pick who, then arrange them.', 1]];
+const stops = [['Counting basics', '3 / 4 solved', 75], ['Stars and bars', '0 / 2 solved', 0], ['Conditional', '', -1], ['Distributions', '', -1]];
+document.getElementById('opts').innerHTML = OPTS.map(([cls, name, why, soon]) => {
+  const tag = soon === 'chip' ? '<span class="chip">Coming soon</span>' : `<span class="n">${soon}</span>`;
+  const rows = methods.map(([t, b, s]) => s < 0
+    ? `<div class="row soon"><span class="main"><span class="t">${t}</span><span class="b">${b}</span></span>${cls === 'a' ? '' : ''}${tag}</div>`
+    : `<div class="row"><span class="main"><span class="t">${t}</span><span class="b">${b}</span></span><span class="bar"><i style="width:${s ? 100 : 0}%"></i></span><span class="n">${s} / ${s ? 1 : 7}</span></div>`).join('');
+  const st = stops.map(([t, n, w]) => w < 0
+    ? `<div class="stop soon"><div class="top"><b>${t}</b>${soon === 'chip' ? tag : '<span class="n">coming soon</span>'}</div><span class="bar"><i style="width:0"></i></span></div>`
+    : `<div class="stop"><div class="top"><b>${t}</b><span class="n">${n}</span></div><span class="bar"><i style="width:${w}%"></i></span></div>`).join('');
+  return `<section class="opt ${cls}"><h2>${name}</h2><p class="why">${why}</p><div class="two"><div><p class="cap">Practice</p><div class="card">${rows}</div></div><div><p class="cap">Progress · By roadmap stop</p><div class="card">${st}</div></div></div></section>`;
+}).join('');
+</script>
+</body>
+</html>
